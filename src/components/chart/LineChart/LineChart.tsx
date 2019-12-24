@@ -10,7 +10,7 @@ import { Map } from 'immutable';
 
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Svg } from '../Svg';
-import { IChartDimensions, IChartPadding, zeroPadding } from '../common';
+import { IChartDimensions, IChartPadding, zeroPadding, defaultChartTickLength } from '../common';
 
 export type ILineChartData<T> = Map<string, T[]>;
 
@@ -25,6 +25,7 @@ export interface ILineChartProps<T = any> {
   colorAccessor?(key: string): string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
+  tickLength?: number;
   colorTheme?: ColorTheme;
 }
 
@@ -55,13 +56,13 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   colorAccessor = () => '#000000',
   numberOfXTicks = 10,
   numberOfYTicks = 10,
+  tickLength = defaultChartTickLength,
   yDomain = calculateDefaultYDomain(data, yValueAccessor),
   xDomain = calculateDefaultXDomain(data),
   colorTheme = colorThemes.light,
 }: ILineChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
-  const tickLength = 5;
 
   const xScale = scaleLinear()
     .domain(xDomain)

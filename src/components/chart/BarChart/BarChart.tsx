@@ -1,12 +1,6 @@
 import React from 'react';
 import { scaleLinear, scaleBand } from 'd3-scale';
-import {
-  stack,
-  stackOffsetNone,
-  stackOrderAscending,
-  stackOrderNone,
-  Series,
-} from 'd3-shape';
+import { stack, stackOffsetNone, stackOrderNone, Series } from 'd3-shape';
 import property from 'lodash/property';
 import min from 'lodash/min';
 import max from 'lodash/max';
@@ -16,7 +10,12 @@ import { Map, List } from 'immutable';
 
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Svg } from '../Svg';
-import { IChartDimensions, IChartPadding, zeroPadding } from '../common';
+import {
+  IChartDimensions,
+  IChartPadding,
+  zeroPadding,
+  defaultChartTickLength,
+} from '../common';
 
 export type IBarChartData<T> = List<Map<string, T>>;
 
@@ -33,6 +32,7 @@ export interface IBarChartProps<T = any> {
   colorTheme?: ColorTheme;
   paddingInner?: number;
   paddingOuter?: number;
+  tickLength?: number;
 }
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
@@ -53,11 +53,11 @@ export const BarChart = <T extends any = { value: number }>({
   numberOfYTicks = 10,
   paddingInner = 0.25,
   paddingOuter = 0.25,
+  tickLength = defaultChartTickLength,
   colorTheme = colorThemes.light,
 }: IBarChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
-  const tickLength = 5;
 
   const stackGenerator = stack<{ [key: string]: T }>()
     .keys(categories)
