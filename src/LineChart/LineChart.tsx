@@ -7,6 +7,7 @@ import max from 'lodash/max';
 import floor from 'lodash/floor';
 import ceil from 'lodash/ceil';
 import { Map } from 'immutable';
+import styled from 'styled-components';
 
 export interface IDimensions {
   width: number;
@@ -41,6 +42,14 @@ const calculateDefaultYDomain = <T extends any>(
 const viewBoxString = (dimensions: IDimensions) =>
   `${0} ${0} ${dimensions.width} ${dimensions.height}`;
 
+
+const Svg = styled.svg`
+  text {
+    font-family: Helvetica;
+    font-size: 8pt;
+  }
+`;
+
 export const LineChart = <T extends any = { x: number; y: number }>({
   data,
   dimensions,
@@ -72,7 +81,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
 
   return (
     <div data-test="line-chart">
-      <svg
+      <Svg
         width={dimensions.width}
         height={dimensions.height}
         viewBox={viewBoxString(dimensions)}
@@ -129,7 +138,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
             </text>
           ))}
         </g>
-      </svg>
+      </Svg>
     </div>
   );
 };
