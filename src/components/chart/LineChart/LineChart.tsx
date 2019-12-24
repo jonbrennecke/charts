@@ -7,7 +7,9 @@ import max from 'lodash/max';
 import floor from 'lodash/floor';
 import ceil from 'lodash/ceil';
 import { Map } from 'immutable';
-import styled from 'styled-components';
+
+import { ColorTheme, colorThemes } from '../../../theme';
+import { Svg } from '../Svg';
 
 export interface IDimensions {
   width: number;
@@ -26,6 +28,7 @@ export interface ILineChartProps<T = any> {
   colorAccessor?(key: string): string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
+  colorTheme?: ColorTheme;
 }
 
 const calculateDefaultYDomain = <T extends any>(
@@ -39,17 +42,6 @@ const calculateDefaultYDomain = <T extends any>(
   return [a, b];
 };
 
-const viewBoxString = (dimensions: IDimensions) =>
-  `${0} ${0} ${dimensions.width} ${dimensions.height}`;
-
-
-const Svg = styled.svg`
-  text {
-    font-family: Helvetica;
-    font-size: 8pt;
-  }
-`;
-
 export const LineChart = <T extends any = { x: number; y: number }>({
   data,
   dimensions,
@@ -60,6 +52,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   numberOfYTicks = 10,
   yDomain = calculateDefaultYDomain(data, yValueAccessor),
   xDomain = [0, data.size],
+  colorTheme = colorThemes.light
 }: ILineChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
@@ -82,12 +75,8 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   return (
     <div data-test="line-chart">
       <Svg
-        width={dimensions.width}
-        height={dimensions.height}
-        viewBox={viewBoxString(dimensions)}
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
+        dimensions={dimensions}
+        colorTheme={colorTheme}
       >
         <g data-test="paths">
           {Object.keys(data.toJS()).map(key => (
