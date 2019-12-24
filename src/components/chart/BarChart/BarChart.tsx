@@ -1,100 +1,116 @@
 import React from 'react';
-import { scaleLinear } from 'd3-scale';
-import { line } from 'd3-shape';
+import { scaleLinear, scaleBand } from 'd3-scale';
+import {
+  stack,
+  stackOffsetNone,
+  stackOrderAscending,
+  stackOrderNone,
+  Series,
+} from 'd3-shape';
 import property from 'lodash/property';
 import min from 'lodash/min';
 import max from 'lodash/max';
 import floor from 'lodash/floor';
 import ceil from 'lodash/ceil';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Svg } from '../Svg';
 import { IChartDimensions, IChartPadding, zeroPadding } from '../common';
 
-export type ILineChartData<T> = Map<string, T[]>;
+export type IBarChartData<T> = List<Map<string, T>>;
 
-export interface ILineChartProps<T = any> {
-  data: ILineChartData<T>;
+export interface IBarChartProps<T = any> {
+  data: IBarChartData<T>;
+  categories: string[];
   padding?: IChartPadding;
   dimensions: IChartDimensions;
   yDomain?: [number, number];
   xDomain?: [number, number];
-  xValueAccessor?(data: T): number;
-  yValueAccessor?(data: T): number;
+  valueAccessor?(data: T): number;
   colorAccessor?(key: string): string;
-  numberOfXTicks?: number;
   numberOfYTicks?: number;
   colorTheme?: ColorTheme;
+  paddingInner?: number;
+  paddingOuter?: number;
 }
 
-const calculateDefaultYDomain = <T extends any>(
-  data: ILineChartData<T>,
-  yValueAccessor: (data: T) => number
+const calculateDefaultYDomainWithSeries = <T extends any>(
+  series: Series<T, string>[]
 ): [number, number] => {
-  const minData = data.minBy(y => y.map(yValueAccessor)) || [];
-  const a = floor(min(minData.map(yValueAccessor)) || 0);
-  const maxData = data.maxBy(y => y.map(yValueAccessor)) || [];
-  const b = ceil(max(maxData.map(yValueAccessor)) || 0);
+  const a = floor(min(series.map(s => min(s.map(s => s[1])))));
+  const b = ceil(max(series.map(s => max(s.map(s => s[1])))));
   return [a, b];
 };
 
-const calculateDefaultXDomain = <T extends any>(
-  data: ILineChartData<T>
-): [number, number] => {
-  const x: T[] = data.first([]);
-  return [0, x.length];
-};
-
-export const LineChart = <T extends any = { x: number; y: number }>({
+export const BarChart = <T extends any = { value: number }>({
   data,
+  categories,
   dimensions,
   padding = zeroPadding,
-  xValueAccessor = property('x'),
-  yValueAccessor = property('y'),
+  valueAccessor = property('value'),
   colorAccessor = () => '#000000',
-  numberOfXTicks = 10,
   numberOfYTicks = 10,
-  yDomain = calculateDefaultYDomain(data, yValueAccessor),
-  xDomain = calculateDefaultXDomain(data),
+  paddingInner = 0.25,
+  paddingOuter = 0.25,
   colorTheme = colorThemes.light,
-}: ILineChartProps<T>) => {
+}: IBarChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
   const tickLength = 5;
 
-  const xScale = scaleLinear()
-    .domain(xDomain)
-    .range([yAxisWidth + padding.left, dimensions.width - padding.right]);
+  const stackGenerator = stack<{ [key: string]: T }>()
+    .keys(categories)
+    .value((x, category) => valueAccessor(x[category]))
+    .order(stackOrderNone)
+    .offset(stackOffsetNone);
+
+  const series = stackGenerator(data.toJS());
+
+  const yDomain = calculateDefaultYDomainWithSeries(series);
 
   const yScale = scaleLinear()
     .domain(yDomain)
     .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
 
-  const lineGenerator = line<T>()
-    .x(d => xScale(xValueAccessor(d)))
-    .y(d => yScale(yValueAccessor(d)));
-
+  const xDomain = data.map((value, i) => i).toJS();
+  const xScale = scaleBand<number>()
+    .domain(xDomain)
+    .range([yAxisWidth + padding.left, dimensions.width - padding.right])
+    .paddingInner(paddingInner)
+    .paddingOuter(paddingOuter);
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
-
+  const bandWidth = xScale.bandwidth();
   return (
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>
-        <g data-test="paths">
+        <g data-test="stacks">
           <clipPath id="clipPath">
             <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
           </clipPath>
 
-          {Object.keys(data.toJS()).map(key => (
-            <path
-              clipPath={`url(#clipPath)`}
-              data-test={`path-${key}`}
-              key={key}
-              d={lineGenerator(data.get(key) || []) || ''}
-              stroke={colorAccessor(key)}
-              fill="transparent"
-            />
+          {xDomain.map(i => (
+            <g data-test={`stack-${i}`} key={`stack-${i}`}>
+              {series.map((s, j) => {
+                const [start, end] = s[i];
+                const yStart = yScale(start);
+                const yEnd = yScale(end);
+                const height = yStart - yEnd;
+                return (
+                  <rect
+                    data-test={`bar-${j}`}
+                    key={`bar-${j}`}
+                    clipPath={`url(#clipPath)`}
+                    x={xScale(i)}
+                    width={bandWidth}
+                    y={yStart - height}
+                    height={height}
+                    fill={colorAccessor(s.key)}
+                  />
+                );
+              })}
+            </g>
           ))}
         </g>
 
@@ -108,27 +124,6 @@ export const LineChart = <T extends any = { x: number; y: number }>({
             fill="transparent"
             data-test="x-axis-line"
           />
-          {xScale.ticks(numberOfXTicks).map(n => (
-            <g key={n}>
-              <line
-                x1={xScale(n)}
-                x2={xScale(n)}
-                y1={y1}
-                y2={y1 + tickLength}
-                stroke={colorTheme.components.chart.axis.line.stroke}
-                fill="transparent"
-              />
-              <text
-                x={xScale(n)}
-                y={y1 + tickLength}
-                dy="1em"
-                textAnchor="middle"
-                fill={colorTheme.components.chart.axis.tick.color}
-              >
-                {n}
-              </text>
-            </g>
-          ))}
         </g>
 
         <g data-test="y-axis">

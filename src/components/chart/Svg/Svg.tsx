@@ -2,11 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ColorTheme, colorThemes } from '../../../theme';
-
-export interface IChartDimensions {
-  width: number;
-  height: number;
-}
+import { IChartDimensions } from '../common';
 
 export interface ISvgProps {
   dimensions: IChartDimensions;

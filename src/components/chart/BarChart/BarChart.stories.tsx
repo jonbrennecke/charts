@@ -3,10 +3,11 @@ import { storiesOf } from '@storybook/react';
 import uuid from 'uuid';
 import { range } from 'd3-array';
 import { randomUniform } from 'd3-random';
-import { LineChart } from './LineChart';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
+
+import { BarChart } from './BarChart';
 
 const dimensions = {
   height: 240,
@@ -21,33 +22,39 @@ export const padding = {
 };
 
 const yDomain = [0, 100];
-const numberOfPoints = 100;
+const numberOfStacks = 20;
 
 const random = randomUniform(yDomain[0], yDomain[1]);
 
-const makeRandomLineData = () =>
-  range(numberOfPoints).map((y, i) => ({ id: uuid.v4(), y: random(), x: i }));
-
 const colors = fromPairs(
-  schemeSet3.map((color, i) => [String.fromCharCode(i), color])
+  schemeSet3.map((color, i) => [String.fromCharCode(65 + i), color])
 );
 
 const categories = Object.keys(colors);
 
-const data = categories.reduce(
-  (map, category) => map.set(category, makeRandomLineData()),
-  Map<string, ReturnType<typeof makeRandomLineData>>()
+const makeRandomBarData = () =>
+  categories.reduce(
+    (map, category) =>
+      map.set(category, {
+        id: uuid.v4(),
+        value: random(),
+      }),
+    Map<string, { id: string; value: ReturnType<typeof random> }>()
+  );
+
+const data = range(numberOfStacks).reduce(
+  (list, _x, i) => list.push(makeRandomBarData()),
+  List()
 );
 
-storiesOf('Charts', module).add('Line chart', () => (
+storiesOf('Charts', module).add('Bar chart', () => (
   <div style={{ width: 320, height: 240 }}>
-    <LineChart
+    <BarChart
       data={data}
+      categories={categories}
       dimensions={dimensions}
       padding={padding}
       colorAccessor={key => colors[key]}
-      yDomain={[-100, 200]}
-      numberOfYTicks={5}
     />
   </div>
 ));
