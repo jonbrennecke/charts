@@ -1,0 +1,64 @@
+{
+  "name": "@jonbrennecke/components",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "format": "prettier --trailing-comma es5 --single-quote --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "start:dev": "ts-node --project tsconfig.json -r dotenv/config ./src/index.ts",
+    "start": "node -r dotenv/config ./lib/src/index.js",
+    "clean": "rm -rf lib",
+    "build": "tsc --build tsconfig.json",
+    "types": "tsc --declaration",
+    "compile": "npm run build && npm run types",
+    "develop": "npm run compile && npm start:dev",
+    "test": "jest",
+    "prepublish": "npm run compile",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "files": [
+    "lib/"
+  ],
+  "author": "Jon Brennecke",
+  "license": "MIT",
+  "dependencies": {
+    "immutable": "4.0.0-rc.12",
+    "jest": "24.9.0",
+    "lodash": "4.17.15",
+    "moment": "2.24.0",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "redux": "4.0.4",
+    "redux-logger": "3.0.6",
+    "redux-storage": "4.1.2",
+    "redux-thunk": "2.3.0",
+    "reselect": "4.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/addon-links": "^5.2.8",
+    "@storybook/addons": "^5.2.8",
+    "@storybook/react": "^5.2.8",
+    "@types/immutable": "3.8.7",
+    "@types/jest": "24.0.23",
+    "@types/lodash": "4.14.149",
+    "@types/node": "^12.11.7",
+    "@types/redux-logger": "3.0.7",
+    "@types/redux-storage": "4.1.0",
+    "@types/reselect": "2.2.0",
+    "@types/uuid": "^3.4.6",
+    "babel-loader": "^8.0.6",
+    "metro-react-native-babel-preset": "0.54.1",
+    "prettier": "1.12.0",
+    "ts-jest": "24.2.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4"
+  },
+  "repository": {
+    "url": "https://github.com/jonbrennecke/components",
+    "type": "git"
+  }
+}
