@@ -52,7 +52,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   numberOfYTicks = 10,
   yDomain = calculateDefaultYDomain(data, yValueAccessor),
   xDomain = [0, data.size],
-  colorTheme = colorThemes.light
+  colorTheme = colorThemes.light,
 }: ILineChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
@@ -74,10 +74,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
 
   return (
     <div data-test="line-chart">
-      <Svg
-        dimensions={dimensions}
-        colorTheme={colorTheme}
-      >
+      <Svg dimensions={dimensions} colorTheme={colorTheme}>
         <g data-test="paths">
           {Object.keys(data.toJS()).map(key => (
             <path

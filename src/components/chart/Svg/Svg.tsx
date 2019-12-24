@@ -23,7 +23,7 @@ export const chartTickFontSize = 8;
 export const Svg = ({
   dimensions,
   children,
-  colorTheme = colorThemes.light
+  colorTheme = colorThemes.light,
 }: ISvgProps) => {
   const StyledSvg = styled.svg`
     text {

@@ -8,27 +8,27 @@ export interface ColorTheme {
     chart: {
       ticks: {
         color: HexColor;
-      }
-    }
-  },
-};
+      };
+    };
+  };
+}
 
 export const darkColorTheme: ColorTheme = {
   components: {
     chart: {
       ticks: {
-        color: mediumGray
-      }
-    }
-  }
+        color: mediumGray,
+      },
+    },
+  },
 };
 
 export const lightColorTheme: ColorTheme = {
   components: {
     chart: {
       ticks: {
-        color: mediumGray
-      }
+        color: mediumGray,
+      },
     },
   },
 };
