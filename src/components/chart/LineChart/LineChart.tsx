@@ -10,7 +10,14 @@ import { Map } from 'immutable';
 
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Svg } from '../Svg';
-import { IChartDimensions, IChartPadding, zeroPadding, defaultChartTickLength } from '../common';
+import {
+  IChartDimensions,
+  IChartPadding,
+  zeroPadding,
+  defaultChartTickLength,
+  defaultChartXAxisHeight,
+  defaultChartYAxisWidth,
+} from '../common';
 
 export type ILineChartData<T> = Map<string, T[]>;
 
@@ -26,6 +33,8 @@ export interface ILineChartProps<T = any> {
   numberOfXTicks?: number;
   numberOfYTicks?: number;
   tickLength?: number;
+  xAxisHeight?: number;
+  yAxisWidth?: number;
   colorTheme?: ColorTheme;
 }
 
@@ -47,6 +56,23 @@ const calculateDefaultXDomain = <T extends any>(
   return [0, x.length];
 };
 
+const makeLineChartScales = (
+  xDomain: [number, number],
+  yDomain: [number, number],
+  yAxisWidth: number,
+  xAxisHeight: number,
+  dimensions: IChartDimensions,
+  padding: IChartPadding
+) => {
+  const xScale = scaleLinear()
+    .domain(xDomain)
+    .range([yAxisWidth + padding.left, dimensions.width - padding.right]);
+  const yScale = scaleLinear()
+    .domain(yDomain)
+    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
+  return { xScale, yScale };
+};
+
 export const LineChart = <T extends any = { x: number; y: number }>({
   data,
   dimensions,
@@ -59,26 +85,23 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   tickLength = defaultChartTickLength,
   yDomain = calculateDefaultYDomain(data, yValueAccessor),
   xDomain = calculateDefaultXDomain(data),
+  xAxisHeight = defaultChartXAxisHeight,
+  yAxisWidth = defaultChartYAxisWidth,
   colorTheme = colorThemes.light,
 }: ILineChartProps<T>) => {
-  const xAxisHeight = 30;
-  const yAxisWidth = 30;
-
-  const xScale = scaleLinear()
-    .domain(xDomain)
-    .range([yAxisWidth + padding.left, dimensions.width - padding.right]);
-
-  const yScale = scaleLinear()
-    .domain(yDomain)
-    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
-
+  const { xScale, yScale } = makeLineChartScales(
+    xDomain,
+    yDomain,
+    yAxisWidth,
+    xAxisHeight,
+    dimensions,
+    padding
+  );
   const lineGenerator = line<T>()
     .x(d => xScale(xValueAccessor(d)))
     .y(d => yScale(yValueAccessor(d)));
-
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
-
   return (
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>

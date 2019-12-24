@@ -15,6 +15,8 @@ import {
   IChartPadding,
   zeroPadding,
   defaultChartTickLength,
+  defaultChartXAxisHeight,
+  defaultChartYAxisWidth,
 } from '../common';
 
 export type IBarChartData<T> = List<Map<string, T>>;
@@ -33,14 +35,37 @@ export interface IBarChartProps<T = any> {
   paddingInner?: number;
   paddingOuter?: number;
   tickLength?: number;
+  xAxisHeight?: number;
+  yAxisWidth?: number;
 }
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]
 ): [number, number] => {
-  const a = floor(min(series.map(s => min(s.map(s => s[1])))));
-  const b = ceil(max(series.map(s => max(s.map(s => s[1])))));
+  const a = floor(min(series.map(s => min(s.map(s => s[1])))) || 0);
+  const b = ceil(max(series.map(s => max(s.map(s => s[1])))) || 0);
   return [a, b];
+};
+
+const makeBarChartScales = (
+  xDomain: number[],
+  yDomain: [number, number],
+  xAxisHeight: number,
+  yAxisWidth: number,
+  dimensions: IChartDimensions,
+  padding: IChartPadding,
+  paddingInner: number,
+  paddingOuter: number
+) => {
+  const yScale = scaleLinear()
+    .domain(yDomain)
+    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
+  const xScale = scaleBand<number>()
+    .domain(xDomain)
+    .range([yAxisWidth + padding.left, dimensions.width - padding.right])
+    .paddingInner(paddingInner)
+    .paddingOuter(paddingOuter);
+  return { xScale, yScale };
 };
 
 export const BarChart = <T extends any = { value: number }>({
@@ -53,32 +78,29 @@ export const BarChart = <T extends any = { value: number }>({
   numberOfYTicks = 10,
   paddingInner = 0.25,
   paddingOuter = 0.25,
+  xAxisHeight = defaultChartXAxisHeight,
+  yAxisWidth = defaultChartYAxisWidth,
   tickLength = defaultChartTickLength,
   colorTheme = colorThemes.light,
 }: IBarChartProps<T>) => {
-  const xAxisHeight = 30;
-  const yAxisWidth = 30;
-
   const stackGenerator = stack<{ [key: string]: T }>()
     .keys(categories)
     .value((x, category) => valueAccessor(x[category]))
     .order(stackOrderNone)
     .offset(stackOffsetNone);
-
   const series = stackGenerator(data.toJS());
-
-  const yDomain = calculateDefaultYDomainWithSeries(series);
-
-  const yScale = scaleLinear()
-    .domain(yDomain)
-    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
-
   const xDomain = data.map((value, i) => i).toJS();
-  const xScale = scaleBand<number>()
-    .domain(xDomain)
-    .range([yAxisWidth + padding.left, dimensions.width - padding.right])
-    .paddingInner(paddingInner)
-    .paddingOuter(paddingOuter);
+  const yDomain = calculateDefaultYDomainWithSeries(series);
+  const { xScale, yScale } = makeBarChartScales(
+    xDomain,
+    yDomain,
+    xAxisHeight,
+    yAxisWidth,
+    dimensions,
+    padding,
+    paddingInner,
+    paddingOuter
+  );
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
   const bandWidth = xScale.bandwidth();
