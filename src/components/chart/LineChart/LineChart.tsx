@@ -56,6 +56,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
 }: ILineChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
+  const tickLength = 8;
 
   const xScale = scaleLinear()
     .domain(xDomain)
@@ -93,13 +94,30 @@ export const LineChart = <T extends any = { x: number; y: number }>({
             x2={x1}
             y1={y1}
             y2={y1}
-            stroke="#000000"
+            stroke={colorTheme.components.chart.axis.line.stroke}
             fill="transparent"
+            data-test="x-axis-line"
           />
           {xScale.ticks(numberOfXTicks).map(n => (
-            <text x={xScale(n)} y={y1} dy="1em" key={n} textAnchor="middle">
-              {n}
-            </text>
+            <g key={n}>
+              <line
+                x1={xScale(n)}
+                x2={xScale(n)}
+                y1={y1}
+                y2={y1 + tickLength}
+                stroke={colorTheme.components.chart.axis.line.stroke}
+                fill="transparent"
+              />
+              <text
+                x={xScale(n)}
+                y={y1 + tickLength}
+                dy="1em"
+                textAnchor="middle"
+                fill={colorTheme.components.chart.axis.tick.color}
+              >
+                {n}
+              </text>
+            </g>
           ))}
         </g>
 
@@ -109,19 +127,30 @@ export const LineChart = <T extends any = { x: number; y: number }>({
             x2={x0}
             y1={y0}
             y2={y1}
-            stroke="#000000"
+            stroke={colorTheme.components.chart.axis.line.stroke}
             fill="transparent"
           />
           {yScale.ticks(numberOfYTicks).map(n => (
-            <text
-              key={n}
-              x={x0}
-              y={yScale(n)}
-              width={yAxisWidth}
-              textAnchor="end"
-            >
-              {n}&nbsp;
-            </text>
+            <g key={n}>
+              <line
+                x1={x0 - tickLength}
+                x2={x0}
+                y1={yScale(n)}
+                y2={yScale(n)}
+                stroke={colorTheme.components.chart.axis.line.stroke}
+                fill="transparent"
+              />
+              <text
+                x={x0 - tickLength}
+                y={yScale(n)}
+                dy="0.28em"
+                width={yAxisWidth}
+                textAnchor="end"
+                fill={colorTheme.components.chart.axis.tick.color}
+              >
+                {n}&nbsp;
+              </text>
+            </g>
           ))}
         </g>
       </Svg>

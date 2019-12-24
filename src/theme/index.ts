@@ -6,8 +6,13 @@ export type HexColor = string;
 export interface ColorTheme {
   components: {
     chart: {
-      ticks: {
-        color: HexColor;
+      axis: {
+        tick: {
+          color: HexColor;
+        };
+        line: {
+          stroke: HexColor;
+        };
       };
     };
   };
@@ -16,8 +21,13 @@ export interface ColorTheme {
 export const darkColorTheme: ColorTheme = {
   components: {
     chart: {
-      ticks: {
-        color: mediumGray,
+      axis: {
+        tick: {
+          color: mediumGray,
+        },
+        line: {
+          stroke: mediumGray,
+        },
       },
     },
   },
@@ -26,8 +36,13 @@ export const darkColorTheme: ColorTheme = {
 export const lightColorTheme: ColorTheme = {
   components: {
     chart: {
-      ticks: {
-        color: mediumGray,
+      axis: {
+        tick: {
+          color: mediumGray,
+        },
+        line: {
+          stroke: mediumGray,
+        },
       },
     },
   },
