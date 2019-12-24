@@ -18,7 +18,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   yScale,
   xValueAccessor = property('x'),
   yValueAccessor = property('y'),
-  colorAccessor = () => '#000000'
+  colorAccessor = () => '#000000',
 }: ILineChartProps<T>) => {
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
