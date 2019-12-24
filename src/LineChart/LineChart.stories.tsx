@@ -22,7 +22,7 @@ const yScale = scaleLinear()
   .domain(yDomain)
   .range([dimensions.height, 0]);
 
-const random = randomUniform(xDomain[0], xDomain[1]);
+const random = randomUniform(yDomain[0], yDomain[1]);
 const values = range(yDomain[1]).map(random);
 
 const chartData = values.map((y, i) => ({ id: uuid.v4(), y, x: i }));
