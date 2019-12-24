@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "format": "prettier --trailing-comma es5 --single-quote --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "format": "prettier --parser typescript --trailing-comma es5 --single-quote --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "start:dev": "ts-node --project tsconfig.json -r dotenv/config ./src/index.ts",
     "start": "node -r dotenv/config ./lib/src/index.js",
     "clean": "rm -rf lib",
