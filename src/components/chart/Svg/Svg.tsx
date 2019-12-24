@@ -3,18 +3,18 @@ import styled from 'styled-components';
 
 import { ColorTheme, colorThemes } from '../../../theme';
 
-export interface IDimensions {
+export interface IChartDimensions {
   width: number;
   height: number;
 }
 
 export interface ISvgProps {
-  dimensions: IDimensions;
+  dimensions: IChartDimensions;
   children: React.ReactElement[];
   colorTheme?: ColorTheme;
 }
 
-export const viewBoxString = (dimensions: IDimensions) =>
+export const viewBoxString = (dimensions: IChartDimensions) =>
   `${0} ${0} ${dimensions.width} ${dimensions.height}`;
 
 export const chartTickFontFamily = 'Helvetica';

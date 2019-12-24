@@ -13,6 +13,13 @@ const dimensions = {
   width: 640,
 };
 
+export const padding = {
+  top: 15,
+  bottom: 15,
+  left: 15,
+  right: 15,
+};
+
 const yDomain = [0, 100];
 
 const random = randomUniform(yDomain[0], yDomain[1]);
@@ -36,6 +43,7 @@ storiesOf('Charts', module).add('Line chart', () => (
     <LineChart
       data={data}
       dimensions={dimensions}
+      padding={padding}
       colorAccessor={key => colors[key]}
     />
   </div>

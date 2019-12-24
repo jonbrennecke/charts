@@ -9,18 +9,14 @@ import ceil from 'lodash/ceil';
 import { Map } from 'immutable';
 
 import { ColorTheme, colorThemes } from '../../../theme';
-import { Svg } from '../Svg';
-
-export interface IDimensions {
-  width: number;
-  height: number;
-}
+import { Svg, IChartDimensions } from '../Svg';
 
 export type ILineChartData<T> = Map<string, T[]>;
 
 export interface ILineChartProps<T = any> {
   data: ILineChartData<T>;
-  dimensions: IDimensions;
+  padding?: IChartPadding;
+  dimensions: IChartDimensions;
   yDomain?: [number, number];
   xDomain?: [number, number];
   xValueAccessor?(data: T): number;
@@ -42,9 +38,24 @@ const calculateDefaultYDomain = <T extends any>(
   return [a, b];
 };
 
+export interface IChartPadding {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+export const zeroPadding: IChartPadding = {
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+};
+
 export const LineChart = <T extends any = { x: number; y: number }>({
   data,
   dimensions,
+  padding = zeroPadding,
   xValueAccessor = property('x'),
   yValueAccessor = property('y'),
   colorAccessor = () => '#000000',
@@ -56,15 +67,15 @@ export const LineChart = <T extends any = { x: number; y: number }>({
 }: ILineChartProps<T>) => {
   const xAxisHeight = 30;
   const yAxisWidth = 30;
-  const tickLength = 8;
+  const tickLength = 5;
 
   const xScale = scaleLinear()
     .domain(xDomain)
-    .range([yAxisWidth, dimensions.width]);
+    .range([yAxisWidth + padding.left, dimensions.width - padding.right]);
 
   const yScale = scaleLinear()
     .domain(yDomain)
-    .range([dimensions.height - xAxisHeight, 0]);
+    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
 
   const lineGenerator = line<T>()
     .x(d => xScale(xValueAccessor(d)))
@@ -77,8 +88,13 @@ export const LineChart = <T extends any = { x: number; y: number }>({
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>
         <g data-test="paths">
+          <clipPath id="clipPath">
+            <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
+          </clipPath>
+
           {Object.keys(data.toJS()).map(key => (
             <path
+              clipPath={`url(#clipPath)`}
               data-test={`path-${key}`}
               key={key}
               d={lineGenerator(data.get(key) || []) || ''}
