@@ -96,7 +96,9 @@ describe('BarChart', () => {
           showGridLines={true}
         />
       );
-      expect(barChar.find(dataTestAttr('y-axis-gridlines')).exists()).toBeTruthy();
+      expect(
+        barChar.find(dataTestAttr('y-axis-gridlines')).exists()
+      ).toBeTruthy();
     });
 
     it('does not render gridlines if showGridLines is false', () => {
@@ -110,7 +112,9 @@ describe('BarChart', () => {
           showGridLines={false}
         />
       );
-      expect(barChar.find(dataTestAttr('y-axis-gridlines')).exists()).toBeFalsy();
+      expect(
+        barChar.find(dataTestAttr('y-axis-gridlines')).exists()
+      ).toBeFalsy();
     });
   });
 });

@@ -86,7 +86,9 @@ describe('LineChart', () => {
           showGridLines={true}
         />
       );
-      expect(lineChart.find(dataTestAttr('y-axis-gridlines')).exists()).toBeTruthy();
+      expect(
+        lineChart.find(dataTestAttr('y-axis-gridlines')).exists()
+      ).toBeTruthy();
     });
 
     it('does not render gridlines if showGridLines is false', () => {
@@ -101,7 +103,9 @@ describe('LineChart', () => {
           showGridLines={false}
         />
       );
-      expect(lineChart.find(dataTestAttr('y-axis-gridlines')).exists()).toBeFalsy();
+      expect(
+        lineChart.find(dataTestAttr('y-axis-gridlines')).exists()
+      ).toBeFalsy();
     });
   });
 });

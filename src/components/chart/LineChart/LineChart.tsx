@@ -89,7 +89,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
   colorTheme = colorThemes.light,
-  showGridLines = true
+  showGridLines = true,
 }: ILineChartProps<T>) => {
   const { xScale, yScale } = makeLineChartScales(
     xDomain,
@@ -107,7 +107,6 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   return (
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>
-        
         {showGridLines && (
           <g data-test="y-axis-gridlines">
             {yScale.ticks(numberOfYTicks).map(n => (
