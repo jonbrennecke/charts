@@ -42,6 +42,7 @@ export interface IBarChartProps<T = any> {
   xAxisHeight?: number;
   yAxisWidth?: number;
   charLimitBeforeEllipsis?: number;
+  showGridLines?: boolean;
 }
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
@@ -92,6 +93,7 @@ export const BarChart = <
   tickLength = defaultChartTickLength,
   colorTheme = colorThemes.light,
   charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
+  showGridLines = true,
 }: IBarChartProps<T>) => {
   const stackGenerator = stack<T>()
     .keys(categories)
@@ -117,6 +119,23 @@ export const BarChart = <
   return (
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>
+        {showGridLines && (
+          <g data-test="y-axis-gridlines">
+            {yScale.ticks(numberOfYTicks).map(n => (
+              <g key={n}>
+                <line
+                  x1={x0}
+                  x2={x1}
+                  y1={yScale(n)}
+                  y2={yScale(n)}
+                  stroke={colorTheme.components.chart.axis.gridline.stroke}
+                  fill="transparent"
+                />
+              </g>
+            ))}
+          </g>
+        )}
+
         <g data-test="stacks">
           <clipPath id="clipPath">
             <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />

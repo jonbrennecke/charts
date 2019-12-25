@@ -13,6 +13,9 @@ export interface ColorTheme {
         line: {
           stroke: HexColor;
         };
+        gridline: {
+          stroke: HexColor;
+        };
       };
     };
   };
@@ -28,6 +31,9 @@ export const darkColorTheme: ColorTheme = {
         line: {
           stroke: mediumGray,
         },
+        gridline: {
+          stroke: lightGray,
+        },
       },
     },
   },
@@ -42,6 +48,9 @@ export const lightColorTheme: ColorTheme = {
         },
         line: {
           stroke: mediumGray,
+        },
+        gridline: {
+          stroke: lightGray,
         },
       },
     },

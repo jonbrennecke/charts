@@ -6,7 +6,7 @@ import { IChartDimensions } from '../common';
 
 export interface ISvgProps {
   dimensions: IChartDimensions;
-  children: React.ReactElement[];
+  children: (React.ReactElement | React.ReactNode)[];
   colorTheme?: ColorTheme;
 }
 
