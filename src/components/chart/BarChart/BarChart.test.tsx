@@ -84,4 +84,3 @@ describe('BarChart', () => {
     expect(barChar.find(dataTestAttr('stacks')).exists()).toBeTruthy();
   });
 });
-

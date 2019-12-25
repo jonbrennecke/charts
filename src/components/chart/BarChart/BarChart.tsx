@@ -70,7 +70,9 @@ const makeBarChartScales = (
   return { xScale, yScale };
 };
 
-export const BarChart = <T extends any = { data: { value: number }, label: string }>({
+export const BarChart = <
+  T extends any = { data: { value: number }; label: string }
+>({
   data,
   categories,
   dimensions,
