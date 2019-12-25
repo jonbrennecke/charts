@@ -72,4 +72,36 @@ describe('LineChart', () => {
     expect(lineChart.find(dataTestAttr('x-axis')).exists()).toBeTruthy();
     expect(lineChart.find(dataTestAttr('y-axis')).exists()).toBeTruthy();
   });
+
+  describe('gridlines', () => {
+    it('renders gridlines if showGridLines is true', () => {
+      const lineChart = shallow(
+        <LineChart
+          data={data}
+          dimensions={dimensions}
+          padding={padding}
+          colorAccessor={key => colors[key]}
+          yDomain={[-100, 200]}
+          numberOfYTicks={5}
+          showGridLines={true}
+        />
+      );
+      expect(lineChart.find(dataTestAttr('y-axis-gridlines')).exists()).toBeTruthy();
+    });
+
+    it('does not render gridlines if showGridLines is false', () => {
+      const lineChart = shallow(
+        <LineChart
+          data={data}
+          dimensions={dimensions}
+          padding={padding}
+          colorAccessor={key => colors[key]}
+          yDomain={[-100, 200]}
+          numberOfYTicks={5}
+          showGridLines={false}
+        />
+      );
+      expect(lineChart.find(dataTestAttr('y-axis-gridlines')).exists()).toBeFalsy();
+    });
+  });
 });

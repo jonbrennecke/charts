@@ -36,6 +36,7 @@ export interface ILineChartProps<T = any> {
   xAxisHeight?: number;
   yAxisWidth?: number;
   colorTheme?: ColorTheme;
+  showGridLines?: boolean;
 }
 
 const calculateDefaultYDomain = <T extends any>(
@@ -88,6 +89,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
   colorTheme = colorThemes.light,
+  showGridLines = true
 }: ILineChartProps<T>) => {
   const { xScale, yScale } = makeLineChartScales(
     xDomain,
@@ -105,6 +107,24 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   return (
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>
+        
+        {showGridLines && (
+          <g data-test="y-axis-gridlines">
+            {yScale.ticks(numberOfYTicks).map(n => (
+              <g key={n}>
+                <line
+                  x1={x0}
+                  x2={x1}
+                  y1={yScale(n)}
+                  y2={yScale(n)}
+                  stroke={colorTheme.components.chart.axis.gridline.stroke}
+                  fill="transparent"
+                />
+              </g>
+            ))}
+          </g>
+        )}
+
         <g data-test="paths">
           <clipPath id="clipPath">
             <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
