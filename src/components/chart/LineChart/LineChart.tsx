@@ -18,6 +18,7 @@ import {
   defaultChartXAxisHeight,
   defaultChartYAxisWidth,
 } from '../common';
+import { GridLines } from '../GridLines/GridLines';
 
 export type ILineChartData<T> = Map<string, T[]>;
 
@@ -108,20 +109,12 @@ export const LineChart = <T extends any = { x: number; y: number }>({
     <div data-test="line-chart">
       <Svg dimensions={dimensions} colorTheme={colorTheme}>
         {showGridLines && (
-          <g data-test="y-axis-gridlines">
-            {yScale.ticks(numberOfYTicks).map(n => (
-              <g key={n}>
-                <line
-                  x1={x0}
-                  x2={x1}
-                  y1={yScale(n)}
-                  y2={yScale(n)}
-                  stroke={colorTheme.components.chart.axis.gridline.stroke}
-                  fill="transparent"
-                />
-              </g>
-            ))}
-          </g>
+          <GridLines
+            xScale={xScale}
+            yScale={yScale}
+            numberOfYTicks={numberOfYTicks}
+            colorTheme={colorTheme}
+          />
         )}
 
         <g data-test="paths">

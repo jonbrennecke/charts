@@ -7,6 +7,7 @@ import { LineChart } from './LineChart';
 import { Map } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 const dimensions = {
   height: 240,
@@ -39,15 +40,18 @@ const data = categories.reduce(
   Map<string, ReturnType<typeof makeRandomLineData>>()
 );
 
-storiesOf('Charts', module).add('Line chart', () => (
-  <div style={{ width: 320, height: 240 }}>
-    <LineChart
-      data={data}
-      dimensions={dimensions}
-      padding={padding}
-      colorAccessor={key => colors[key]}
-      yDomain={[-100, 200]}
-      numberOfYTicks={5}
-    />
-  </div>
-));
+storiesOf('Charts', module)
+  .addDecorator(withKnobs)
+  .add('Line chart', () => (
+    <div style={{ width: 320, height: 240 }}>
+      <LineChart
+        data={data}
+        dimensions={dimensions}
+        padding={padding}
+        colorAccessor={key => colors[key]}
+        yDomain={[-100, 200]}
+        numberOfYTicks={5}
+        showGridLines={boolean('Show grid lines', true)}
+      />
+    </div>
+  ));
