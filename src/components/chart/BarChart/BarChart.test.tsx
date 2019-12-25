@@ -83,4 +83,34 @@ describe('BarChart', () => {
     expect(barChar.find(dataTestAttr('y-axis')).exists()).toBeTruthy();
     expect(barChar.find(dataTestAttr('stacks')).exists()).toBeTruthy();
   });
+
+  describe('gridlines', () => {
+    it('renders gridlines if showGridLines is true', () => {
+      const barChar = shallow(
+        <BarChart
+          data={data}
+          categories={categories}
+          dimensions={dimensions}
+          padding={padding}
+          colorAccessor={key => colors[key]}
+          showGridLines={true}
+        />
+      );
+      expect(barChar.find(dataTestAttr('y-axis-gridlines')).exists()).toBeTruthy();
+    });
+
+    it('does not render gridlines if showGridLines is false', () => {
+      const barChar = shallow(
+        <BarChart
+          data={data}
+          categories={categories}
+          dimensions={dimensions}
+          padding={padding}
+          colorAccessor={key => colors[key]}
+          showGridLines={false}
+        />
+      );
+      expect(barChar.find(dataTestAttr('y-axis-gridlines')).exists()).toBeFalsy();
+    });
+  });
 });
