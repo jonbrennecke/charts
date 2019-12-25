@@ -21,7 +21,7 @@ export const padding = {
 };
 
 const yDomain = [0, 100];
-const numberOfPoints = 100;
+const numberOfPoints = 50;
 
 const random = randomUniform(yDomain[0], yDomain[1]);
 

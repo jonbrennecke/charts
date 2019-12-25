@@ -19,7 +19,7 @@ import {
   defaultChartYAxisWidth,
 } from '../common';
 
-export type IBarChartData<T> = List<Map<string, T>>;
+export type IBarChartData<T> = List<T>;
 
 export interface IBarChartProps<T = any> {
   data: IBarChartData<T>;
@@ -28,8 +28,10 @@ export interface IBarChartProps<T = any> {
   dimensions: IChartDimensions;
   yDomain?: [number, number];
   xDomain?: [number, number];
+  dataAccessor?(data: T): number;
   valueAccessor?(data: T): number;
   colorAccessor?(key: string): string;
+  labelAccessor?(data: T): string;
   numberOfYTicks?: number;
   colorTheme?: ColorTheme;
   paddingInner?: number;
@@ -68,12 +70,14 @@ const makeBarChartScales = (
   return { xScale, yScale };
 };
 
-export const BarChart = <T extends any = { value: number }>({
+export const BarChart = <T extends any = { data: { value: number }, label: string }>({
   data,
   categories,
   dimensions,
   padding = zeroPadding,
   valueAccessor = property('value'),
+  dataAccessor = property('data'),
+  labelAccessor = property('label'),
   colorAccessor = () => '#000000',
   numberOfYTicks = 10,
   paddingInner = 0.25,
@@ -83,9 +87,9 @@ export const BarChart = <T extends any = { value: number }>({
   tickLength = defaultChartTickLength,
   colorTheme = colorThemes.light,
 }: IBarChartProps<T>) => {
-  const stackGenerator = stack<{ [key: string]: T }>()
+  const stackGenerator = stack<T>()
     .keys(categories)
-    .value((x, category) => valueAccessor(x[category]))
+    .value((x, category) => valueAccessor(dataAccessor(x)[category]))
     .order(stackOrderNone)
     .offset(stackOffsetNone);
   const series = stackGenerator(data.toJS());
@@ -146,6 +150,32 @@ export const BarChart = <T extends any = { value: number }>({
             fill="transparent"
             data-test="x-axis-line"
           />
+          {xDomain.map(i => {
+            const d = data.get(i)!;
+            const label = labelAccessor(d);
+            const bandCenter = (xScale(i) || 0) + bandWidth / 2;
+            return (
+              <g key={`x-tick-${i}`}>
+                <line
+                  x1={bandCenter}
+                  x2={bandCenter}
+                  y1={y1}
+                  y2={y1 + tickLength}
+                  stroke={colorTheme.components.chart.axis.line.stroke}
+                  fill="transparent"
+                />
+                <text
+                  x={bandCenter}
+                  y={y1 + tickLength}
+                  dy="1em"
+                  textAnchor="middle"
+                  fill={colorTheme.components.chart.axis.tick.color}
+                >
+                  {label}
+                </text>
+              </g>
+            );
+          })}
         </g>
 
         <g data-test="y-axis">

@@ -43,7 +43,12 @@ const makeRandomBarData = () =>
   );
 
 const data = range(numberOfStacks).reduce(
-  (list, _x, i) => list.push(makeRandomBarData()),
+  (list, _x, i) =>
+    list.push({
+      id: uuid.v4(),
+      label: 'Lorem ipsum',
+      data: makeRandomBarData(),
+    }),
   List()
 );
 
