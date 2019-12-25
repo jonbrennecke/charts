@@ -8,6 +8,7 @@ import fromPairs from 'lodash/fromPairs';
 import { shallow } from 'enzyme';
 
 import { LineChart } from './LineChart';
+import { dataTestAttr } from '../../../testUtils';
 
 const dimensions = {
   height: 240,
@@ -52,9 +53,9 @@ describe('LineChart', () => {
         numberOfYTicks={5}
       />
     );
-    expect(lineChart.find('[data-test="paths"]').exists()).toBeTruthy();
-    expect(lineChart.find('[data-test="x-axis"]').exists()).toBeTruthy();
-    expect(lineChart.find('[data-test="y-axis"]').exists()).toBeTruthy();
+    expect(lineChart.find(dataTestAttr('paths')).exists()).toBeTruthy();
+    expect(lineChart.find(dataTestAttr('x-axis')).exists()).toBeTruthy();
+    expect(lineChart.find(dataTestAttr('y-axis')).exists()).toBeTruthy();
   });
 
   it('works with empty data', () => {
@@ -67,8 +68,8 @@ describe('LineChart', () => {
         numberOfYTicks={5}
       />
     );
-    expect(lineChart.find('[data-test="paths"]').exists()).toBeTruthy();
-    expect(lineChart.find('[data-test="x-axis"]').exists()).toBeTruthy();
-    expect(lineChart.find('[data-test="y-axis"]').exists()).toBeTruthy();
+    expect(lineChart.find(dataTestAttr('paths')).exists()).toBeTruthy();
+    expect(lineChart.find(dataTestAttr('x-axis')).exists()).toBeTruthy();
+    expect(lineChart.find(dataTestAttr('y-axis')).exists()).toBeTruthy();
   });
 });
