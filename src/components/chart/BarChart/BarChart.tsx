@@ -6,7 +6,7 @@ import min from 'lodash/min';
 import max from 'lodash/max';
 import floor from 'lodash/floor';
 import ceil from 'lodash/ceil';
-import { Map, List } from 'immutable';
+import { List } from 'immutable';
 
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Svg } from '../Svg';
@@ -17,6 +17,8 @@ import {
   defaultChartTickLength,
   defaultChartXAxisHeight,
   defaultChartYAxisWidth,
+  defaultChartCharLimitBeforeEllipsis,
+  ellipsis,
 } from '../common';
 
 export type IBarChartData<T> = List<T>;
@@ -39,6 +41,7 @@ export interface IBarChartProps<T = any> {
   tickLength?: number;
   xAxisHeight?: number;
   yAxisWidth?: number;
+  charLimitBeforeEllipsis?: number;
 }
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
@@ -88,6 +91,7 @@ export const BarChart = <
   yAxisWidth = defaultChartYAxisWidth,
   tickLength = defaultChartTickLength,
   colorTheme = colorThemes.light,
+  charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
 }: IBarChartProps<T>) => {
   const stackGenerator = stack<T>()
     .keys(categories)
@@ -173,7 +177,7 @@ export const BarChart = <
                     fill={colorTheme.components.chart.axis.tick.color}
                     transform="rotate(45)"
                   >
-                    {label}
+                    {ellipsis(label, charLimitBeforeEllipsis)}
                   </text>
                 </g>
               </g>
