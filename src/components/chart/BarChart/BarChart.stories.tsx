@@ -16,7 +16,7 @@ const dimensions = {
 
 export const padding = {
   top: 15,
-  bottom: 15,
+  bottom: 25,
   left: 15,
   right: 15,
 };

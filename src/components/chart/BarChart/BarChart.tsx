@@ -166,15 +166,16 @@ export const BarChart = <
                   stroke={colorTheme.components.chart.axis.line.stroke}
                   fill="transparent"
                 />
-                <text
-                  x={bandCenter}
-                  y={y1 + tickLength}
-                  dy="1em"
-                  textAnchor="middle"
-                  fill={colorTheme.components.chart.axis.tick.color}
-                >
-                  {label}
-                </text>
+                <g transform={`translate(${bandCenter}, ${y1 + tickLength})`}>
+                  <text
+                    dy="1em"
+                    textAnchor="start"
+                    fill={colorTheme.components.chart.axis.tick.color}
+                    transform="rotate(45)"
+                  >
+                    {label}
+                  </text>
+                </g>
               </g>
             );
           })}
