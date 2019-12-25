@@ -1,11 +1,11 @@
 import React from 'react';
-import { ScaleLinear } from 'd3-scale';
+import { ScaleLinear, ScaleBand } from 'd3-scale';
 import { ColorTheme, colorThemes } from '../../../theme';
 
 export interface IGridLinesProps {
   numberOfYTicks: number;
   yScale: ScaleLinear<number, number>;
-  xScale: ScaleLinear<number, number>;
+  xScale: ScaleLinear<number, number> | ScaleBand<number>;
   colorTheme?: ColorTheme;
 }
 

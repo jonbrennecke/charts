@@ -5,7 +5,7 @@ import { randomUniform } from 'd3-random';
 import { Map, List } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import { dataTestAttr } from '../../../testUtils';
 import { BarChart } from './BarChart';
@@ -86,7 +86,7 @@ describe('BarChart', () => {
 
   describe('gridlines', () => {
     it('renders gridlines if showGridLines is true', () => {
-      const barChar = shallow(
+      const barChar = mount(
         <BarChart
           data={data}
           categories={categories}
@@ -96,13 +96,11 @@ describe('BarChart', () => {
           showGridLines={true}
         />
       );
-      expect(
-        barChar.find(dataTestAttr('y-axis-gridlines')).exists()
-      ).toBeTruthy();
+      expect(barChar.find(dataTestAttr('gridlines')).exists()).toBeTruthy();
     });
 
     it('does not render gridlines if showGridLines is false', () => {
-      const barChar = shallow(
+      const barChar = mount(
         <BarChart
           data={data}
           categories={categories}
@@ -112,9 +110,7 @@ describe('BarChart', () => {
           showGridLines={false}
         />
       );
-      expect(
-        barChar.find(dataTestAttr('y-axis-gridlines')).exists()
-      ).toBeFalsy();
+      expect(barChar.find(dataTestAttr('gridlines')).exists()).toBeFalsy();
     });
   });
 });

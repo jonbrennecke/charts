@@ -6,6 +6,7 @@ import { randomUniform } from 'd3-random';
 import { Map, List } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 import { BarChart } from './BarChart';
 
@@ -52,14 +53,17 @@ const data = range(numberOfStacks).reduce(
   List()
 );
 
-storiesOf('Charts', module).add('Bar chart', () => (
-  <div style={{ width: 320, height: 240 }}>
-    <BarChart
-      data={data}
-      categories={categories}
-      dimensions={dimensions}
-      padding={padding}
-      colorAccessor={key => colors[key]}
-    />
-  </div>
-));
+storiesOf('Charts', module)
+  .addDecorator(withKnobs)
+  .add('Bar chart', () => (
+    <div style={{ width: 320, height: 240 }}>
+      <BarChart
+        data={data}
+        categories={categories}
+        dimensions={dimensions}
+        padding={padding}
+        colorAccessor={key => colors[key]}
+        showGridLines={boolean('Show grid lines', true)}
+      />
+    </div>
+  ));
