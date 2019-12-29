@@ -34,7 +34,8 @@ export interface IBarChartProps<T = any, D = any> {
   dataAccessor?(data: T): D;
   valueAccessor?(data: T): number;
   colorAccessor?(key: string): string;
-  labelAccessor?(data: T): string;
+  domainLabelFormatter?(data: T): string;
+  rangeLabelFormatter?(n: number): string;
   numberOfYTicks?: number;
   colorTheme?: ColorTheme;
   paddingInner?: number;
@@ -75,6 +76,10 @@ const makeBarChartScales = (
   return { xScale, yScale };
 };
 
+export const defaultDomainLabelFormatter = <T extends any = { label: string }>(data: T) => data.label;
+
+export const defaultRangeLabelFormatter = (x: any) => x.toString();
+
 export const BarChart = <
   T extends any = { data: { value: number }; label: string }
 >({
@@ -84,7 +89,8 @@ export const BarChart = <
   padding = zeroPadding,
   valueAccessor = property('value'),
   dataAccessor = property('data'),
-  labelAccessor = property('label'),
+  domainLabelFormatter = defaultDomainLabelFormatter,
+  rangeLabelFormatter = defaultRangeLabelFormatter,
   colorAccessor = () => '#000000',
   numberOfYTicks = 10,
   paddingInner = 0.25,
@@ -170,7 +176,7 @@ export const BarChart = <
           />
           {xDomain.map(i => {
             const d = data.get(i)!;
-            const label = labelAccessor(d);
+            const label = domainLabelFormatter(d);
             const bandCenter = (xScale(i) || 0) + bandWidth / 2;
             return (
               <g key={`x-tick-${i}`}>
@@ -224,7 +230,7 @@ export const BarChart = <
                 textAnchor="end"
                 fill={colorTheme.components.chart.axis.tick.color}
               >
-                {n}&nbsp;
+                {rangeLabelFormatter(n)}&nbsp;
               </text>
             </g>
           ))}
