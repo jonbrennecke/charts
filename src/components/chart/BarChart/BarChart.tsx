@@ -24,14 +24,14 @@ import { GridLines } from '../GridLines/GridLines';
 
 export type IBarChartData<T> = List<T>;
 
-export interface IBarChartProps<T = any> {
+export interface IBarChartProps<T = any, D = any> {
   data: IBarChartData<T>;
   categories: string[];
   padding?: IChartPadding;
   dimensions: IChartDimensions;
   yDomain?: [number, number];
   xDomain?: [number, number];
-  dataAccessor?(data: T): number;
+  dataAccessor?(data: T): D;
   valueAccessor?(data: T): number;
   colorAccessor?(key: string): string;
   labelAccessor?(data: T): string;
@@ -98,7 +98,7 @@ export const BarChart = <
 }: IBarChartProps<T>) => {
   const stackGenerator = stack<T>()
     .keys(categories)
-    .value((x, category) => valueAccessor(dataAccessor(x)[category]))
+    .value((x, category) => valueAccessor(dataAccessor(x)[category]) || 0)
     .order(stackOrderNone)
     .offset(stackOffsetNone);
   const series = stackGenerator(data.toJS());
