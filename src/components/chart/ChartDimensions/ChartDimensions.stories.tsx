@@ -53,7 +53,7 @@ const data = range(numberOfStacks).reduce(
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
-  .add('ChartDimensions', () => (
+  .add('Chart dimensions', () => (
     <ChartDimensions>
       {({ dimensions }) => (
         <BarChart

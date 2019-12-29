@@ -18,6 +18,14 @@ export interface ColorTheme {
         };
       };
     };
+    card: {
+      border: {
+        color: HexColor;
+      };
+    };
+    text: {
+      color: HexColor;
+    };
   };
 }
 
@@ -36,6 +44,14 @@ export const darkColorTheme: ColorTheme = {
         },
       },
     },
+    card: {
+      border: {
+        color: lightGray,
+      },
+    },
+    text: {
+      color: mediumGray,
+    },
   },
 };
 
@@ -53,6 +69,14 @@ export const lightColorTheme: ColorTheme = {
           stroke: lightGray,
         },
       },
+    },
+    card: {
+      border: {
+        color: lightGray,
+      },
+    },
+    text: {
+      color: mediumGray,
     },
   },
 };
