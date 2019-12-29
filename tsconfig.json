@@ -12,7 +12,8 @@
     "outDir": "lib",
     "resolveJsonModule": true,
     "allowJs": true,
-    "jsx": "react"
+    "jsx": "react",
+    "types": ["react", "jest"]
   },
   "include": ["src"],
   "exclude": ["node_modules"]
