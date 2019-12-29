@@ -13,7 +13,7 @@ export interface ISvgProps {
 export const viewBoxString = (dimensions: IChartDimensions) =>
   `${0} ${0} ${dimensions.width} ${dimensions.height}`;
 
-export const chartTickFontFamily = 'Helvetica';
+export const chartTickFontFamily = 'Cabin';
 export const chartTickFontSize = 8;
 
 export const Svg = ({
