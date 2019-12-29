@@ -43,15 +43,13 @@ const data = categories.reduce(
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
   .add('Line chart', () => (
-    <div style={{ width: 320, height: 240 }}>
-      <LineChart
-        data={data}
-        dimensions={dimensions}
-        padding={padding}
-        colorAccessor={key => colors[key]}
-        yDomain={[-100, 200]}
-        numberOfYTicks={5}
-        showGridLines={boolean('Show grid lines', true)}
-      />
-    </div>
+    <LineChart
+      data={data}
+      dimensions={dimensions}
+      padding={padding}
+      colorAccessor={key => colors[key]}
+      yDomain={[-100, 200]}
+      numberOfYTicks={5}
+      showGridLines={boolean('Show grid lines', true)}
+    />
   ));

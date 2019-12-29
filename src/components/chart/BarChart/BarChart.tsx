@@ -76,7 +76,9 @@ const makeBarChartScales = (
   return { xScale, yScale };
 };
 
-export const defaultDomainLabelFormatter = <T extends any = { label: string }>(data: T) => data.label;
+export const defaultDomainLabelFormatter = <T extends any = { label: string }>(
+  data: T
+) => data.label;
 
 export const defaultRangeLabelFormatter = (x: any) => x.toString();
 
@@ -124,118 +126,121 @@ export const BarChart = <
   const [y1, y0] = yScale.range();
   const bandWidth = xScale.bandwidth();
   return (
-    <div data-test="line-chart">
-      <Svg dimensions={dimensions} colorTheme={colorTheme}>
-        {showGridLines && (
-          <GridLines
-            xScale={xScale}
-            yScale={yScale}
-            numberOfYTicks={numberOfYTicks}
-            colorTheme={colorTheme}
+    <Svg dimensions={dimensions} colorTheme={colorTheme}>
+      {showGridLines && (
+        <GridLines
+          xScale={xScale}
+          yScale={yScale}
+          numberOfYTicks={numberOfYTicks}
+          colorTheme={colorTheme}
+        />
+      )}
+
+      <g data-test="stacks">
+        <clipPath id="clipPath">
+          <rect
+            x={x0}
+            width={Math.max(x1 - x0, 0)}
+            y={y0}
+            height={Math.max(y1 - y0, 0)}
           />
-        )}
+        </clipPath>
 
-        <g data-test="stacks">
-          <clipPath id="clipPath">
-            <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
-          </clipPath>
-
-          {xDomain.map(i => (
-            <g data-test={`stack-${i}`} key={`stack-${i}`}>
-              {series.map((s, j) => {
-                const [start, end] = s[i];
-                const yStart = yScale(start);
-                const yEnd = yScale(end);
-                const height = yStart - yEnd;
-                return (
-                  <rect
-                    data-test={`bar-${j}`}
-                    key={`bar-${j}`}
-                    clipPath={`url(#clipPath)`}
-                    x={xScale(i)}
-                    width={bandWidth}
-                    y={yStart - height}
-                    height={height}
-                    fill={colorAccessor(s.key)}
-                  />
-                );
-              })}
-            </g>
-          ))}
-        </g>
-
-        <g data-test="x-axis">
-          <line
-            x1={x0}
-            x2={x1}
-            y1={y1}
-            y2={y1}
-            stroke={colorTheme.components.chart.axis.line.stroke}
-            fill="transparent"
-            data-test="x-axis-line"
-          />
-          {xDomain.map(i => {
-            const d = data.get(i)!;
-            const label = domainLabelFormatter(d);
-            const bandCenter = (xScale(i) || 0) + bandWidth / 2;
-            return (
-              <g key={`x-tick-${i}`}>
-                <line
-                  x1={bandCenter}
-                  x2={bandCenter}
-                  y1={y1}
-                  y2={y1 + tickLength}
-                  stroke={colorTheme.components.chart.axis.line.stroke}
-                  fill="transparent"
+        {xDomain.map(i => (
+          <g data-test={`stack-${i}`} key={`stack-${i}`}>
+            {series.map((s, j) => {
+              const [start, end] = s[i];
+              const yStart = yScale(start);
+              const yEnd = yScale(end);
+              const height = yStart - yEnd;
+              return (
+                <rect
+                  data-test={`bar-${j}`}
+                  key={`bar-${j}`}
+                  clipPath={`url(#clipPath)`}
+                  x={Math.max(xScale(i) || 0, 0)}
+                  width={Math.max(bandWidth, 0)}
+                  y={Math.max(yStart - height, 0)}
+                  height={Math.max(height, 0)}
+                  fill={colorAccessor(s.key)}
                 />
-                <g transform={`translate(${bandCenter}, ${y1 + tickLength})`}>
-                  <text
-                    dy="1em"
-                    textAnchor="start"
-                    fill={colorTheme.components.chart.axis.tick.color}
-                    transform="rotate(45)"
-                  >
-                    {ellipsis(label, charLimitBeforeEllipsis)}
-                  </text>
-                </g>
-              </g>
-            );
-          })}
-        </g>
+              );
+            })}
+          </g>
+        ))}
+      </g>
 
-        <g data-test="y-axis">
-          <line
-            x1={x0}
-            x2={x0}
-            y1={y0}
-            y2={y1}
-            stroke={colorTheme.components.chart.axis.line.stroke}
-            fill="transparent"
-          />
-          {yScale.ticks(numberOfYTicks).map(n => (
-            <g key={n}>
+      <g data-test="x-axis">
+        <line
+          x1={x0}
+          x2={x1}
+          y1={y1}
+          y2={y1}
+          stroke={colorTheme.components.chart.axis.line.stroke}
+          fill="transparent"
+          data-test="x-axis-line"
+        />
+        {xDomain.map(i => {
+          const d = data.get(i)!;
+          const label = domainLabelFormatter(d);
+          const bandCenter = (xScale(i) || 0) + bandWidth / 2;
+          return (
+            <g key={`x-tick-${i}`}>
               <line
-                x1={x0 - tickLength}
-                x2={x0}
-                y1={yScale(n)}
-                y2={yScale(n)}
+                x1={bandCenter}
+                x2={bandCenter}
+                y1={y1}
+                y2={y1 + tickLength}
                 stroke={colorTheme.components.chart.axis.line.stroke}
                 fill="transparent"
               />
-              <text
-                x={x0 - tickLength}
-                y={yScale(n)}
-                dy="0.28em"
-                width={yAxisWidth}
-                textAnchor="end"
-                fill={colorTheme.components.chart.axis.tick.color}
-              >
-                {rangeLabelFormatter(n)}&nbsp;
-              </text>
+              <g transform={`translate(${bandCenter}, ${y1 + tickLength})`}>
+                <text
+                  dy="1em"
+                  textAnchor="start"
+                  fill={colorTheme.components.chart.axis.tick.color}
+                  transform="rotate(45)"
+                >
+                  {ellipsis(label, charLimitBeforeEllipsis)}
+                </text>
+              </g>
             </g>
-          ))}
-        </g>
-      </Svg>
-    </div>
+          );
+        })}
+      </g>
+
+      <g data-test="y-axis">
+        <line
+          x1={x0}
+          x2={x0}
+          y1={y0}
+          y2={y1}
+          stroke={colorTheme.components.chart.axis.line.stroke}
+          fill="transparent"
+        />
+        {yScale.ticks(numberOfYTicks).map(n => (
+          <g key={n}>
+            <line
+              x1={x0 - tickLength}
+              x2={x0}
+              y1={yScale(n)}
+              y2={yScale(n)}
+              stroke={colorTheme.components.chart.axis.line.stroke}
+              fill="transparent"
+            />
+            <text
+              x={x0 - tickLength}
+              y={yScale(n)}
+              dy="0.28em"
+              width={yAxisWidth}
+              textAnchor="end"
+              fill={colorTheme.components.chart.axis.tick.color}
+            >
+              {rangeLabelFormatter(n)}&nbsp;
+            </text>
+          </g>
+        ))}
+      </g>
+    </Svg>
   );
 };

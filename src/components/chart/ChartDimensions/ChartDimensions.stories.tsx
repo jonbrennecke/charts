@@ -6,16 +6,14 @@ import { randomUniform } from 'd3-random';
 import { Map, List } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
-import { withKnobs, boolean } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 
-import { BarChart } from './BarChart';
+import { BarChart } from '../';
+import { ChartDimensions } from './ChartDimensions';
 
-const dimensions = {
-  height: 240,
-  width: 640,
-};
+import './ChartDimensions.stories.css';
 
-export const padding = {
+const padding = {
   top: 15,
   bottom: 25,
   left: 15,
@@ -55,13 +53,17 @@ const data = range(numberOfStacks).reduce(
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
-  .add('Bar chart', () => (
-    <BarChart
-      data={data}
-      categories={categories}
-      dimensions={dimensions}
-      padding={padding}
-      colorAccessor={key => colors[key]}
-      showGridLines={boolean('Show grid lines', true)}
-    />
+  .add('ChartDimensions', () => (
+    <ChartDimensions>
+      {({ dimensions }) => (
+        <BarChart
+          data={data}
+          categories={categories}
+          dimensions={dimensions}
+          padding={padding}
+          colorAccessor={key => colors[key]}
+          showGridLines
+        />
+      )}
+    </ChartDimensions>
   ));
