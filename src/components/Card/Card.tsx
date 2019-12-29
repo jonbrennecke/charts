@@ -1,6 +1,7 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { ColorTheme, colorThemes } from '../../theme';
+import { unit } from '../../constants';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 
@@ -13,6 +14,7 @@ const Div = styled.div`
   border: 1px solid
     ${(props: { colorTheme: ColorTheme }) =>
       props.colorTheme.components.card.border.color};
+  padding: ${unit}px
 `;
 
 export const Card = ({

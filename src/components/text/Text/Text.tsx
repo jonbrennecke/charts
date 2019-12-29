@@ -22,8 +22,9 @@ const Span = styled.span`
 export const Text = ({
   children,
   colorTheme = colorThemes.light,
+  ...etc
 }: ITextProps) => (
-  <Span data-test="text" colorTheme={colorTheme}>
+  <Span data-test="text" colorTheme={colorTheme} {...etc}>
     {children}
   </Span>
 );
