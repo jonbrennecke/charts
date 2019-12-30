@@ -18,7 +18,7 @@ export const CardContent = ({
   children,
   colorTheme = colorThemes.light,
 }: ICardContentProps) => (
-  <Container data-test="card" colorTheme={colorTheme}>
+  <Container data-test="card">
     {children}
   </Container>
 );
