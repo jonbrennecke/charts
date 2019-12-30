@@ -11,7 +11,7 @@ export interface ITextProps {
 
 const Span = styled.span`
   color: ${(props: { colorTheme: ColorTheme }) =>
-    props.colorTheme.components.text.color};
+    props.colorTheme.components.text.base.color};
   font-family: Cabin;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

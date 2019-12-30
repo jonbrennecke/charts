@@ -36,7 +36,12 @@ export const lightColorTheme: ColorTheme = {
       },
     },
     text: {
-      color: mediumGray,
+      base: {
+        color: mediumGray,
+      },
+      placeholder: {
+        color: lightGray,
+      },
     },
     select: {
       border: {

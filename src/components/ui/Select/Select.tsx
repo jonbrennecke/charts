@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Map } from 'immutable';
 import noop from 'lodash/noop';
 import { ColorTheme, colorThemes } from '../../../theme';
-import { Text } from '../../text';
+import { Text, Placeholder } from '../../text';
 import { SelectOption } from './SelectOption';
 import { SelectOptions, SelectCurrentSelection } from './Select.styles';
 
@@ -10,37 +10,51 @@ export interface ISelectOption {
   label: string;
 }
 
-export interface ISelectProps {
+export interface ISelectProps<K = string> {
   colorTheme?: ColorTheme;
   placeholder?: string;
-  options?: Map<string, ISelectOption>;
+  selected?: K;
+  options?: Map<K, ISelectOption>;
   onSelectOption?(key: string, option: ISelectOption): void;
 }
 
 export const Select = ({
   options = Map(),
+  selected,
   placeholder = '',
   colorTheme = colorThemes.light,
   onSelectOption = noop,
 }: ISelectProps) => {
-  const [showMenu, setState] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   return (
     <div data-test="select">
       <SelectCurrentSelection
         data-test="select-current-selection"
         colorTheme={colorTheme}
-        onClick={() => setState(!showMenu)}
+        onClick={() => setShowMenu(!showMenu)}
       >
-        <Text colorTheme={colorTheme}>{placeholder}</Text>
+        {selected ? (
+          <Text colorTheme={colorTheme}>{options.get(selected)!.label}</Text>
+        ) : (
+          <Placeholder colorTheme={colorTheme}>{placeholder}</Placeholder>
+        )}
       </SelectCurrentSelection>
-      <SelectOptions data-test="select-options" visible={showMenu} colorTheme={colorTheme}>
+      <SelectOptions
+        data-test="select-options"
+        visible={showMenu}
+        colorTheme={colorTheme}
+      >
         {options
           .mapEntries(([key, option]) => [
             key,
             <SelectOption
               key={key}
               colorTheme={colorTheme}
-              onClick={() => onSelectOption(key, option)}
+              selected={key === selected}
+              onClick={() => {
+                onSelectOption(key, option);
+                setShowMenu(false);
+              }}
             >
               {option.label}
             </SelectOption>,

@@ -30,7 +30,12 @@ export interface ColorTheme {
       };
     };
     text: {
-      color: HexColor;
+      base: {
+        color: HexColor;
+      };
+      placeholder: {
+        color: HexColor;
+      };
     };
     select: {
       border: {
