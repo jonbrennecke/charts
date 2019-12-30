@@ -10,6 +10,8 @@ export interface ICardBorderProps {
 }
 
 const Container = styled.div`
+  height: 100%;
+  width: 100%;
   border: 1px solid
     ${(props: { colorTheme: ColorTheme }) =>
       props.colorTheme.components.card.border.borderColor};

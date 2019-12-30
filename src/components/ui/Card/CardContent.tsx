@@ -12,9 +12,11 @@ export interface ICardContentProps {
 
 const Container = styled.div`
   padding: ${unit}px;
+  height: 100%;
+  width: 100%;
 `;
 
 export const CardContent = ({
   children,
   colorTheme = colorThemes.light,
-}: ICardContentProps) => <Container data-test="card">{children}</Container>;
+}: ICardContentProps) => <Container data-test="card-content">{children}</Container>;
