@@ -15,7 +15,6 @@ storiesOf('UI', module)
       <CardBorder>
         <CardHeader>
           <CardTitle>Lorem ipsum dolor sit amet</CardTitle>
-          {/* <CardDescription></CardDescription> */}
         </CardHeader>
         <CardContent />
       </CardBorder>
