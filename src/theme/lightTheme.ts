@@ -2,11 +2,9 @@ import { color } from 'd3-color';
 
 import { mediumGray, lightGray, trueBlack } from '../constants/colors';
 import { ColorTheme } from './themeTypes';
+import { withOpacity, brighter } from './colorUtils';
 
-// @ts-ignore
-let black = color(trueBlack)!;
-black.opacity = 0.05;
-const shadowColor = black.toString();
+const cardShadowColor = withOpacity(trueBlack, 0.05);
 
 export const lightColorTheme: ColorTheme = {
   components: {
@@ -26,19 +24,28 @@ export const lightColorTheme: ColorTheme = {
     card: {
       border: {
         borderColor: lightGray,
-        shadowColor: shadowColor,
+        shadowColor: cardShadowColor,
       },
       header: {
         border: {
           color: lightGray,
         },
         shadow: {
-          color: shadowColor,
+          color: cardShadowColor,
         },
       },
     },
     text: {
       color: mediumGray,
+    },
+    select: {
+      border: {
+        color: lightGray,
+        hoverColor: mediumGray,
+      },
+      option: {
+        hoverBackgroundColor: brighter(lightGray, 0.33),
+      },
     },
   },
 };

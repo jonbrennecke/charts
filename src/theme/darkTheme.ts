@@ -33,5 +33,14 @@ export const darkColorTheme: ColorTheme = {
     text: {
       color: mediumGray,
     },
+    select: {
+      border: {
+        color: lightGray,
+        hoverColor: mediumGray,
+      },
+      option: {
+        hoverBackgroundColor: lightGray,
+      },
+    },
   },
 };

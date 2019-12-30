@@ -32,5 +32,14 @@ export interface ColorTheme {
     text: {
       color: HexColor;
     };
+    select: {
+      border: {
+        color: HexColor;
+        hoverColor: HexColor;
+      };
+      option: {
+        hoverBackgroundColor: HexColor;
+      };
+    };
   };
 }
