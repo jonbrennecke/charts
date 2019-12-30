@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ColorTheme, colorThemes } from '../../theme';
-import { Heading } from '../text';
+import { ColorTheme, colorThemes } from '../../../theme';
+import { Heading } from '../../text';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ColorTheme, colorThemes } from '../../theme';
+import { ColorTheme, colorThemes } from '../../../theme';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 

@@ -9,6 +9,7 @@ type ReactChild = React.ReactElement | React.ReactNode;
 export interface ISelectOptionProps {
   children?: ReactChild | ReactChild[];
   colorTheme?: ColorTheme;
+  onClick?(): void;
 }
 
 interface IContainerProps {
