@@ -5,23 +5,20 @@ import { unit } from '../../constants';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 
-export interface ICardProps {
+export interface ICardContentProps {
   children?: ReactChild | ReactChild[];
   colorTheme?: ColorTheme;
 }
 
-const Div = styled.div`
-  border: 1px solid
-    ${(props: { colorTheme: ColorTheme }) =>
-      props.colorTheme.components.card.border.color};
-  padding: ${unit}px
+const Container = styled.div`
+  padding: ${unit}px;
 `;
 
-export const Card = ({
+export const CardContent = ({
   children,
   colorTheme = colorThemes.light,
-}: ICardProps) => (
-  <Div data-test="card" colorTheme={colorTheme}>
+}: ICardContentProps) => (
+  <Container data-test="card" colorTheme={colorTheme}>
     {children}
-  </Div>
+  </Container>
 );

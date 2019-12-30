@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { ColorTheme, colorThemes } from '../../theme';
 import { Heading } from '../text';
 
@@ -17,11 +17,7 @@ export const CardTitle = ({
   colorTheme = colorThemes.light,
 }: ICardTitleProps) => {
   return (
-    <HeadingText
-      variant="h2"
-      data-test="card-title"
-      colorTheme={colorTheme}
-    >
+    <HeadingText variant="h2" data-test="card-title" colorTheme={colorTheme}>
       {children}
     </HeadingText>
   );
