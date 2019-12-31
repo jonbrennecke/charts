@@ -42,6 +42,9 @@ export interface ColorTheme {
         color: HexColor;
         hoverColor: HexColor;
       };
+      options: {
+        backgroundColor: HexColor;
+      };
       option: {
         hoverBackgroundColor: HexColor;
       };

@@ -24,6 +24,10 @@ const Container = styled.div`
   cursor: pointer;
   transition: background-color 250ms ease-in-out;
   font-weight: ${(props: IContainerProps) => (props.selected ? 'bold' : '')};
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     background-color: ${(props: IContainerProps) =>

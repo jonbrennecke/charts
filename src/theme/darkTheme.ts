@@ -1,4 +1,9 @@
-import { mediumGray, lightGray, trueBlack } from '../constants/colors';
+import {
+  mediumGray,
+  lightGray,
+  trueBlack,
+  trueWhite,
+} from '../constants/colors';
 import { ColorTheme } from './themeTypes';
 
 export const darkColorTheme: ColorTheme = {
@@ -42,6 +47,9 @@ export const darkColorTheme: ColorTheme = {
       border: {
         color: lightGray,
         hoverColor: mediumGray,
+      },
+      options: {
+        backgroundColor: trueWhite,
       },
       option: {
         hoverBackgroundColor: lightGray,

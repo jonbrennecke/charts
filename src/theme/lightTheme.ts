@@ -1,6 +1,11 @@
 import { color } from 'd3-color';
 
-import { mediumGray, lightGray, trueBlack } from '../constants/colors';
+import {
+  mediumGray,
+  lightGray,
+  trueBlack,
+  trueWhite,
+} from '../constants/colors';
 import { ColorTheme } from './themeTypes';
 import { withOpacity, brighter } from './colorUtils';
 
@@ -47,6 +52,9 @@ export const lightColorTheme: ColorTheme = {
       border: {
         color: lightGray,
         hoverColor: mediumGray,
+      },
+      options: {
+        backgroundColor: trueWhite,
       },
       option: {
         hoverBackgroundColor: brighter(lightGray, 0.33),

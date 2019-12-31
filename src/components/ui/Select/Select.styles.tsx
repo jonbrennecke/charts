@@ -20,6 +20,8 @@ export const SelectOptions = styled.div`
   overflow: hidden;
   border-radius: ${unit * 0.5}px;
   margin-top: ${unit}px;
+  background-color: ${(props: ISelectOptionsProps) =>
+    props.colorTheme.components.select.options.backgroundColor};
   opacity: ${(props: ISelectOptionsProps) => (props.visible ? '1' : '0')};
   transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
   box-shadow: 1px 3px 5px
@@ -30,9 +32,13 @@ export const SelectOptions = styled.div`
       props.colorTheme.components.select.border.color};
 `;
 
+export interface ISelectCurrentSelection {
+  colorTheme: ColorTheme;
+}
+
 export const SelectCurrentSelection = styled.div`
   border: 1px solid
-    ${(props: { colorTheme: ColorTheme }) =>
+    ${(props: ISelectCurrentSelection) =>
       props.colorTheme.components.select.border.color};
   padding: ${unit}px;
   border-radius: ${unit * 0.5}px;
@@ -40,7 +46,7 @@ export const SelectCurrentSelection = styled.div`
   transition: border-color 250ms ease-in-out;
 
   &:hover {
-    border-color: ${(props: { colorTheme: ColorTheme }) =>
+    border-color: ${(props: ISelectCurrentSelection) =>
       props.colorTheme.components.select.border.hoverColor};
   }
 `;
