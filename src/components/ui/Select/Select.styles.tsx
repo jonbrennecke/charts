@@ -2,12 +2,19 @@ import styled from 'styled-components';
 import { unit } from '../../../constants';
 import { ColorTheme } from '../../../theme';
 
+export const SelectContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
 export interface ISelectOptionsProps {
   colorTheme: ColorTheme;
   visible: boolean;
 }
 
 export const SelectOptions = styled.div`
+  position: absolute;
+  width: 100%;
   max-height: ${(props: ISelectOptionsProps) =>
     props.visible ? '1000px' : '0px'};
   overflow: hidden;

@@ -4,7 +4,7 @@ import noop from 'lodash/noop';
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Text, Placeholder } from '../../text';
 import { SelectOption } from './SelectOption';
-import { SelectOptions, SelectCurrentSelection } from './Select.styles';
+import { SelectOptions, SelectCurrentSelection, SelectContainer } from './Select.styles';
 
 export interface ISelectOption {
   label: string;
@@ -27,7 +27,7 @@ export const Select = ({
 }: ISelectProps) => {
   const [showMenu, setShowMenu] = useState(false);
   return (
-    <div data-test="select">
+    <SelectContainer data-test="select">
       <SelectCurrentSelection
         data-test="select-current-selection"
         colorTheme={colorTheme}
@@ -62,6 +62,6 @@ export const Select = ({
           .valueSeq()
           .toArray()}
       </SelectOptions>
-    </div>
+    </SelectContainer>
   );
 };
