@@ -4,7 +4,11 @@ import noop from 'lodash/noop';
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Text, Placeholder } from '../../text';
 import { SelectOption } from './SelectOption';
-import { SelectOptions, SelectCurrentSelection, SelectContainer } from './Select.styles';
+import {
+  SelectOptions,
+  SelectCurrentSelection,
+  SelectContainer,
+} from './Select.styles';
 
 export interface ISelectOption {
   label: string;

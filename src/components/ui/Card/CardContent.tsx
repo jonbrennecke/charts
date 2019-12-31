@@ -19,4 +19,6 @@ const Container = styled.div`
 export const CardContent = ({
   children,
   colorTheme = colorThemes.light,
-}: ICardContentProps) => <Container data-test="card-content">{children}</Container>;
+}: ICardContentProps) => (
+  <Container data-test="card-content">{children}</Container>
+);
