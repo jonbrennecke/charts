@@ -16,6 +16,7 @@ export const SelectOptions = styled.div`
   position: absolute;
   width: 100%;
   min-width: 75px;
+  z-index: 1000;
   max-height: ${(props: ISelectOptionsProps) =>
     props.visible ? '1000px' : '0px'};
   overflow: hidden;
