@@ -12,9 +12,10 @@ export interface ICollapseContent {
 export const CollapseContentOuter = styled.div`
   overflow: hidden;
   position: relative;
+  height: auto;
   max-height: ${(props: ICollapseContent) =>
-    props.collapsed ? '0px' : 'none'};
-  transition: height 250ms ease-in-out;
+    props.collapsed ? '0px' : '1000px'};
+  transition: all 250ms ease-in-out;
 `;
 
 export const CollapseContentInner = styled.div`

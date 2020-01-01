@@ -14,9 +14,9 @@ export interface ISelectOptionsProps {
 
 export const SelectOptions = styled.div`
   position: fixed;
-  width: 100%;
   min-width: 75px;
   z-index: 1000;
+  height: auto;
   max-height: ${(props: ISelectOptionsProps) =>
     props.visible ? '1000px' : '0px'};
   overflow: hidden;
@@ -25,13 +25,13 @@ export const SelectOptions = styled.div`
   background-color: ${(props: ISelectOptionsProps) =>
     props.colorTheme.components.select.options.backgroundColor};
   opacity: ${(props: ISelectOptionsProps) => (props.visible ? '1' : '0')};
-  transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
   box-shadow: 1px 3px 5px
     ${(props: ISelectOptionsProps) =>
       props.colorTheme.components.card.border.shadowColor};
   border: 1px solid
     ${(props: { colorTheme: ColorTheme }) =>
       props.colorTheme.components.select.border.color};
+  transition: all 250ms ease-in-out, opacity 250ms ease-in-out;
 `;
 
 export interface ISelectCurrentSelection {

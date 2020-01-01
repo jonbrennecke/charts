@@ -27,7 +27,8 @@ export const InlineSelect = ({
     <InlineSelectContainer data-test="inline-select">
       <InlineSelectCurrentSelection
         data-test="inline-select-current-selection"
-        aria-role="button"
+        role="button"
+        aria-expanded={!!selected}
         selected={!!selected}
         onClick={() => setShowMenu(!showMenu)}
       >
@@ -41,6 +42,7 @@ export const InlineSelect = ({
         data-test="inline-select-options"
         visible={showMenu}
         colorTheme={colorTheme}
+        style={{ width: 'auto' }}
       >
         {options
           .mapEntries(([key, option]) => [
