@@ -20,6 +20,7 @@ export const CollapseContentOuter = styled.div`
 
 export const CollapseContentInner = styled.div`
   padding: ${1.5 * unit}px;
+  max-height: 100%;
 `;
 
 export const CollapseContent = ({ children, ...etc }: ICollapseContent) => (
