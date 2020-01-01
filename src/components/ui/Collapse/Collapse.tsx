@@ -28,7 +28,7 @@ export const Collapse = ({
       data-test="collapse-header"
       colorTheme={colorTheme}
       role="button"
-      aria-pressed={collapsed}
+      aria-expanded={collapsed}
       onClick={onClickHeader}
     >
       <Heading colorTheme={colorTheme}>{heading}</Heading>

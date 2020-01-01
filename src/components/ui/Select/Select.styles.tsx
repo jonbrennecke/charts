@@ -13,7 +13,7 @@ export interface ISelectOptionsProps {
 }
 
 export const SelectOptions = styled.div`
-  position: absolute;
+  position: fixed;
   width: 100%;
   min-width: 75px;
   z-index: 1000;
