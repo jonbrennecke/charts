@@ -14,10 +14,11 @@ const ContainerDiv = styled.div`
   border-bottom: 1px solid
     ${(props: { colorTheme: ColorTheme }) =>
       props.colorTheme.components.card.header.border.color};
-  padding: ${unit}px;
+  padding: 0 ${1.5 * unit}px;
   box-shadow: 0px 1px 7px
     ${(props: { colorTheme: ColorTheme }) =>
       props.colorTheme.components.card.border.shadowColor};
+  overflow: auto;
 `;
 
 export const CardHeader = ({

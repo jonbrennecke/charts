@@ -27,6 +27,7 @@ export const InlineSelect = ({
     <InlineSelectContainer data-test="inline-select">
       <InlineSelectCurrentSelection
         data-test="inline-select-current-selection"
+        aria-role="button"
         selected={!!selected}
         onClick={() => setShowMenu(!showMenu)}
       >

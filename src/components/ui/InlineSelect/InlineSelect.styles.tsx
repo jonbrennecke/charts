@@ -15,4 +15,8 @@ export const InlineSelectCurrentSelection = styled.div`
   transition: border-color 250ms ease-in-out;
   font-weight: ${(props: IInlineSelectCurrentSelection) =>
     props.selected ? 'bold' : ''};
+
+  span {
+    text-decoration: underline;
+  }
 `;

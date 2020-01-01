@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Text } from '../Text';
+import { unit } from '../../../constants';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 
@@ -12,7 +13,7 @@ export interface IHeadingProps {
 }
 
 const HeadingText = styled(Text)`
-  margin: 0;
+  margin: ${unit}px 0;
 `;
 
 export const Heading = ({

@@ -34,6 +34,7 @@ export const Select = ({
     <SelectContainer data-test="select">
       <SelectCurrentSelection
         data-test="select-current-selection"
+        aria-role="button"
         colorTheme={colorTheme}
         onClick={() => setShowMenu(!showMenu)}
       >
