@@ -40,6 +40,11 @@ const StyledButton = styled.button`
       ${(props: { colorTheme: ColorTheme }) =>
         props.colorTheme.components.button.hover.shadowColor};
   }
+
+  &:active {
+    background-color: ${(props: { colorTheme: ColorTheme }) =>
+        props.colorTheme.components.button.active.backgroundColor};
+  }
 `;
 
 export const Button = ({

@@ -81,9 +81,12 @@ export const lightColorTheme: ColorTheme = {
         borderColor: lightGray,
       },
       hover: {
-        borderColor: mediumGray,
+        borderColor: mediumLightGray,
         shadowColor: lightGray,
       },
+      active: {
+        backgroundColor: brighter(lightGray, 0.33)
+      }
     },
   },
 };

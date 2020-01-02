@@ -73,6 +73,9 @@ export interface ColorTheme {
         borderColor: HexColor;
         shadowColor: HexColor;
       };
+      active: {
+        backgroundColor: HexColor;
+      };
     };
   };
 }
