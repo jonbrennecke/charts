@@ -36,6 +36,12 @@ export interface ColorTheme {
       placeholder: {
         color: HexColor;
       };
+      link: {
+        color: HexColor;
+        activeColor: HexColor;
+        hoverColor: HexColor;
+        // selectedColor: HexColor;
+      };
     };
     select: {
       border: {

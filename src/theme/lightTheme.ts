@@ -1,7 +1,7 @@
-import { color } from 'd3-color';
-
 import {
+  darkGray,
   mediumGray,
+  mediumLightGray,
   lightGray,
   trueBlack,
   trueWhite,
@@ -46,6 +46,11 @@ export const lightColorTheme: ColorTheme = {
       },
       placeholder: {
         color: lightGray,
+      },
+      link: {
+        color: mediumLightGray,
+        activeColor: darkGray,
+        hoverColor: mediumGray,
       },
     },
     select: {
