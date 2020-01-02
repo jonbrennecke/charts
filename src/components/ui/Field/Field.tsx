@@ -21,7 +21,7 @@ const FieldContainer = styled.div`
 
 export const Field = ({
   children,
-  colorTheme = colorThemes.light
+  colorTheme = colorThemes.light,
 }: IFieldProps) => (
   <FieldContainer colorTheme={colorTheme} data-test="field">
     {children}

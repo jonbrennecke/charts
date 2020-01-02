@@ -72,18 +72,18 @@ export const lightColorTheme: ColorTheme = {
     form: {
       field: {
         shadowColor: cardShadowColor,
-        borderColor: lightGray
-      }
+        borderColor: lightGray,
+      },
     },
     button: {
       base: {
         shadowColor: cardShadowColor,
-        borderColor: lightGray
+        borderColor: lightGray,
       },
       hover: {
         borderColor: mediumGray,
-        shadowColor: lightGray
-      }
-    }
+        shadowColor: lightGray,
+      },
+    },
   },
 };

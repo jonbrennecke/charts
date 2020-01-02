@@ -4,17 +4,19 @@ import styled from 'styled-components';
 import { Text } from '../../text';
 import isString from 'lodash/isString';
 import { unit } from '../../../constants';
+import noop from 'lodash/noop';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 
 export enum EButtonType {
   button = 'button',
-  submit = 'submit'
+  submit = 'submit',
 }
 
 export interface IButtonProps {
   colorTheme?: ColorTheme;
   children?: ReactChild | ReactChild[];
+  onClick?(): void;
 }
 
 const StyledButton = styled.button`
@@ -37,14 +39,15 @@ const StyledButton = styled.button`
     box-shadow: 1px 1px 3px
       ${(props: { colorTheme: ColorTheme }) =>
         props.colorTheme.components.button.hover.shadowColor};
-  } 
+  }
 `;
 
 export const Button = ({
   children,
-  colorTheme = colorThemes.light
+  onClick = noop,
+  colorTheme = colorThemes.light,
 }: IButtonProps) => (
-  <StyledButton type="button" colorTheme={colorTheme}>
+  <StyledButton type="button" colorTheme={colorTheme} onClick={onClick}>
     {isString(children) ? <Text>{children}</Text> : children}
   </StyledButton>
 );

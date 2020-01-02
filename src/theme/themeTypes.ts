@@ -62,17 +62,17 @@ export interface ColorTheme {
       field: {
         shadowColor: HexColor;
         borderColor: HexColor;
-      }
-    },
+      };
+    };
     button: {
       base: {
         borderColor: HexColor;
         shadowColor: HexColor;
-      },
+      };
       hover: {
         borderColor: HexColor;
         shadowColor: HexColor;
-      }
-    }
+      };
+    };
   };
 }
