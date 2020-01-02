@@ -42,6 +42,10 @@ export interface ColorTheme {
         hoverColor: HexColor;
         // selectedColor: HexColor;
       };
+      input: {
+        placeholderColor: HexColor;
+        color: HexColor;
+      };
     };
     select: {
       border: {

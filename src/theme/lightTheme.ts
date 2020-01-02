@@ -52,6 +52,10 @@ export const lightColorTheme: ColorTheme = {
         activeColor: darkGray,
         hoverColor: mediumGray,
       },
+      input: {
+        placeholderColor: lightGray,
+        color: mediumGray,
+      },
     },
     select: {
       border: {

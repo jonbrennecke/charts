@@ -13,6 +13,7 @@ const Span = styled.span`
   color: ${(props: { colorTheme: ColorTheme }) =>
     props.colorTheme.components.text.base.color};
   font-family: Cabin;
+  font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
