@@ -40,7 +40,6 @@ export interface ColorTheme {
         color: HexColor;
         activeColor: HexColor;
         hoverColor: HexColor;
-        // selectedColor: HexColor;
       };
       input: {
         placeholderColor: HexColor;
@@ -59,5 +58,11 @@ export interface ColorTheme {
         hoverBackgroundColor: HexColor;
       };
     };
+    form: {
+      field: {
+        shadowColor: HexColor;
+        borderColor: HexColor;
+      }
+    }
   };
 }

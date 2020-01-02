@@ -69,5 +69,11 @@ export const lightColorTheme: ColorTheme = {
         hoverBackgroundColor: brighter(lightGray, 0.33),
       },
     },
+    form: {
+      field: {
+        shadowColor: cardShadowColor,
+        borderColor: lightGray
+      }
+    }
   },
 };
