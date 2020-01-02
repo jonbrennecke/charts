@@ -63,6 +63,16 @@ export interface ColorTheme {
         shadowColor: HexColor;
         borderColor: HexColor;
       }
+    },
+    button: {
+      base: {
+        borderColor: HexColor;
+        shadowColor: HexColor;
+      },
+      hover: {
+        borderColor: HexColor;
+        shadowColor: HexColor;
+      }
     }
   };
 }

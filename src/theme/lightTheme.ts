@@ -74,6 +74,16 @@ export const lightColorTheme: ColorTheme = {
         shadowColor: cardShadowColor,
         borderColor: lightGray
       }
+    },
+    button: {
+      base: {
+        shadowColor: cardShadowColor,
+        borderColor: lightGray
+      },
+      hover: {
+        borderColor: mediumGray,
+        shadowColor: lightGray
+      }
     }
   },
 };
