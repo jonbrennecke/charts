@@ -1,6 +1,7 @@
 import React from 'react';
 import { ColorTheme, colorThemes } from '../../../theme';
 import styled from 'styled-components';
+import { unit } from '../../../constants';
 
 export enum EInputType {
   text = 'text',
@@ -20,6 +21,8 @@ export interface IInputProps {
   label?: string;
   title?: string;
   type?: EInputType;
+  value?: string;
+  onChange?(event: React.ChangeEvent<HTMLInputElement>): void;
 }
 
 const StyledInput = styled.input`
@@ -29,7 +32,7 @@ const StyledInput = styled.input`
   font-size: 16px;
   margin: 0;
   outline: 0;
-  padding: 0;
+  padding: ${unit}px;
   border: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -49,6 +52,9 @@ export const Input = ({
   placeholder = '',
   colorTheme = colorThemes.light,
   type = EInputType.text,
+  value,
+  onChange,
+  ...etc
 }: IInputProps) => (
   <StyledInput
     id={id}
@@ -57,5 +63,8 @@ export const Input = ({
     aria-label={label}
     title={title}
     colorTheme={colorTheme}
+    value={value}
+    onChange={onChange}
+    {...etc}
   />
 );
