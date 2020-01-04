@@ -74,7 +74,7 @@ export const lightColorTheme: ColorTheme = {
     list: {
       item: {
         hoverColor: mediumBlue,
-        hoverBackgroundColor: lightBlue,
+        selectedBackgroundColor: lightBlue,
         selectedColor: mediumBlue,
       },
     },

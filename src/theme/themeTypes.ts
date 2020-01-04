@@ -61,7 +61,7 @@ export interface ColorTheme {
     list: {
       item: {
         hoverColor: HexColor;
-        hoverBackgroundColor: HexColor;
+        selectedBackgroundColor: HexColor;
         selectedColor: HexColor;
       };
     };
