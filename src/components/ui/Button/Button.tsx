@@ -43,7 +43,7 @@ const StyledButton = styled.button`
 
   &:active {
     background-color: ${(props: { colorTheme: ColorTheme }) =>
-        props.colorTheme.components.button.active.backgroundColor};
+      props.colorTheme.components.button.active.backgroundColor};
   }
 `;
 

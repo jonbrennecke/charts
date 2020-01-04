@@ -5,6 +5,8 @@ import {
   lightGray,
   trueBlack,
   trueWhite,
+  lightBlue,
+  mediumBlue,
 } from '../constants/colors';
 import { ColorTheme } from './themeTypes';
 import { withOpacity, brighter } from './colorUtils';
@@ -69,6 +71,13 @@ export const lightColorTheme: ColorTheme = {
         hoverBackgroundColor: brighter(lightGray, 0.33),
       },
     },
+    list: {
+      item: {
+        hoverColor: mediumBlue,
+        hoverBackgroundColor: lightBlue,
+        selectedColor: mediumBlue,
+      },
+    },
     form: {
       field: {
         shadowColor: cardShadowColor,
@@ -85,8 +94,8 @@ export const lightColorTheme: ColorTheme = {
         shadowColor: lightGray,
       },
       active: {
-        backgroundColor: brighter(lightGray, 0.33)
-      }
+        backgroundColor: brighter(lightGray, 0.33),
+      },
     },
   },
 };

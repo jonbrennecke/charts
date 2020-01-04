@@ -58,6 +58,13 @@ export interface ColorTheme {
         hoverBackgroundColor: HexColor;
       };
     };
+    list: {
+      item: {
+        hoverColor: HexColor;
+        hoverBackgroundColor: HexColor;
+        selectedColor: HexColor;
+      };
+    };
     form: {
       field: {
         shadowColor: HexColor;
