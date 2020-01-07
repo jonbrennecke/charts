@@ -1,42 +1,24 @@
 import React from 'react';
-import { line } from 'd3-shape';
+import { line, area } from 'd3-shape';
 import property from 'lodash/property';
 
-import { ColorTheme, colorThemes } from '../../../theme';
+import { colorThemes } from '../../../theme';
 import { Svg } from '../Svg';
 import {
-  IChartDimensions,
-  IChartPadding,
   zeroPadding,
   defaultChartTickLength,
   defaultChartXAxisHeight,
   defaultChartYAxisWidth,
   makeLineChartScales,
-  ILineChartData,
   calculateDefaultYDomainForLineChart,
-  calculateDefaultXDomainForLineChart
+  calculateDefaultXDomainForLineChart,
 } from '../common';
 import { GridLines } from '../GridLines/GridLines';
+import { ILineChartProps } from '../LineChart';
 
-export interface ILineChartProps<T = any> {
-  data: ILineChartData<T>;
-  padding?: IChartPadding;
-  dimensions: IChartDimensions;
-  yDomain?: [number, number];
-  xDomain?: [number, number];
-  xValueAccessor?(data: T): number;
-  yValueAccessor?(data: T): number;
-  colorAccessor?(key: string): string;
-  numberOfXTicks?: number;
-  numberOfYTicks?: number;
-  tickLength?: number;
-  xAxisHeight?: number;
-  yAxisWidth?: number;
-  colorTheme?: ColorTheme;
-  showGridLines?: boolean;
-}
+export type IAreaChartProps<T> = ILineChartProps<T>;
 
-export const LineChart = <T extends any = { x: number; y: number }>({
+export const AreaChart = <T extends any = { x: number; y: number }>({
   data,
   dimensions,
   padding = zeroPadding,
@@ -61,9 +43,11 @@ export const LineChart = <T extends any = { x: number; y: number }>({
     dimensions,
     padding
   );
-  const lineGenerator = line<T>()
+  const areaGenerator = area<T>()
     .x(d => xScale(xValueAccessor(d)))
-    .y(d => yScale(yValueAccessor(d)));
+    .y0(dimensions.height)
+    .y1(d => yScale(yValueAccessor(d)))
+    
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
   return (
@@ -88,9 +72,8 @@ export const LineChart = <T extends any = { x: number; y: number }>({
               clipPath={`url(#clipPath)`}
               data-test={`path-${key}`}
               key={key}
-              d={lineGenerator(data.get(key) || []) || ''}
-              stroke={colorAccessor(key)}
-              fill="transparent"
+              d={areaGenerator(data.get(key) || []) || ''}
+              fill={colorAccessor(key)}
             />
           ))}
         </g>
