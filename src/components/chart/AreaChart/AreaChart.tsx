@@ -47,7 +47,6 @@ export const AreaChart = <T extends any = { x: number; y: number }>({
     .x(d => xScale(xValueAccessor(d)))
     .y0(dimensions.height)
     .y1(d => yScale(yValueAccessor(d)))
-    
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
   return (
