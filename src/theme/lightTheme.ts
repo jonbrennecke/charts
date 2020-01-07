@@ -11,7 +11,6 @@ import {
 } from '../constants/colors';
 import { ColorTheme } from './themeTypes';
 import { opacity, brighter, darker } from './colorUtils';
-import { EButtonVariant } from '../components';
 
 const cardShadowColor = opacity(trueBlack, 0.05);
 
@@ -91,45 +90,45 @@ export const lightColorTheme: ColorTheme = {
         shadow: opacity(cardShadowColor, 0.02),
         primaryText: trueWhite,
         backgroundColor: {
-          [EButtonVariant.default]: transparent,
-          [EButtonVariant.primary]: mediumBlue,
+          default: transparent,
+          primary: mediumBlue,
         },
         color: {
-          [EButtonVariant.default]: lightGray,
-          [EButtonVariant.primary]: transparent,
+          default: lightGray,
+          primary: transparent,
         },
       },
       hover: {
         shadow: lightGray,
         backgroundColor: {
-          [EButtonVariant.default]: transparent,
-          [EButtonVariant.primary]: brighter(mediumBlue, 0.33),
+          default: transparent,
+          primary: brighter(mediumBlue, 0.33),
         },
         border: {
-          [EButtonVariant.default]: mediumBlue,
-          [EButtonVariant.primary]: brighter(mediumBlue, 0.33),
+          default: mediumBlue,
+          primary: brighter(mediumBlue, 0.33),
         },
         color: {
-          [EButtonVariant.default]: mediumBlue,
-          [EButtonVariant.primary]: trueWhite,
+          default: mediumBlue,
+          primary: trueWhite,
         },
       },
       active: {
         backgroundColor: {
-          [EButtonVariant.default]: transparent,
-          [EButtonVariant.primary]: darker(mediumBlue, 0.33),
+          default: transparent,
+          primary: darker(mediumBlue, 0.33),
         },
         border: {
-          [EButtonVariant.default]: darker(mediumBlue, 0.5),
-          [EButtonVariant.primary]: darker(mediumBlue, 0.33),
+          default: darker(mediumBlue, 0.5),
+          primary: darker(mediumBlue, 0.33),
         },
         color: {
-          [EButtonVariant.default]: darker(mediumBlue, 0.5),
-          [EButtonVariant.primary]: trueWhite,
+          default: darker(mediumBlue, 0.5),
+          primary: trueWhite,
         },
         borderShadow: {
-          [EButtonVariant.default]: mediumBlue,
-          [EButtonVariant.primary]: mediumBlue,
+          default: mediumBlue,
+          primary: mediumBlue,
         },
       },
     },
