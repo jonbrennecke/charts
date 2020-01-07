@@ -8,3 +8,5 @@ export const mediumBlue = '#4499FF';
 
 export const trueBlack = '#000000';
 export const trueWhite = '#ffffff';
+
+export const transparent = 'transparent';

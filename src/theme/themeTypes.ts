@@ -1,3 +1,5 @@
+import { EButtonVariant } from '../components';
+
 export type HexColor = string;
 
 export interface ColorTheme {
@@ -73,15 +75,21 @@ export interface ColorTheme {
     };
     button: {
       base: {
-        borderColor: HexColor;
-        shadowColor: HexColor;
+        primaryText: HexColor;
+        shadow: HexColor;
+        backgroundColor: { [key in EButtonVariant]: HexColor };
+        color: { [key in EButtonVariant]: HexColor };
       };
       hover: {
-        borderColor: HexColor;
-        shadowColor: HexColor;
+        shadow: HexColor;
+        backgroundColor: { [key in EButtonVariant]: HexColor };
+        border: { [key in EButtonVariant]: HexColor };
+        color: { [key in EButtonVariant]: HexColor };
       };
       active: {
-        backgroundColor: HexColor;
+        backgroundColor: { [key in EButtonVariant]: HexColor };
+        border: { [key in EButtonVariant]: HexColor };
+        color: { [key in EButtonVariant]: HexColor };
       };
     };
   };

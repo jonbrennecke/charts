@@ -7,11 +7,13 @@ import {
   trueWhite,
   lightBlue,
   mediumBlue,
+  transparent,
 } from '../constants/colors';
 import { ColorTheme } from './themeTypes';
-import { withOpacity, brighter } from './colorUtils';
+import { opacity, brighter, darker } from './colorUtils';
+import { EButtonVariant } from '../components';
 
-const cardShadowColor = withOpacity(trueBlack, 0.05);
+const cardShadowColor = opacity(trueBlack, 0.05);
 
 export const lightColorTheme: ColorTheme = {
   components: {
@@ -86,15 +88,45 @@ export const lightColorTheme: ColorTheme = {
     },
     button: {
       base: {
-        shadowColor: cardShadowColor,
-        borderColor: lightGray,
+        shadow: opacity(cardShadowColor, 0.02),
+        primaryText: trueWhite,
+        backgroundColor: {
+          [EButtonVariant.default]: transparent,
+          [EButtonVariant.primary]: mediumBlue,
+        },
+        color: {
+          [EButtonVariant.default]: lightGray,
+          [EButtonVariant.primary]: transparent,
+        },
       },
       hover: {
-        borderColor: mediumLightGray,
-        shadowColor: lightGray,
+        shadow: lightGray,
+        backgroundColor: {
+          [EButtonVariant.default]: transparent,
+          [EButtonVariant.primary]: brighter(mediumBlue, 0.33),
+        },
+        border: {
+          [EButtonVariant.default]: mediumBlue,
+          [EButtonVariant.primary]: brighter(mediumBlue, 0.33),
+        },
+        color: {
+          [EButtonVariant.default]: mediumBlue,
+          [EButtonVariant.primary]: trueWhite,
+        },
       },
       active: {
-        backgroundColor: brighter(lightGray, 0.33),
+        backgroundColor: {
+          [EButtonVariant.default]: transparent,
+          [EButtonVariant.primary]: darker(mediumBlue, 0.33),
+        },
+        border: {
+          [EButtonVariant.default]: darker(mediumBlue, 0.5),
+          [EButtonVariant.primary]: darker(mediumBlue, 0.33),
+        },
+        color: {
+          [EButtonVariant.default]: darker(mediumBlue, 0.5),
+          [EButtonVariant.primary]: trueWhite,
+        },
       },
     },
   },
