@@ -90,6 +90,7 @@ export interface ColorTheme {
         backgroundColor: { [key in EButtonVariant]: HexColor };
         border: { [key in EButtonVariant]: HexColor };
         color: { [key in EButtonVariant]: HexColor };
+        borderShadow: { [key in EButtonVariant]: HexColor };
       };
     };
   };

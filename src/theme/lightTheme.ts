@@ -127,6 +127,10 @@ export const lightColorTheme: ColorTheme = {
           [EButtonVariant.default]: darker(mediumBlue, 0.5),
           [EButtonVariant.primary]: trueWhite,
         },
+        borderShadow: {
+          [EButtonVariant.default]: mediumBlue,
+          [EButtonVariant.primary]: mediumBlue,
+        },
       },
     },
   },
