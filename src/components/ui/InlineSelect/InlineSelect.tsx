@@ -3,13 +3,7 @@ import { Map } from 'immutable';
 import noop from 'lodash/noop';
 import { colorThemes } from '../../../theme';
 import { Text, Placeholder } from '../../text';
-import {
-  SelectOption,
-  ISelectOption,
-  ISelectOptionProps,
-  ISelectProps,
-  SelectOptions,
-} from '../Select';
+import { SelectOption, ISelectProps, SelectOptions } from '../Select';
 import {
   InlineSelectCurrentSelection,
   InlineSelectContainer,
@@ -33,7 +27,9 @@ export const InlineSelect = ({
         onClick={() => setShowMenu(!showMenu)}
       >
         {selected ? (
-          <Text colorTheme={colorTheme}>{options.get(selected)!.label}</Text>
+          <Text colorTheme={colorTheme}>
+            {selected ? options.get(selected)!.label : ''}
+          </Text>
         ) : (
           <Placeholder colorTheme={colorTheme}>{placeholder}</Placeholder>
         )}
