@@ -1,9 +1,5 @@
 import { scaleLinear } from 'd3-scale';
-import {
-  IChartDimensions,
-  IChartPadding,
-  ILineChartData
-} from './chartTypes';
+import { IChartDimensions, IChartPadding, ILineChartData } from './chartTypes';
 import min from 'lodash/min';
 import max from 'lodash/max';
 import floor from 'lodash/floor';
@@ -25,7 +21,6 @@ export const makeLineChartScales = (
     .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
   return { xScale, yScale };
 };
-
 
 export const calculateDefaultYDomainForLineChart = <T extends any>(
   data: ILineChartData<T>,

@@ -14,7 +14,7 @@ import {
   makeLineChartScales,
   ILineChartData,
   calculateDefaultYDomainForLineChart,
-  calculateDefaultXDomainForLineChart
+  calculateDefaultXDomainForLineChart,
 } from '../common';
 import { GridLines } from '../GridLines/GridLines';
 
