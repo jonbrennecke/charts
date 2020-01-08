@@ -28,7 +28,9 @@ export const InlineSelect = ({
       >
         {selected ? (
           <Text colorTheme={colorTheme}>
-            {selected ? options.get(selected)!.label : ''}
+            {options.get(selected)
+              ? options.get(selected)!.label
+              : ''}
           </Text>
         ) : (
           <Placeholder colorTheme={colorTheme}>{placeholder}</Placeholder>
