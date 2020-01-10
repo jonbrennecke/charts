@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import { ColorTheme, colorThemes } from '../../../theme';
 import { IChartDimensions } from '../common';
 
+type ReactChild = React.ReactElement | React.ReactNode;
+
 export interface ISvgProps {
   dimensions: IChartDimensions;
-  children: (React.ReactElement | React.ReactNode)[];
+  children: ReactChild | ReactChild[];
   colorTheme?: ColorTheme;
 }
 

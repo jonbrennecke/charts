@@ -1,9 +1,25 @@
-import { IChartPadding, IChartDimensions } from './chartTypes';
+import { DefaultArcObject } from 'd3-shape';
+import { IChartDimensions, IChartPadding } from './chartTypes';
 
 export const defaultChartTickLength = 5;
 export const defaultChartXAxisHeight = 30;
 export const defaultChartYAxisWidth = 30;
 export const defaultChartCharLimitBeforeEllipsis = 10;
+
+export const defaultChartColorAccessor = () => '#000000';
+
+// pie chart
+export const defaultPieChartPadAngle = 0.01;
+export const defaultPieChartOuterRadius = 0.8;
+export const defaultPieChartInnerRadius = 0.2;
+
+export const defaultPieChartArcDatum: DefaultArcObject = {
+  innerRadius: 40,
+  outerRadius: 60,
+  startAngle: 0,
+  endAngle: Math.PI / 2,
+  padAngle: defaultPieChartPadAngle,
+};
 
 export const zeroPadding: IChartPadding = {
   top: 0,

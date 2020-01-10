@@ -135,7 +135,6 @@ export const BarChart = <
           colorTheme={colorTheme}
         />
       )}
-
       <g data-test="stacks">
         <clipPath id="clipPath">
           <rect
@@ -145,7 +144,6 @@ export const BarChart = <
             height={Math.max(y1 - y0, 0)}
           />
         </clipPath>
-
         {xDomain.map(i => (
           <g data-test={`stack-${i}`} key={`stack-${i}`}>
             {series.map((s, j) => {
@@ -169,7 +167,6 @@ export const BarChart = <
           </g>
         ))}
       </g>
-
       <g data-test="x-axis">
         <line
           x1={x0}
@@ -208,7 +205,6 @@ export const BarChart = <
           );
         })}
       </g>
-
       <g data-test="y-axis">
         <line
           x1={x0}

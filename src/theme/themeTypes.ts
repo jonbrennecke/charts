@@ -5,6 +5,12 @@ export type HexColor = string;
 export interface ColorTheme {
   components: {
     chart: {
+      // TODO: { [key in EChartType] }
+      pie: {
+        slice: {
+          stroke: HexColor;
+        };
+      };
       axis: {
         tick: {
           color: HexColor;

@@ -17,6 +17,11 @@ const cardShadowColor = opacity(trueBlack, 0.05);
 export const lightColorTheme: ColorTheme = {
   components: {
     chart: {
+      pie: {
+        slice: {
+          stroke: mediumGray,
+        },
+      },
       axis: {
         tick: {
           color: mediumGray,
