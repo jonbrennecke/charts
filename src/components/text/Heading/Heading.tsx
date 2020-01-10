@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css, createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import { ColorTheme, colorThemes } from '../../../theme';
 import { Text } from '../Text';
 import { unit } from '../../../constants';
@@ -21,7 +21,11 @@ export interface IHeadingProps {
   variant?: EHeadingVariant | keyof typeof EHeadingVariant;
 }
 
-const scale = Object.keys(EHeadingVariant)
+const HeadingText = styled(Text)`
+  margin: ${unit}px 0;
+`;
+
+const fontSizeScale = Object.keys(EHeadingVariant)
   .reverse()
   .reduce(
     (obj, k, i) => ({
@@ -31,16 +35,12 @@ const scale = Object.keys(EHeadingVariant)
     {}
   );
 
-const HeadingText = styled(Text)`
-  margin: ${unit}px 0;
-`;
-
 const cssFontSizes = Object.keys(EHeadingVariant).reduce(
   (styles, k) => `
       ${styles}
 
       ${k}${HeadingText} {
-        font-size: ${scale[k].toFixed(2)}em;
+        font-size: ${fontSizeScale[k].toFixed(2)}em;
       }
     `,
   ''
