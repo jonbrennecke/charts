@@ -17,7 +17,7 @@ export const CardTitle = ({
   colorTheme = colorThemes.light,
 }: ICardTitleProps) => {
   return (
-    <HeadingText variant="h2" data-test="card-title" colorTheme={colorTheme}>
+    <HeadingText variant="h4" data-test="card-title" colorTheme={colorTheme}>
       {children}
     </HeadingText>
   );

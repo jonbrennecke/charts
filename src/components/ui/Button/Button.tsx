@@ -14,8 +14,15 @@ export enum EButtonVariant {
   default = 'default',
 }
 
+export enum EButtonSize {
+  small = 'small',
+  medium = 'medium',
+  large = 'large',
+}
+
 export interface IButtonProps {
   variant?: EButtonVariant;
+  size?: EButtonSize;
   colorTheme?: ColorTheme;
   children?: ReactChild | ReactChild[];
   onClick?(): void;
@@ -23,6 +30,7 @@ export interface IButtonProps {
 
 export interface IStyledButton {
   variant: EButtonVariant;
+  size: EButtonSize;
   colorTheme: ColorTheme['components']['button'];
 }
 
@@ -34,11 +42,26 @@ const activeBorderKeyframes = ({ colorTheme, variant }: IStyledButton) =>
     }
     to {
       opacity: 0;
-      box-shadow: 0px 0px 1px ${unit}px ${
-    colorTheme.active.borderShadow[variant]
-  };
+      box-shadow: 0px 0px 1px ${unit}px ${colorTheme.active.borderShadow[variant]};
     }
   `;
+
+const padding = (size: EButtonSize) => {
+  switch (size) {
+    case EButtonSize.small:
+      return css`
+        padding: ${0.25 * unit}px ${unit}px;
+      `;
+    case EButtonSize.medium:
+      return css`
+        padding: ${unit}px ${2 * unit}px;
+      `;
+    case EButtonSize.large:
+      return css`
+        padding: ${1.5 * unit}px ${4 * unit}px;
+      `;
+  }
+};
 
 // prettier-ignore
 const Container = styled.button<IStyledButton>`
@@ -48,7 +71,6 @@ const Container = styled.button<IStyledButton>`
   text-align: center;
   outline: 0;
   cursor: pointer;
-  padding: ${unit}px ${2 * unit}px;
   transition: all 200ms ease-in-out;
   box-shadow:
     0px 1px 0px ${props => props.colorTheme.base.shadow};
@@ -56,6 +78,7 @@ const Container = styled.button<IStyledButton>`
     props.colorTheme.base.backgroundColor[props.variant]};
   border: 1px solid ${props => props.colorTheme.base.color[props.variant]};
   border-radius: 2px;
+  ${props => padding(props.size)}
 
   &:active::after {
     transition: all 200ms ease-in-out;
@@ -107,11 +130,13 @@ const Container = styled.button<IStyledButton>`
 
 export const Button = ({
   variant = EButtonVariant.default,
+  size = EButtonSize.medium,
   children,
   onClick = noop,
   colorTheme = colorThemes.light,
 }: IButtonProps) => (
   <Container
+    size={size}
     colorTheme={colorTheme.components.button}
     onClick={onClick}
     variant={variant}
