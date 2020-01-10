@@ -11,13 +11,14 @@ import {
   defaultPieChartOuterRadius,
   defaultPieChartArcDatum,
   defaultChartColorAccessor,
+  defaultChartCharLimitBeforeEllipsis,
   IChartRect,
   IChartPoint,
+  ellipsis,
 } from '../common';
 import { Svg } from '../Svg';
 import { Map } from 'immutable';
 import { transparent, unit } from '../../../constants';
-import { ascending } from 'd3-array';
 
 export type IPieChartData<T> = Map<string, T>;
 
@@ -32,6 +33,7 @@ export interface IPieChartProps<T = any> {
   padAngle?: number;
   innerRadius?: number;
   outerRadius?: number;
+  charLimitBeforeEllipsis?: number;
 }
 
 export const makePieRadius = (
@@ -68,6 +70,7 @@ export const PieChart = <T extends any = { value: number; label: string }>({
   padAngle = defaultPieChartPadAngle,
   innerRadius = defaultPieChartInnerRadius,
   outerRadius = defaultPieChartOuterRadius,
+  charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
 }: IPieChartProps<T>) => {
   const radius = makePieRadius(dimensions, padding);
   const pieGenerator = pie<[string, T]>()
@@ -124,8 +127,9 @@ export const PieChart = <T extends any = { value: number; label: string }>({
                       x: dimensions.width / 2,
                       y: dimensions.height / 2,
                     }}
+                    charLimitBeforeEllipsis={charLimitBeforeEllipsis}
                   >
-                    {labelFormatter(data)}
+                    {ellipsis(labelFormatter(data), charLimitBeforeEllipsis)}
                   </PieSliceLabel>
                 </g>
               )
@@ -159,19 +163,22 @@ export interface IPieSliceLabelProps<T> {
   insetRect: IChartRect;
   center: IChartPoint;
   children?: SVGTextElement['children'] | string;
+  charLimitBeforeEllipsis: number;
+  defaultCharWidth?: number;
 }
 
 export const calcPointForPieSliceLabelText = (
   centroid: IChartPoint,
   center: IChartPoint,
-  insetRect: IChartRect
+  insetRect: IChartRect,
+  labelWidth: number
 ): IChartPoint => {
   const xMidPoint = insetRect.origin.x + insetRect.size.width / 2;
   return {
     x:
       centroid.x + center.x > xMidPoint
-        ? insetRect.origin.x + insetRect.size.width - center.x
-        : insetRect.origin.x - center.x,
+        ? insetRect.origin.x + insetRect.size.width - center.x - labelWidth
+        : insetRect.origin.x - center.x + labelWidth,
     y: centroid.y,
   };
 };
@@ -190,7 +197,7 @@ export const calcPointsForPieSliceLabelPolyline = (
     y: labelPoint.y,
   },
   {
-    x: labelPoint.x > 0 ? labelPoint.x - unit : labelPoint.x + unit,
+    x: labelPoint.x > 0 ? labelPoint.x - unit * 0.5 : labelPoint.x + unit * 0.5,
     y: labelPoint.y,
   },
 ];
@@ -204,7 +211,10 @@ export const PieSliceLabel = <T extends any>({
   children,
   insetRect,
   center,
+  charLimitBeforeEllipsis,
+  defaultCharWidth = 10,
 }: IPieSliceLabelProps<T>) => {
+  const labelWidth = charLimitBeforeEllipsis * defaultCharWidth;
   const [centroidX, centroidY] = arcGenerator.centroid(defaultPieChartArcDatum);
   const [labelCentroidX, labelCentroidY] = labelArcGenerator.centroid(
     defaultPieChartArcDatum
@@ -212,7 +222,8 @@ export const PieSliceLabel = <T extends any>({
   const labelPoint = calcPointForPieSliceLabelText(
     { x: labelCentroidX, y: labelCentroidY },
     center,
-    insetRect
+    insetRect,
+    labelWidth
   );
   const points = calcPointsForPieSliceLabelPolyline(
     { x: centroidX, y: centroidY },
@@ -238,7 +249,7 @@ export const PieSliceLabel = <T extends any>({
         fill={transparent}
       />
       <text
-        textAnchor="middle"
+        textAnchor={labelPoint.x > 0 ? 'start' : 'end'}
         fill={colorTheme.components.chart.axis.tick.color}
         x={labelPoint.x}
         y={labelCentroidY}

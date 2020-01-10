@@ -17,8 +17,8 @@ const dimensions = {
 export const padding = {
   top: 15,
   bottom: 15,
-  left: 55,
-  right: 55,
+  left: 25,
+  right: 25,
 };
 
 const yDomain = [0, 100];
@@ -30,7 +30,7 @@ const categories = Object.keys(colors);
 const data = categories.reduce(
   (map, category) =>
     map.set(category, {
-      label: category,
+      label: `${category}: Lorem ipsum dolor sit amet`,
       value: random(),
     }),
   Map<string, { value: number; label: string }>()
