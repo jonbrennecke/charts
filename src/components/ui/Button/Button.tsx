@@ -21,16 +21,16 @@ export enum EButtonSize {
 }
 
 export interface IButtonProps {
-  variant?: EButtonVariant;
-  size?: EButtonSize;
+  variant?: EButtonVariant | keyof typeof EButtonVariant;
+  size?: EButtonSize | keyof typeof EButtonSize;
   colorTheme?: ColorTheme;
   children?: ReactChild | ReactChild[];
   onClick?(): void;
 }
 
 export interface IStyledButton {
-  variant: EButtonVariant;
-  size: EButtonSize;
+  variant: EButtonVariant | keyof typeof EButtonVariant;
+  size: EButtonSize | keyof typeof EButtonSize;
   colorTheme: ColorTheme['components']['button'];
 }
 
@@ -46,7 +46,7 @@ const activeBorderKeyframes = ({ colorTheme, variant }: IStyledButton) =>
     }
   `;
 
-const padding = (size: EButtonSize) => {
+const padding = (size: EButtonSize | keyof typeof EButtonSize) => {
   switch (size) {
     case EButtonSize.small:
       return css`
