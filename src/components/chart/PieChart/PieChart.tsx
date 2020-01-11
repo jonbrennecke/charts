@@ -59,6 +59,12 @@ export const makePaddedInsetRect = (
   },
 });
 
+export const validateArcSize = (arcGenerator: Arc<any, any>) => {
+  const startAngle = arcGenerator.startAngle()(defaultPieChartArcDatum);
+  const endAngle = arcGenerator.endAngle()(defaultPieChartArcDatum);
+  return Math.abs(startAngle - endAngle) > 0.15;
+};
+
 export const PieChart = <T extends any = { value: number; label: string }>({
   data,
   padding = zeroPadding,
@@ -114,25 +120,26 @@ export const PieChart = <T extends any = { value: number; label: string }>({
           </g>
           <g data-test="slice-labels">
             {piePathData.map(
-              ({ data: [key, data], arcGenerator, labelArcGenerator }, i) => (
-                <g key={`label-${i}-${key}`}>
-                  <PieSliceLabel
-                    arcGenerator={arcGenerator}
-                    labelArcGenerator={labelArcGenerator}
-                    color={colorAccessor(key)}
-                    colorTheme={colorTheme}
-                    radius={2}
-                    insetRect={insetRect}
-                    center={{
-                      x: dimensions.width / 2,
-                      y: dimensions.height / 2,
-                    }}
-                    charLimitBeforeEllipsis={charLimitBeforeEllipsis}
-                  >
-                    {ellipsis(labelFormatter(data), charLimitBeforeEllipsis)}
-                  </PieSliceLabel>
-                </g>
-              )
+              ({ data: [key, data], arcGenerator, labelArcGenerator }, i) =>
+                validateArcSize(arcGenerator) && (
+                  <g key={`label-${i}-${key}`}>
+                    <PieSliceLabel
+                      arcGenerator={arcGenerator}
+                      labelArcGenerator={labelArcGenerator}
+                      color={colorAccessor(key)}
+                      colorTheme={colorTheme}
+                      radius={2}
+                      insetRect={insetRect}
+                      center={{
+                        x: dimensions.width / 2,
+                        y: dimensions.height / 2,
+                      }}
+                      charLimitBeforeEllipsis={charLimitBeforeEllipsis}
+                    >
+                      {ellipsis(labelFormatter(data), charLimitBeforeEllipsis)}
+                    </PieSliceLabel>
+                  </g>
+                )
             )}
           </g>
         </g>

@@ -4,14 +4,14 @@ import { IChartDimensions, IChartPadding } from './chartTypes';
 export const defaultChartTickLength = 5;
 export const defaultChartXAxisHeight = 30;
 export const defaultChartYAxisWidth = 30;
-export const defaultChartCharLimitBeforeEllipsis = 10;
+export const defaultChartCharLimitBeforeEllipsis = 15;
 
 export const defaultChartColorAccessor = () => '#000000';
 
 // pie chart
 export const defaultPieChartPadAngle = 0.01;
 export const defaultPieChartOuterRadius = 0.8;
-export const defaultPieChartInnerRadius = 0.2;
+export const defaultPieChartInnerRadius = 0.35;
 
 export const defaultPieChartArcDatum: DefaultArcObject = {
   innerRadius: 40,
