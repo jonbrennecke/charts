@@ -18,7 +18,8 @@ import {
 } from '../common';
 import { Svg } from '../Svg';
 import { Map } from 'immutable';
-import { transparent, unit } from '../../../constants';
+import { transparent, unit, trueWhite } from '../../../constants';
+import styled, { css } from 'styled-components';
 
 export type IPieChartData<T> = Map<string, T>;
 
@@ -120,26 +121,26 @@ export const PieChart = <T extends any = { value: number; label: string }>({
           </g>
           <g data-test="slice-labels">
             {piePathData.map(
-              ({ data: [key, data], arcGenerator, labelArcGenerator }, i) =>
-                validateArcSize(arcGenerator) && (
-                  <g key={`label-${i}-${key}`}>
-                    <PieSliceLabel
-                      arcGenerator={arcGenerator}
-                      labelArcGenerator={labelArcGenerator}
-                      color={colorAccessor(key)}
-                      colorTheme={colorTheme}
-                      radius={2}
-                      insetRect={insetRect}
-                      center={{
-                        x: dimensions.width / 2,
-                        y: dimensions.height / 2,
-                      }}
-                      charLimitBeforeEllipsis={charLimitBeforeEllipsis}
-                    >
-                      {ellipsis(labelFormatter(data), charLimitBeforeEllipsis)}
-                    </PieSliceLabel>
-                  </g>
-                )
+              ({ data: [key, data], arcGenerator, labelArcGenerator }, i) => (
+                <g key={`label-${i}-${key}`}>
+                  <PieSliceLabel
+                    visible={validateArcSize(arcGenerator)}
+                    arcGenerator={arcGenerator}
+                    labelArcGenerator={labelArcGenerator}
+                    color={colorAccessor(key)}
+                    colorTheme={colorTheme}
+                    radius={2}
+                    insetRect={insetRect}
+                    center={{
+                      x: dimensions.width / 2,
+                      y: dimensions.height / 2,
+                    }}
+                    charLimitBeforeEllipsis={charLimitBeforeEllipsis}
+                  >
+                    {ellipsis(labelFormatter(data), charLimitBeforeEllipsis)}
+                  </PieSliceLabel>
+                </g>
+              )
             )}
           </g>
         </g>
@@ -172,6 +173,7 @@ export interface IPieSliceLabelProps<T> {
   children?: SVGTextElement['children'] | string;
   charLimitBeforeEllipsis: number;
   defaultCharWidth?: number;
+  visible?: boolean;
 }
 
 export const calcPointForPieSliceLabelText = (
@@ -209,6 +211,57 @@ export const calcPointsForPieSliceLabelPolyline = (
   },
 ];
 
+interface IPieSliceLabelContainerProps {
+  colorTheme: ColorTheme;
+  visible: boolean;
+}
+
+const PieSliceLabelLine = styled.path``;
+
+const PieSliceLabelContainer = styled.g<IPieSliceLabelContainerProps>`
+  cursor: pointer;
+
+  circle,
+  path,
+  rect,
+  text {
+    transition: all 200ms ease-in-out;
+
+    ${props =>
+      !props.visible &&
+      css`
+        opacity: 0;
+      `}
+  }
+
+  circle,
+  ${PieSliceLabelLine} {
+    stroke: ${props => props.colorTheme.components.chart.pie.slice.stroke};
+  }
+
+  &:hover {
+    circle,
+    path,
+    rect,
+    text {
+      opacity: 1;
+    }
+
+    circle,
+    path {
+      stroke-width: 2;
+    }
+
+    rect {
+      fill: ${props => props.colorTheme.components.chart.pie.slice.stroke};
+    }
+
+    text {
+      fill: ${trueWhite};
+    }
+  }
+`;
+
 export const PieSliceLabel = <T extends any>({
   arcGenerator,
   labelArcGenerator,
@@ -219,7 +272,8 @@ export const PieSliceLabel = <T extends any>({
   insetRect,
   center,
   charLimitBeforeEllipsis,
-  defaultCharWidth = 10,
+  defaultCharWidth = 6,
+  visible = false,
 }: IPieSliceLabelProps<T>) => {
   const labelWidth = charLimitBeforeEllipsis * defaultCharWidth;
   const [centroidX, centroidY] = arcGenerator.centroid(defaultPieChartArcDatum);
@@ -242,17 +296,24 @@ export const PieSliceLabel = <T extends any>({
     .y(d => d.y);
   const polylinePoints = polylinePointsGenerator(points);
   return (
-    <g>
-      <circle
-        cx={centroidX}
-        cy={centroidY}
-        r={radius}
-        fill={color}
-        stroke={colorTheme.components.chart.pie.slice.stroke}
-      />
+    <PieSliceLabelContainer colorTheme={colorTheme} visible={visible}>
       <path
-        d={polylinePoints || ''}
-        stroke={colorTheme.components.chart.pie.slice.stroke}
+        d={arcGenerator(defaultPieChartArcDatum) || ''}
+        stroke={transparent}
+        fill={transparent}
+      />
+      <circle cx={centroidX} cy={centroidY} r={radius} fill={color} />
+      <PieSliceLabelLine d={polylinePoints || ''} fill={transparent} />
+      <rect
+        x={
+          labelPoint.x > 0
+            ? labelPoint.x - unit
+            : labelPoint.x + unit - labelWidth
+        }
+        y={labelCentroidY - unit}
+        rx={unit * 0.25}
+        width={labelWidth}
+        height={unit * 2}
         fill={transparent}
       />
       <text
@@ -264,6 +325,6 @@ export const PieSliceLabel = <T extends any>({
       >
         {children}
       </text>
-    </g>
+    </PieSliceLabelContainer>
   );
 };

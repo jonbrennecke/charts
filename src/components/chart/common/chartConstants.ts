@@ -11,7 +11,7 @@ export const defaultChartColorAccessor = () => '#000000';
 // pie chart
 export const defaultPieChartPadAngle = 0.01;
 export const defaultPieChartOuterRadius = 0.8;
-export const defaultPieChartInnerRadius = 0.35;
+export const defaultPieChartInnerRadius = 0;
 
 export const defaultPieChartArcDatum: DefaultArcObject = {
   innerRadius: 40,
