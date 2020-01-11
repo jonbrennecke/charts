@@ -1,6 +1,6 @@
 import { pie, arc, Arc, line } from 'd3-shape';
 import property from 'lodash/property';
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ColorTheme, colorThemes, HexColor } from '../../../theme';
 import {
   IChartDimensions,
@@ -135,7 +135,6 @@ export const PieChart = <T extends any = { value: number; label: string }>({
                       x: dimensions.width / 2,
                       y: dimensions.height / 2,
                     }}
-                    charLimitBeforeEllipsis={charLimitBeforeEllipsis}
                   >
                     {ellipsis(labelFormatter(data), charLimitBeforeEllipsis)}
                   </PieSliceLabel>
@@ -171,8 +170,6 @@ export interface IPieSliceLabelProps<T> {
   insetRect: IChartRect;
   center: IChartPoint;
   children?: SVGTextElement['children'] | string;
-  charLimitBeforeEllipsis: number;
-  defaultCharWidth?: number;
   visible?: boolean;
 }
 
@@ -271,11 +268,16 @@ export const PieSliceLabel = <T extends any>({
   children,
   insetRect,
   center,
-  charLimitBeforeEllipsis,
-  defaultCharWidth = 6,
   visible = false,
 }: IPieSliceLabelProps<T>) => {
-  const labelWidth = charLimitBeforeEllipsis * defaultCharWidth;
+  const [labelWidth, setLabelWidth] = useState(0);
+  const textRef = useRef<SVGTextElement>(null);
+  useEffect(() => {
+    if (textRef.current) {
+      const textLength = textRef.current.getComputedTextLength();
+      setLabelWidth(textLength + unit * 2);
+    }
+  });
   const [centroidX, centroidY] = arcGenerator.centroid(defaultPieChartArcDatum);
   const [labelCentroidX, labelCentroidY] = labelArcGenerator.centroid(
     defaultPieChartArcDatum
@@ -322,6 +324,7 @@ export const PieSliceLabel = <T extends any>({
         x={labelPoint.x}
         y={labelCentroidY}
         dy="0.333em"
+        ref={textRef}
       >
         {children}
       </text>
