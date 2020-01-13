@@ -191,12 +191,11 @@ export const calcPointForPieSliceLabelText = (
 
 export const calcPointsForPieSliceLabelPolyline = (
   centroid: IChartPoint,
-  labelPoint: IChartPoint,
-  radius: number
+  labelPoint: IChartPoint
 ): IChartPoint[] => [
   {
-    x: centroid.x > 0 ? centroid.x + radius : centroid.x - radius,
-    y: centroid.y > 0 ? centroid.y + 0.5 : centroid.y - 0.5,
+    x: centroid.x > 0 ? centroid.x : centroid.x,
+    y: centroid.y > 0 ? centroid.y : centroid.y,
   },
   {
     x: (labelPoint.x + centroid.x) / 2,
@@ -290,8 +289,7 @@ export const PieSliceLabel = <T extends any>({
   );
   const points = calcPointsForPieSliceLabelPolyline(
     { x: centroidX, y: centroidY },
-    labelPoint,
-    radius
+    labelPoint
   );
   const polylinePointsGenerator = line<IChartPoint>()
     .x(d => d.x)
@@ -304,8 +302,8 @@ export const PieSliceLabel = <T extends any>({
         stroke={transparent}
         fill={transparent}
       />
-      <circle cx={centroidX} cy={centroidY} r={radius} fill={color} />
       <PieSliceLabelLine d={polylinePoints || ''} fill={transparent} />
+      <circle cx={centroidX} cy={centroidY} r={radius} fill={color} />
       <rect
         x={
           labelPoint.x > 0
