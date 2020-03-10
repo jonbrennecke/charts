@@ -4,21 +4,36 @@ import { BarChart, IBarChartProps } from '../BarChart';
 import { opacity } from '../../../theme/colorUtils';
 import { Text } from '../../text';
 import { unit } from '../../../constants';
-import { defaultRangeFormatter, defaultRangeValueFormatter } from '../common';
+import { defaultRangeValueFormatter } from '../common';
 
-const positionCss = ({ point }: { point: { x: number; y: number } | null }) =>
-  point
-    ? css`
-        transform: translate(${point.x}px, ${point.y}px);
-        opacity: 1;
-      `
-    : css`
-        transform: translate(0, 0);
-        opacity: 0;
-      `;
+const positionCss = ({
+  point,
+  value,
+}: {
+  point: { x: number; y: number } | null;
+  value: any | null;
+}) => {
+  if (point && value) {
+    return css`
+      transform: translate(${point.x}px, ${point.y}px);
+      opacity: 1;
+    `;
+  } else if (point) {
+    return css`
+      transform: translate(${point.x}px, ${point.y}px);
+      opacity: 0;
+    `;
+  } else {
+    return css`
+      transform: translate(0, 0);
+      opacity: 0;
+    `;
+  }
+};
 
 const HoverTooltipContainer = styled.div<{
   point: { x: number; y: number } | null;
+  value: any | null;
 }>`
   position: absolute;
   height: 30px;
@@ -27,6 +42,8 @@ const HoverTooltipContainer = styled.div<{
   top: -30px;
   z-index: 1000;
   filter: drop-shadow(0px 0px 3px ${opacity('#000', 0.1)});
+  transition: transform 0.05s ease-in-out, opacity 0.05s ease-in-out 0.05s;
+  pointer-events: none;
   ${positionCss}
 
   svg {
@@ -72,7 +89,7 @@ export const HoverTooltip = <RangeElementType extends { value: number }>({
   value,
   valueFormatter = defaultRangeValueFormatter,
 }: HoverTooltipProps<RangeElementType>) => (
-  <HoverTooltipContainer point={point}>
+  <HoverTooltipContainer point={point} value={value}>
     <svg width="93px" height="30px" viewBox="0 0 93 30">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g transform="translate(-248.000000, -147.000000)">
@@ -98,6 +115,13 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
   return (props: IBarChartProps<RangeElementType>) => {
     const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
     const [value, setValue] = useState<RangeElementType | null>(null);
+    const updateTooltipState = (
+      value: RangeElementType,
+      point: { x: number; y: number }
+    ) => {
+      setPoint(point);
+      setValue(value as RangeElementType);
+    };
     return (
       <Container>
         <HoverTooltip
@@ -107,12 +131,11 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
         />
         <ChartComponent
           {...props}
-          onValueClick={(value, point) => {
-            setPoint(point);
-            setValue(value as RangeElementType);
+          onValueClick={updateTooltipState}
+          onValueMouseOver={updateTooltipState}
+          onValueMouseOut={() => {
+            setValue(null);
           }}
-          // onValueMouseOver={value => console.log('mouseover', value)}
-          // onValueMouseOut={value => console.log('mouseout', value)}
         />
       </Container>
     );

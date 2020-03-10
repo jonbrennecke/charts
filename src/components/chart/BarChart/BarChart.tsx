@@ -99,8 +99,11 @@ export interface IBarChartProps<
     value: RangeElementType,
     centroid: { x: number; y: number }
   ): void;
-  onValueMouseOver?(value: RangeElementType): void;
-  onValueMouseOut?(value: RangeElementType): void;
+  onValueMouseOver?(
+    value: RangeElementType,
+    centroid: { x: number; y: number }
+  ): void;
+  onValueMouseOut?(): void;
 }
 
 export const BarChart = <
@@ -183,6 +186,18 @@ export const BarChart = <
               const domainValue = data.get(i);
               const rangeValue =
                 domainValue && dataAccessor(domainValue).get(s.key);
+              const makeOnMouseOverOrClickFunction = (
+                callback: typeof onValueClick | typeof onValueMouseOver
+              ) => (e: React.MouseEvent<SVGRectElement, MouseEvent>) => {
+                if (e.target instanceof Element) {
+                  const domRect = e.target.getBoundingClientRect();
+                  rangeValue &&
+                    callback(rangeValue, {
+                      x: domRect.left + domRect.width * 0.5,
+                      y: domRect.top + domRect.height * 0.5,
+                    });
+                }
+              };
               return (
                 <StackRect
                   data-test={`bar-${j}`}
@@ -193,22 +208,9 @@ export const BarChart = <
                   y={Math.max(yStart - height, 0)}
                   height={Math.max(height, 0)}
                   fill={colorAccessor(s.key)}
-                  onClick={e => {
-                    if (e.target instanceof Element) {
-                      const domRect = e.target.getBoundingClientRect();
-                      rangeValue &&
-                        onValueClick(rangeValue, {
-                          x: domRect.left + domRect.width * 0.5,
-                          y: domRect.top + domRect.height * 0.5,
-                        });
-                    }
-                  }}
-                  onMouseOver={() => {
-                    rangeValue && onValueMouseOver(rangeValue);
-                  }}
-                  onMouseOut={() => {
-                    rangeValue && onValueMouseOut(rangeValue);
-                  }}
+                  onClick={makeOnMouseOverOrClickFunction(onValueClick)}
+                  onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
+                  onMouseOut={() => onValueMouseOut()}
                 />
               );
             })}
