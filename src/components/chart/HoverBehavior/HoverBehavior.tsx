@@ -161,10 +161,18 @@ export interface ChartEventPayload<RangeElementType> {
   point: BarChartEventPayload<RangeElementType>['point'] | null;
 }
 
+export interface ChartPropsWithHover<RangeElementType>
+  extends IBarChartProps<RangeElementType> {
+  showTooltipOnHover?: boolean;
+}
+
 export const withHoverBehavior = <RangeElementType extends { value: number }>(
   ChartComponent: typeof BarChart
 ) => {
-  return (props: IBarChartProps<RangeElementType>) => {
+  return ({
+    showTooltipOnHover = false,
+    ...props
+  }: ChartPropsWithHover<RangeElementType>) => {
     const [eventPayload, setEventPayload] = useState<ChartEventPayload<
       RangeElementType
     > | null>(null);
@@ -173,13 +181,15 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
     ) => setEventPayload(payload);
     return (
       <Container>
-        <HoverTooltip
-          category={eventPayload?.category || null}
-          point={eventPayload?.point || null}
-          value={eventPayload?.value || null}
-          color={eventPayload?.color || undefined}
-          valueFormatter={props.rangeLabelFormatter}
-        />
+        {showTooltipOnHover && (
+          <HoverTooltip
+            category={eventPayload?.category || null}
+            point={eventPayload?.point || null}
+            value={eventPayload?.value || null}
+            color={eventPayload?.color || undefined}
+            valueFormatter={props.rangeLabelFormatter}
+          />
+        )}
         <ChartComponent
           {...props}
           onValueClick={updateTooltipState}

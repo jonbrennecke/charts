@@ -70,5 +70,6 @@ storiesOf('Charts', module)
       padding={padding}
       colorAccessor={key => colors[key]}
       showGridLines={boolean('Show grid lines', true)}
+      showTooltipOnHover={boolean('Show tooltip on hover', true)}
     />
   ));
