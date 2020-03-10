@@ -13,22 +13,25 @@ const positionCss = ({
   point: { x: number; y: number } | null;
   value: any | null;
 }) => {
-  if (point && value) {
-    return css`
-      transform: translate(${point.x}px, ${point.y}px);
-      opacity: 1;
-    `;
-  } else if (point) {
-    return css`
-      transform: translate(${point.x}px, ${point.y}px);
-      opacity: 0;
-    `;
-  } else {
-    return css`
-      transform: translate(0, 0);
-      opacity: 0;
-    `;
-  }
+  const transformCss = point
+    ? css`
+        transform: translate(${point.x}px, ${point.y}px);
+      `
+    : css`
+        transform: translate(0, 0);
+      `;
+  const opacityCss =
+    point && value
+      ? css`
+          opacity: 1;
+        `
+      : css`
+          opacity: 0;
+        `;
+  return css`
+    ${transformCss}
+    ${opacityCss}
+  `;
 };
 
 const HoverTooltipContainer = styled.div<{
