@@ -50,7 +50,11 @@ const data = range(numberOfStacks).reduce(
       label: 'Lorem ipsum',
       data: makeRandomBarData(),
     }),
-  List()
+  List() as List<{
+    id: string;
+    label: string;
+    data: Map<string, { id: string; value: number }>;
+  }>
 );
 
 storiesOf('Charts', module)
@@ -63,5 +67,8 @@ storiesOf('Charts', module)
       padding={padding}
       colorAccessor={key => colors[key]}
       showGridLines={boolean('Show grid lines', true)}
+      onValueClick={value => console.log('click', value)}
+      onValueMouseOver={value => console.log('mouseover', value)}
+      onValueMouseOut={value => console.log('mouseout', value)}
     />
   ));

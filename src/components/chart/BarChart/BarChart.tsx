@@ -1,51 +1,28 @@
-import React from 'react';
-import { scaleLinear, scaleBand } from 'd3-scale';
-import { stack, stackOffsetNone, stackOrderNone, Series } from 'd3-shape';
-import property from 'lodash/property';
-import min from 'lodash/min';
-import max from 'lodash/max';
-import floor from 'lodash/floor';
+import { scaleBand, scaleLinear } from 'd3-scale';
+import { Series, stack, stackOffsetNone, stackOrderNone } from 'd3-shape';
+import { List, Map } from 'immutable';
 import ceil from 'lodash/ceil';
-import { List } from 'immutable';
-
+import floor from 'lodash/floor';
+import max from 'lodash/max';
+import min from 'lodash/min';
+import property from 'lodash/property';
+import React from 'react';
 import { ColorTheme, colorThemes } from '../../../theme';
-import { Svg } from '../Svg';
 import {
-  IChartDimensions,
-  IChartPadding,
-  zeroPadding,
+  defaultChartCharLimitBeforeEllipsis,
   defaultChartTickLength,
   defaultChartXAxisHeight,
   defaultChartYAxisWidth,
-  defaultChartCharLimitBeforeEllipsis,
   ellipsis,
+  IChartDimensions,
+  IChartPadding,
+  zeroPadding,
 } from '../common';
 import { GridLines } from '../GridLines/GridLines';
-
-export type IBarChartData<T> = List<T>;
-
-export interface IBarChartProps<T = any, D = any> {
-  data: IBarChartData<T>;
-  categories: string[];
-  padding?: IChartPadding;
-  dimensions: IChartDimensions;
-  yDomain?: [number, number];
-  xDomain?: [number, number];
-  dataAccessor?(data: T): D;
-  valueAccessor?(data: T): number;
-  colorAccessor?(key: string): string;
-  domainLabelFormatter?(data: T): string;
-  rangeLabelFormatter?(n: number): string;
-  numberOfYTicks?: number;
-  colorTheme?: ColorTheme;
-  paddingInner?: number;
-  paddingOuter?: number;
-  tickLength?: number;
-  xAxisHeight?: number;
-  yAxisWidth?: number;
-  charLimitBeforeEllipsis?: number;
-  showGridLines?: boolean;
-}
+import { Svg } from '../Svg';
+import styled from 'styled-components';
+import { darker, brighter } from '../../../theme/colorUtils';
+import noop from 'lodash/noop';
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]
@@ -76,16 +53,65 @@ const makeBarChartScales = (
   return { xScale, yScale };
 };
 
+const Stack = styled.g``;
+
+const StackRect = styled.rect`
+  cursor: pointer;
+
+  &:hover {
+    fill: ${props => (props.fill ? brighter(props.fill, 0.25) : '')};
+  }
+
+  &:active {
+    fill: ${props => (props.fill ? darker(props.fill, 0.25) : '')};
+  }
+`;
+
 export const defaultDomainLabelFormatter = <T extends any = { label: string }>(
   data: T
 ) => data.label;
 
 export const defaultRangeLabelFormatter = (x: any) => x.toString();
 
+export type IBarChartData<T> = List<T>;
+
+export interface IBarChartProps<
+  RangeElementType = any,
+  DomainElementType = any
+> {
+  data: IBarChartData<DomainElementType>;
+  categories: string[];
+  padding?: IChartPadding;
+  dimensions: IChartDimensions;
+  yDomain?: [number, number];
+  xDomain?: [number, number];
+  dataAccessor?(data: DomainElementType): Map<string, RangeElementType>;
+  valueAccessor?(data: RangeElementType): number;
+  colorAccessor?(key: string): string;
+  domainLabelFormatter?(data: DomainElementType): string;
+  rangeLabelFormatter?(n: number): string;
+  numberOfYTicks?: number;
+  colorTheme?: ColorTheme;
+  paddingInner?: number;
+  paddingOuter?: number;
+  tickLength?: number;
+  xAxisHeight?: number;
+  yAxisWidth?: number;
+  charLimitBeforeEllipsis?: number;
+  showGridLines?: boolean;
+  onValueClick?(value: RangeElementType): void;
+  onValueMouseOver?(value: RangeElementType): void;
+  onValueMouseOut?(value: RangeElementType): void;
+}
+
 export const BarChart = <
-  T extends any = { data: { value: number }; label: string }
+  RangeElementType extends { value: number },
+  DomainElementType extends {
+    data: Map<string, RangeElementType>;
+    label: string;
+  }
 >({
-  data,
+  data: originalData,
   categories,
   dimensions,
   padding = zeroPadding,
@@ -103,14 +129,18 @@ export const BarChart = <
   colorTheme = colorThemes.light,
   charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
   showGridLines = true,
-}: IBarChartProps<T>) => {
-  const stackGenerator = stack<T>()
+  onValueClick = noop,
+  onValueMouseOut = noop,
+  onValueMouseOver = noop,
+}: IBarChartProps<RangeElementType, DomainElementType>) => {
+  const data = List(originalData);
+  const stackGenerator = stack<DomainElementType>()
     .keys(categories)
     .value((x, category) => valueAccessor(dataAccessor(x)[category]) || 0)
     .order(stackOrderNone)
     .offset(stackOffsetNone);
   const series = stackGenerator(data.toJS());
-  const xDomain = data.map((value, i) => i).toJS();
+  const xDomain: number[] = data.map((value, i) => i).toJS();
   const yDomain = calculateDefaultYDomainWithSeries(series);
   const { xScale, yScale } = makeBarChartScales(
     xDomain,
@@ -126,7 +156,7 @@ export const BarChart = <
   const [y1, y0] = yScale.range();
   const bandWidth = xScale.bandwidth();
   return (
-    <Svg dimensions={dimensions} colorTheme={colorTheme}>
+    <Svg dimensions={dimensions}>
       {showGridLines && (
         <GridLines
           xScale={xScale}
@@ -145,14 +175,17 @@ export const BarChart = <
           />
         </clipPath>
         {xDomain.map(i => (
-          <g data-test={`stack-${i}`} key={`stack-${i}`}>
+          <Stack data-test={`stack-${i}`} key={`stack-${i}`}>
             {series.map((s, j) => {
               const [start, end] = s[i];
               const yStart = yScale(start);
               const yEnd = yScale(end);
               const height = yStart - yEnd;
+              const domainValue = data.get(i);
+              const rangeValue =
+                domainValue && dataAccessor(domainValue).get(s.key);
               return (
-                <rect
+                <StackRect
                   data-test={`bar-${j}`}
                   key={`bar-${j}`}
                   clipPath={`url(#clipPath)`}
@@ -161,10 +194,19 @@ export const BarChart = <
                   y={Math.max(yStart - height, 0)}
                   height={Math.max(height, 0)}
                   fill={colorAccessor(s.key)}
+                  onClick={() => {
+                    rangeValue && onValueClick(rangeValue);
+                  }}
+                  onMouseOver={() => {
+                    rangeValue && onValueMouseOver(rangeValue);
+                  }}
+                  onMouseOut={() => {
+                    rangeValue && onValueMouseOut(rangeValue);
+                  }}
                 />
               );
             })}
-          </g>
+          </Stack>
         ))}
       </g>
       <g data-test="x-axis">

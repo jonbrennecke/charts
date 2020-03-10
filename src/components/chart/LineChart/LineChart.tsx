@@ -68,7 +68,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   const [y1, y0] = yScale.range();
   return (
     <div data-test="line-chart">
-      <Svg dimensions={dimensions} colorTheme={colorTheme}>
+      <Svg dimensions={dimensions}>
         {showGridLines && (
           <GridLines
             xScale={xScale}

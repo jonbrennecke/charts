@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ColorTheme, colorThemes } from '../../../theme';
 import { IChartDimensions } from '../common';
 
 type ReactChild = React.ReactElement | React.ReactNode;
@@ -9,7 +8,6 @@ type ReactChild = React.ReactElement | React.ReactNode;
 export interface ISvgProps {
   dimensions: IChartDimensions;
   children: ReactChild | ReactChild[];
-  colorTheme?: ColorTheme;
 }
 
 export const viewBoxString = (dimensions: IChartDimensions) =>
@@ -18,11 +16,7 @@ export const viewBoxString = (dimensions: IChartDimensions) =>
 export const chartTickFontFamily = 'Cabin';
 export const chartTickFontSize = 8;
 
-export const Svg = ({
-  dimensions,
-  children,
-  colorTheme = colorThemes.light,
-}: ISvgProps) => {
+export const Svg = ({ dimensions, children }: ISvgProps) => {
   const StyledSvg = styled.svg`
     text {
       font-family: ${chartTickFontFamily};
