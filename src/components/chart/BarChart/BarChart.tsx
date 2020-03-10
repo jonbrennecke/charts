@@ -71,6 +71,13 @@ const StackRect = styled.rect`
 
 export type IBarChartData<T> = List<T>;
 
+export interface BarChartEventPayload<RangeElementType> {
+  category: string;
+  color: string;
+  value: RangeElementType;
+  point: { x: number; y: number };
+}
+
 export interface IBarChartProps<
   RangeElementType = any,
   DomainElementType = any
@@ -95,14 +102,8 @@ export interface IBarChartProps<
   yAxisWidth?: number;
   charLimitBeforeEllipsis?: number;
   showGridLines?: boolean;
-  onValueClick?(
-    value: RangeElementType,
-    centroid: { x: number; y: number }
-  ): void;
-  onValueMouseOver?(
-    value: RangeElementType,
-    centroid: { x: number; y: number }
-  ): void;
+  onValueClick?(payload: BarChartEventPayload<RangeElementType>): void;
+  onValueMouseOver?(payload: BarChartEventPayload<RangeElementType>): void;
   onValueMouseOut?(): void;
 }
 
@@ -184,17 +185,24 @@ export const BarChart = <
               const yEnd = yScale(end);
               const height = yStart - yEnd;
               const domainValue = data.get(i);
-              const rangeValue =
-                domainValue && dataAccessor(domainValue).get(s.key);
+              const category = s.key;
+              const color = colorAccessor(category);
+              const value =
+                domainValue && dataAccessor(domainValue).get(category);
               const makeOnMouseOverOrClickFunction = (
                 callback: typeof onValueClick | typeof onValueMouseOver
               ) => (e: React.MouseEvent<SVGRectElement, MouseEvent>) => {
                 if (e.target instanceof Element) {
                   const domRect = e.target.getBoundingClientRect();
-                  rangeValue &&
-                    callback(rangeValue, {
-                      x: domRect.left + domRect.width * 0.5,
-                      y: domRect.top + domRect.height * 0.5,
+                  value &&
+                    callback({
+                      color,
+                      category,
+                      value,
+                      point: {
+                        x: domRect.left + domRect.width * 0.5,
+                        y: domRect.top + domRect.height * 0.5,
+                      },
                     });
                 }
               };
@@ -207,7 +215,7 @@ export const BarChart = <
                   width={Math.max(bandWidth, 0)}
                   y={Math.max(yStart - height, 0)}
                   height={Math.max(height, 0)}
-                  fill={colorAccessor(s.key)}
+                  fill={color}
                   onClick={makeOnMouseOverOrClickFunction(onValueClick)}
                   onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
                   onMouseOut={() => onValueMouseOut()}

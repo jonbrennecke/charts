@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { BarChart, IBarChartProps } from '../BarChart';
+import { BarChart, IBarChartProps, BarChartEventPayload } from '../BarChart';
 import { opacity } from '../../../theme/colorUtils';
 import { Text } from '../../text';
 import { unit } from '../../../constants';
@@ -81,15 +81,36 @@ const TooltipValueText = styled(Text)`
   text-overflow: ellipsis;
 `;
 
+const ToolTipCategoryText = styled(Text)`
+  font-size: 11px;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Color = styled.div<{ color: string }>`
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  border: 2px solid ${props => props.color};
+  margin-right: ${unit * 0.5}px;
+`;
+
 export interface HoverTooltipProps<RangeElementType extends { value: number }> {
   point: { x: number; y: number } | null;
   value: RangeElementType | null;
+  category: string | null;
+  color?: string;
   valueFormatter?(value: number): string;
 }
 
 export const HoverTooltip = <RangeElementType extends { value: number }>({
   point,
   value,
+  category,
+  color = 'gray',
   valueFormatter = defaultRangeValueFormatter,
 }: HoverTooltipProps<RangeElementType>) => (
   <HoverTooltipContainer point={point} value={value}>
@@ -101,6 +122,10 @@ export const HoverTooltip = <RangeElementType extends { value: number }>({
       </g>
     </svg>
     <TextContainer>
+      <Color color={color} />
+      <ToolTipCategoryText weight="bold">
+        {`${category}:`}&nbsp;
+      </ToolTipCategoryText>
       <TooltipValueText>
         {value && valueFormatter(value.value)}
       </TooltipValueText>
@@ -112,24 +137,30 @@ const Container = styled.div`
   position: relative;
 `;
 
+export interface ChartEventPayload<RangeElementType> {
+  category: BarChartEventPayload<RangeElementType>['category'] | null;
+  color: BarChartEventPayload<RangeElementType>['color'] | null;
+  value: BarChartEventPayload<RangeElementType>['value'] | null;
+  point: BarChartEventPayload<RangeElementType>['point'] | null;
+}
+
 export const withHoverBehavior = <RangeElementType extends { value: number }>(
   ChartComponent: typeof BarChart
 ) => {
   return (props: IBarChartProps<RangeElementType>) => {
-    const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
-    const [value, setValue] = useState<RangeElementType | null>(null);
+    const [eventPayload, setEventPayload] = useState<ChartEventPayload<
+      RangeElementType
+    > | null>(null);
     const updateTooltipState = (
-      value: RangeElementType,
-      point: { x: number; y: number }
-    ) => {
-      setPoint(point);
-      setValue(value as RangeElementType);
-    };
+      payload: BarChartEventPayload<RangeElementType>
+    ) => setEventPayload(payload);
     return (
       <Container>
         <HoverTooltip
-          point={point}
-          value={value}
+          category={eventPayload?.category || null}
+          point={eventPayload?.point || null}
+          value={eventPayload?.value || null}
+          color={eventPayload?.color || undefined}
           valueFormatter={props.rangeLabelFormatter}
         />
         <ChartComponent
@@ -137,7 +168,12 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
           onValueClick={updateTooltipState}
           onValueMouseOver={updateTooltipState}
           onValueMouseOut={() => {
-            setValue(null);
+            setEventPayload({
+              color: null,
+              category: null,
+              value: null,
+              point: eventPayload?.point || null,
+            });
           }}
         />
       </Container>
