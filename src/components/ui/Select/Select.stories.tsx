@@ -4,7 +4,6 @@ import { withKnobs } from '@storybook/addon-knobs';
 import { Map } from 'immutable';
 
 import { Select } from './Select';
-import { SelectOption } from './SelectOption';
 
 import './Select.stories.css';
 import { useState } from '@storybook/addons';
