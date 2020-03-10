@@ -34,9 +34,15 @@ const positionCss = ({
   `;
 };
 
+export enum TooltipColorTheme {
+  light = 'light',
+  dark = 'dark',
+}
+
 const HoverTooltipContainer = styled.div<{
   point: { x: number; y: number } | null;
   value: any | null;
+  colorTheme: TooltipColorTheme | keyof typeof TooltipColorTheme;
 }>`
   position: absolute;
   height: 30px;
@@ -54,7 +60,8 @@ const HoverTooltipContainer = styled.div<{
     height: auto;
 
     path {
-      fill: #fff;
+      fill: ${props =>
+        props.colorTheme === TooltipColorTheme.light ? '#000' : '#fff'};
     }
   }
 `;
@@ -72,22 +79,30 @@ const TextContainer = styled.div`
   padding: ${unit}px;
 `;
 
-const TooltipValueText = styled(Text)`
+const TooltipValueText = styled(Text)<{
+  colorTheme: TooltipColorTheme | keyof typeof TooltipColorTheme;
+}>`
   font-size: 11px;
   display: inline-block;
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: ${props =>
+    props.colorTheme === TooltipColorTheme.light ? '#fff' : '#000'};
 `;
 
-const ToolTipCategoryText = styled(Text)`
+const ToolTipCategoryText = styled(Text)<{
+  colorTheme: TooltipColorTheme | keyof typeof TooltipColorTheme;
+}>`
   font-size: 11px;
   display: inline-block;
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: ${props =>
+    props.colorTheme === TooltipColorTheme.light ? '#fff' : '#000'};
 `;
 
 const Color = styled.div<{ color: string }>`
@@ -103,6 +118,7 @@ export interface HoverTooltipProps<RangeElementType extends { value: number }> {
   value: RangeElementType | null;
   category: string | null;
   color?: string;
+  colorTheme?: TooltipColorTheme | keyof typeof TooltipColorTheme;
   valueFormatter?(value: number): string;
 }
 
@@ -111,9 +127,10 @@ export const HoverTooltip = <RangeElementType extends { value: number }>({
   value,
   category,
   color = 'gray',
+  colorTheme = TooltipColorTheme.light,
   valueFormatter = defaultRangeValueFormatter,
 }: HoverTooltipProps<RangeElementType>) => (
-  <HoverTooltipContainer point={point} value={value}>
+  <HoverTooltipContainer point={point} value={value} colorTheme={colorTheme}>
     <svg width="93px" height="30px" viewBox="0 0 93 30">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g transform="translate(-248.000000, -147.000000)">
@@ -123,10 +140,10 @@ export const HoverTooltip = <RangeElementType extends { value: number }>({
     </svg>
     <TextContainer>
       <Color color={color} />
-      <ToolTipCategoryText weight="bold">
+      <ToolTipCategoryText weight="bold" colorTheme={colorTheme}>
         {`${category}:`}&nbsp;
       </ToolTipCategoryText>
-      <TooltipValueText>
+      <TooltipValueText colorTheme={colorTheme}>
         {value && valueFormatter(value.value)}
       </TooltipValueText>
     </TextContainer>
