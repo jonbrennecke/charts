@@ -17,6 +17,8 @@ import {
   IChartDimensions,
   IChartPadding,
   zeroPadding,
+  defaultRangeValueFormatter,
+  defaultDomainFormatter,
 } from '../common';
 import { GridLines } from '../GridLines/GridLines';
 import { Svg } from '../Svg';
@@ -67,12 +69,6 @@ const StackRect = styled.rect`
   }
 `;
 
-export const defaultDomainLabelFormatter = <T extends any = { label: string }>(
-  data: T
-) => data.label;
-
-export const defaultRangeLabelFormatter = (x: any) => x.toString();
-
 export type IBarChartData<T> = List<T>;
 
 export interface IBarChartProps<
@@ -120,8 +116,8 @@ export const BarChart = <
   padding = zeroPadding,
   valueAccessor = property('value'),
   dataAccessor = property('data'),
-  domainLabelFormatter = defaultDomainLabelFormatter,
-  rangeLabelFormatter = defaultRangeLabelFormatter,
+  domainLabelFormatter = defaultDomainFormatter,
+  rangeLabelFormatter = defaultRangeValueFormatter,
   colorAccessor = () => '#000000',
   numberOfYTicks = 10,
   paddingInner = 0.25,

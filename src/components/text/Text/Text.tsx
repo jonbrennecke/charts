@@ -1,19 +1,38 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ColorTheme, colorThemes } from '../../../theme';
+import { trueBlack } from '../../../constants';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 
-export interface ITextProps {
-  children?: ReactChild | ReactChild[];
-  colorTheme?: ColorTheme;
+export enum ETextWeight {
+  bold = 'bold',
+  medium = 'medium',
+  regular = 'regular',
 }
 
-const Span = styled.span`
-  color: ${(props: { colorTheme: ColorTheme }) =>
-    props.colorTheme.components.text.base.color};
-  font-family: Cabin;
+export type ITextProps = {
+  children?: ReactChild | ReactChild[];
+  color?: string;
+  weight?: ETextWeight | keyof typeof ETextWeight;
+} & React.HTMLAttributes<{}>;
+
+const textWeightToFontWeight = (
+  weight: ETextWeight | keyof typeof ETextWeight
+) =>
+  ({
+    [ETextWeight.bold]: '700',
+    [ETextWeight.medium]: '500',
+    [ETextWeight.regular]: 'normal',
+  }[weight]);
+
+const Span = styled.span<{
+  color: string;
+  weight: ETextWeight | keyof typeof ETextWeight;
+}>`
+  color: ${props => props.color};
+  font-family: Cabin, sans-serif;
   font-size: 16px;
+  font-weight: ${props => textWeightToFontWeight(props.weight)};
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -22,10 +41,11 @@ const Span = styled.span`
 
 export const Text = ({
   children,
-  colorTheme = colorThemes.light,
+  color = trueBlack,
+  weight = ETextWeight.regular,
   ...etc
 }: ITextProps) => (
-  <Span data-test="text" colorTheme={colorTheme} {...etc}>
+  <Span data-test="text" color={color} weight={weight} {...etc}>
     {children}
   </Span>
 );

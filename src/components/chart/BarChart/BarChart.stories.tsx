@@ -19,7 +19,7 @@ const dimensions = {
 export const padding = {
   top: 15,
   bottom: 25,
-  left: 15,
+  left: 25,
   right: 15,
 };
 
