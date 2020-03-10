@@ -9,6 +9,7 @@ import fromPairs from 'lodash/fromPairs';
 import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 import { BarChart } from './BarChart';
+import { withHoverBehavior } from '../HoverBehavior';
 
 const dimensions = {
   height: 240,
@@ -57,18 +58,17 @@ const data = range(numberOfStacks).reduce(
   }>
 );
 
+const BarChartComponent = withHoverBehavior(BarChart);
+
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
   .add('Bar chart', () => (
-    <BarChart
+    <BarChartComponent
       data={data}
       categories={categories}
       dimensions={dimensions}
       padding={padding}
       colorAccessor={key => colors[key]}
       showGridLines={boolean('Show grid lines', true)}
-      onValueClick={value => console.log('click', value)}
-      onValueMouseOver={value => console.log('mouseover', value)}
-      onValueMouseOut={value => console.log('mouseout', value)}
     />
   ));

@@ -99,7 +99,10 @@ export interface IBarChartProps<
   yAxisWidth?: number;
   charLimitBeforeEllipsis?: number;
   showGridLines?: boolean;
-  onValueClick?(value: RangeElementType): void;
+  onValueClick?(
+    value: RangeElementType,
+    centroid: { x: number; y: number }
+  ): void;
   onValueMouseOver?(value: RangeElementType): void;
   onValueMouseOut?(value: RangeElementType): void;
 }
@@ -194,8 +197,15 @@ export const BarChart = <
                   y={Math.max(yStart - height, 0)}
                   height={Math.max(height, 0)}
                   fill={colorAccessor(s.key)}
-                  onClick={() => {
-                    rangeValue && onValueClick(rangeValue);
+                  onClick={e => {
+                    if (e.target instanceof Element) {
+                      const domRect = e.target.getBoundingClientRect();
+                      rangeValue &&
+                        onValueClick(rangeValue, {
+                          x: domRect.left + domRect.width * 0.5,
+                          y: domRect.top + domRect.height * 0.5,
+                        });
+                    }
                   }}
                   onMouseOver={() => {
                     rangeValue && onValueMouseOver(rangeValue);
