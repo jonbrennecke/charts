@@ -1,15 +1,14 @@
-import React from 'react';
+import { boolean, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
-import uuid from 'uuid';
 import { range } from 'd3-array';
 import { randomUniform } from 'd3-random';
-import { Map, List } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
+import { List, Map } from 'immutable';
 import fromPairs from 'lodash/fromPairs';
-import { withKnobs, boolean } from '@storybook/addon-knobs';
-
-import { BarChart } from './BarChart';
+import React from 'react';
+import uuid from 'uuid';
 import { withHoverBehavior } from '../HoverBehavior';
+import { BarChart } from './BarChart';
 
 const dimensions = {
   height: 240,

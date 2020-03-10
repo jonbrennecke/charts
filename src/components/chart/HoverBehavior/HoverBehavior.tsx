@@ -176,9 +176,6 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
     const [eventPayload, setEventPayload] = useState<ChartEventPayload<
       RangeElementType
     > | null>(null);
-    const updateTooltipState = (
-      payload: BarChartEventPayload<RangeElementType>
-    ) => setEventPayload(payload);
     return (
       <Container>
         {showTooltipOnHover && (
@@ -192,8 +189,7 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
         )}
         <ChartComponent
           {...props}
-          onValueClick={updateTooltipState}
-          onValueMouseOver={updateTooltipState}
+          onValueMouseOver={payload => setEventPayload(payload)}
           onValueMouseOut={() => {
             setEventPayload({
               color: null,
