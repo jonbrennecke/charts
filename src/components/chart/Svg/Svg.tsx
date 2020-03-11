@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 import { IChartDimensions } from '../common';
@@ -24,15 +24,18 @@ const StyledSvg = styled.svg`
   }
 `;
 
-export const Svg = ({ dimensions, children }: ISvgProps) => (
-  <StyledSvg
-    width={dimensions.width}
-    height={dimensions.height}
-    viewBox={viewBoxString(dimensions)}
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlnsXlink="http://www.w3.org/1999/xlink"
-  >
-    {children}
-  </StyledSvg>
+export const Svg = forwardRef(
+  ({ dimensions, children }: ISvgProps, ref: React.Ref<SVGSVGElement>) => (
+    <StyledSvg
+      width={dimensions.width}
+      height={dimensions.height}
+      viewBox={viewBoxString(dimensions)}
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      ref={ref}
+    >
+      {children}
+    </StyledSvg>
+  )
 );

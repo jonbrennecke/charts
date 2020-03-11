@@ -7,7 +7,8 @@ import { List, Map } from 'immutable';
 import fromPairs from 'lodash/fromPairs';
 import React from 'react';
 import uuid from 'uuid';
-import { withHoverBehavior } from '../HoverBehavior';
+import { wrapWithHoverBehavior } from '../HoverBehavior';
+import { wrapWithChartHeader } from '../ChartHeader';
 import { BarChart } from './BarChart';
 
 const dimensions = {
@@ -57,7 +58,7 @@ const data = range(numberOfStacks).reduce(
   }>
 );
 
-const BarChartComponent = withHoverBehavior(BarChart);
+const BarChartComponent = wrapWithChartHeader(wrapWithHoverBehavior(BarChart));
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)

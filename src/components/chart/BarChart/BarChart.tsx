@@ -192,16 +192,17 @@ export const BarChart = <
               const makeOnMouseOverOrClickFunction = (
                 callback: typeof onValueClick | typeof onValueMouseOver
               ) => (e: React.MouseEvent<SVGRectElement, MouseEvent>) => {
-                if (e.target instanceof Element) {
+                if (e.target instanceof SVGGraphicsElement) {
                   const domRect = e.target.getBoundingClientRect();
+                  const svgRect = e.target.getBBox();
                   value &&
                     callback({
                       color,
                       category,
                       value,
                       point: {
-                        x: domRect.left + domRect.width * 0.5,
-                        y: domRect.top + domRect.height * 0.5,
+                        x: svgRect.x + domRect.width * 0.5,
+                        y: svgRect.y + domRect.height * 0.5,
                       },
                     });
                 }

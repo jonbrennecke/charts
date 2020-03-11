@@ -1,1 +1,1 @@
-export * from './HoverBehavior';
+export * from './wrapWithHoverBehavior';

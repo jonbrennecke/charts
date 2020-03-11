@@ -5,6 +5,7 @@ import { opacity } from '../../../theme/colorUtils';
 import { Text } from '../../text';
 import { unit } from '../../../constants';
 import { defaultRangeValueFormatter } from '../common';
+import noop from 'lodash/noop';
 
 const positionCss = ({
   point,
@@ -166,11 +167,15 @@ export interface ChartPropsWithHover<RangeElementType>
   showTooltipOnHover?: boolean;
 }
 
-export const withHoverBehavior = <RangeElementType extends { value: number }>(
+export const wrapWithHoverBehavior = <
+  RangeElementType extends { value: number }
+>(
   ChartComponent: typeof BarChart
 ) => {
   return ({
     showTooltipOnHover = false,
+    onValueMouseOver = noop,
+    onValueMouseOut = noop,
     ...props
   }: ChartPropsWithHover<RangeElementType>) => {
     const [eventPayload, setEventPayload] = useState<ChartEventPayload<
@@ -189,7 +194,10 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
         )}
         <ChartComponent
           {...props}
-          onValueMouseOver={payload => setEventPayload(payload)}
+          onValueMouseOver={payload => {
+            setEventPayload(payload);
+            onValueMouseOver(payload);
+          }}
           onValueMouseOut={() => {
             setEventPayload({
               color: null,
@@ -197,6 +205,7 @@ export const withHoverBehavior = <RangeElementType extends { value: number }>(
               value: null,
               point: eventPayload?.point || null,
             });
+            onValueMouseOut();
           }}
         />
       </Container>
