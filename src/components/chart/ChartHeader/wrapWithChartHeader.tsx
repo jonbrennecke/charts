@@ -1,8 +1,9 @@
-import React from 'react';
-import { BarChart, IBarChartProps } from '../BarChart';
+import React, { useState } from 'react';
+import { BarChart, IBarChartProps, BarChartEventPayload } from '../BarChart';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { ChartHeader } from './ChartHeader';
+import { defaultRangeValueFormatter } from '../common';
 
 const Container = styled.div``;
 
@@ -20,28 +21,34 @@ export const wrapWithChartHeader = <
 >(
   ChartComponent: React.ComponentType<ChartProps>
 ) => {
-  // return ({
-  //   showHeader = false,
-  //   ...props
-  // }: ChartProps & {
-  //   showHeader?: boolean;
-  // }) => {
   return (props: ChartProps) => {
+    const [eventPayload, setEventPayload] = useState<BarChartEventPayload<
+      RangeElementType
+    > | null>(null);
+    const rangeLabelFormatter =
+      props.rangeLabelFormatter || defaultRangeValueFormatter;
     return (
       <Container>
-        <ChartHeader title="Title" />
+        <ChartHeader
+          title="Title"
+          value={
+            eventPayload
+              ? {
+                  category: eventPayload.category,
+                  color: eventPayload.color,
+                  value: eventPayload.value,
+                }
+              : undefined
+          }
+          valueFormatter={value => rangeLabelFormatter(value.value)}
+        />
         <ChartComponent
           {...props}
           onValueMouseOver={payload => {
-            console.log('mouse over', payload);
+            setEventPayload(payload);
           }}
           onValueMouseOut={() => {
-            // setEventPayload({
-            //   color: null,
-            //   category: null,
-            //   value: null,
-            //   point: eventPayload?.point || null,
-            // });
+            setEventPayload(null);
           }}
         />
       </Container>

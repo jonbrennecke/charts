@@ -11,14 +11,26 @@ const DescriptionText = styled(Text)`
   color: ${mediumGray};
 `;
 
-export interface ChartHeaderProps {
+export interface ChartHeaderProps<T> {
   title?: string;
+  value?: {
+    category: string;
+    color: string;
+    value: T;
+  };
+  valueFormatter?(value: T): string;
 }
 
-export const ChartHeader = ({ title }: ChartHeaderProps) => (
+export const ChartHeader = <T extends any>({
+  title,
+  value,
+  valueFormatter,
+}: ChartHeaderProps<T>) => (
   <Container>
     <Heading>{title}</Heading>
-    <DescriptionText>Current value (or summary)</DescriptionText>
+    <DescriptionText>
+      {value && valueFormatter ? valueFormatter(value.value) : '\u00A0'}
+    </DescriptionText>
     {/* Legend */}
   </Container>
 );
