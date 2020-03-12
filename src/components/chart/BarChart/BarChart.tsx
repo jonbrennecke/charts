@@ -20,7 +20,7 @@ import {
   defaultRangeValueFormatter,
   defaultDomainFormatter,
 } from '../common';
-import { GridLines } from '../GridLines/GridLines';
+import { GridLines, GridLineStyle } from '../GridLines/GridLines';
 import { Svg } from '../Svg';
 import styled from 'styled-components';
 import { darker, brighter } from '../../../theme/colorUtils';
@@ -103,6 +103,7 @@ export interface IBarChartProps<
   charLimitBeforeEllipsis?: number;
   showVerticalGridLines?: boolean;
   showHorizontalGridLines?: boolean;
+  gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
   onValueClick?(payload: BarChartEventPayload<RangeElementType>): void;
   onValueMouseOver?(payload: BarChartEventPayload<RangeElementType>): void;
   onValueMouseOut?(): void;
@@ -134,6 +135,7 @@ export const BarChart = <
   charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
   showVerticalGridLines = true,
   showHorizontalGridLines = true,
+  gridlineStyle,
   onValueClick = noop,
   onValueMouseOut = noop,
   onValueMouseOver = noop,
@@ -169,6 +171,7 @@ export const BarChart = <
         colorTheme={colorTheme}
         showVerticalGridLines={showVerticalGridLines}
         showHorizontalGridLines={showHorizontalGridLines}
+        gridlineStyle={gridlineStyle}
       />
       <g data-test="stacks">
         <clipPath id="clipPath">

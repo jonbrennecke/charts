@@ -1,4 +1,4 @@
-import { boolean, withKnobs } from '@storybook/addon-knobs';
+import { boolean, withKnobs, select } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import { range } from 'd3-array';
 import { randomUniform } from 'd3-random';
@@ -11,6 +11,7 @@ import { wrapWithHoverBehavior } from '../HoverBehavior';
 import { wrapWithChartHeader } from '../ChartHeader';
 import { BarChart } from './BarChart';
 import randomWords from 'random-words';
+import { GridLineStyle, GridLines } from '../GridLines/GridLines';
 
 const capitalizeFirstLetter = (str: string) =>
   str.length > 0
@@ -78,5 +79,14 @@ storiesOf('Charts', module)
       showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
       showVerticalGridLines={boolean('Show vertical grid lines', true)}
       showTooltipOnHover={boolean('Show tooltip on hover', true)}
+      gridlineStyle={select(
+        'grid line style',
+        {
+          Solid: GridLineStyle.solid,
+          Dashed: GridLineStyle.dashed,
+          Dotted: GridLineStyle.dotted,
+        },
+        GridLineStyle.solid
+      )}
     />
   ));
