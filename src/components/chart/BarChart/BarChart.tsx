@@ -101,7 +101,8 @@ export interface IBarChartProps<
   xAxisHeight?: number;
   yAxisWidth?: number;
   charLimitBeforeEllipsis?: number;
-  showGridLines?: boolean;
+  showVerticalGridLines?: boolean;
+  showHorizontalGridLines?: boolean;
   onValueClick?(payload: BarChartEventPayload<RangeElementType>): void;
   onValueMouseOver?(payload: BarChartEventPayload<RangeElementType>): void;
   onValueMouseOut?(): void;
@@ -131,7 +132,8 @@ export const BarChart = <
   tickLength = defaultChartTickLength,
   colorTheme = colorThemes.light,
   charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
-  showGridLines = true,
+  showVerticalGridLines = true,
+  showHorizontalGridLines = true,
   onValueClick = noop,
   onValueMouseOut = noop,
   onValueMouseOver = noop,
@@ -160,14 +162,14 @@ export const BarChart = <
   const bandWidth = xScale.bandwidth();
   return (
     <Svg dimensions={dimensions}>
-      {showGridLines && (
-        <GridLines
-          xScale={xScale}
-          yScale={yScale}
-          numberOfYTicks={numberOfYTicks}
-          colorTheme={colorTheme}
-        />
-      )}
+      <GridLines
+        xScale={xScale}
+        yScale={yScale}
+        numberOfYTicks={numberOfYTicks}
+        colorTheme={colorTheme}
+        showVerticalGridLines={showVerticalGridLines}
+        showHorizontalGridLines={showHorizontalGridLines}
+      />
       <g data-test="stacks">
         <clipPath id="clipPath">
           <rect

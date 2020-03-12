@@ -12,8 +12,10 @@ import { wrapWithChartHeader } from '../ChartHeader';
 import { BarChart } from './BarChart';
 import randomWords from 'random-words';
 
-const capitalizeFirstLetter = (str: string) => 
-  str.length > 0 ? `${str.replace(/^./, str.charAt(0).toLocaleUpperCase())}` : str;
+const capitalizeFirstLetter = (str: string) =>
+  str.length > 0
+    ? `${str.replace(/^./, str.charAt(0).toLocaleUpperCase())}`
+    : str;
 
 const dimensions = {
   height: 240,
@@ -73,7 +75,8 @@ storiesOf('Charts', module)
       dimensions={dimensions}
       padding={padding}
       colorAccessor={key => colors[key]}
-      showGridLines={boolean('Show grid lines', true)}
+      showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
+      showVerticalGridLines={boolean('Show vertical grid lines', true)}
       showTooltipOnHover={boolean('Show tooltip on hover', true)}
     />
   ));
