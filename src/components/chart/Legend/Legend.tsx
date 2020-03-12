@@ -8,7 +8,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0 ${unit}px;
+  cursor: pointer;
+
+  /* :not(:first) */
+  padding: ${unit * 0.5}px ${unit}px;
 `;
 
 const Name = styled(Text)``;
@@ -27,3 +30,9 @@ export const LegendItem = ({
     <Name>{children}</Name>
   </Container>
 );
+
+export const Legend = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;

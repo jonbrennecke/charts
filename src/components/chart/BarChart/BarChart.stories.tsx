@@ -10,6 +10,10 @@ import uuid from 'uuid';
 import { wrapWithHoverBehavior } from '../HoverBehavior';
 import { wrapWithChartHeader } from '../ChartHeader';
 import { BarChart } from './BarChart';
+import randomWords from 'random-words';
+
+const capitalizeFirstLetter = (str: string) => 
+  str.length > 0 ? `${str.replace(/^./, str.charAt(0).toLocaleUpperCase())}` : str;
 
 const dimensions = {
   height: 240,
@@ -29,7 +33,7 @@ const numberOfStacks = 20;
 const random = randomUniform(yDomain[0], yDomain[1]);
 
 const colors = fromPairs(
-  schemeSet3.map((color, i) => [String.fromCharCode(65 + i), color])
+  schemeSet3.map((color, i) => [capitalizeFirstLetter(randomWords()), color])
 );
 
 const categories = Object.keys(colors);

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Text, Heading } from '../../text';
 import { unit, mediumGray } from '../../../constants';
-import { LegendItem } from '../Legend';
+import { LegendItem, Legend } from '../Legend';
 import { Map } from 'immutable';
 
 const Container = styled.div`
@@ -11,11 +11,6 @@ const Container = styled.div`
 
 const DescriptionText = styled(Text)`
   color: ${mediumGray};
-`;
-
-const Legend = styled.div`
-  display: flex;
-  flex-direction: row;
 `;
 
 export interface ChartHeaderProps<T> {
@@ -42,7 +37,9 @@ export const ChartHeader = <T extends any>({
     </DescriptionText>
     <Legend>
       {categories
-        .map((color, category) => (
+        .entrySeq()
+        .sortBy(([category]) => category)
+        .map(([category, color]) => (
           <LegendItem key={category} color={color}>
             {category}
           </LegendItem>

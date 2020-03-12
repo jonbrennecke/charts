@@ -122,7 +122,7 @@ export const HoverTooltip = <RangeElementType extends { value: number }>({
     <TextContainer>
       <Color color={color} />
       <ToolTipCategoryText weight="bold" colorTheme={colorTheme}>
-        {`${category}:`}&nbsp;
+        {category ? `${category}:` : '\u00A0'}
       </ToolTipCategoryText>
       <TooltipValueText colorTheme={colorTheme}>
         {value && valueFormatter(value.value)}

@@ -1,3 +1,5 @@
+import isNil from 'lodash/isNil';
+
 export const ellipsis = (text: string, charLimitBeforeEllipsis: number) =>
   text.length > charLimitBeforeEllipsis
     ? `${text.substr(0, charLimitBeforeEllipsis).trim()}…`
@@ -6,8 +8,8 @@ export const ellipsis = (text: string, charLimitBeforeEllipsis: number) =>
 export const defaultDomainFormatter = <T extends { label: string }>(data: T) =>
   data.label;
 
-export const defaultRangeValueFormatter = (n: number | string) =>
-  parseFloat(n.toString())
+export const defaultRangeValueFormatter = (n: number | string | null) =>
+  isNil(n) ? '' : parseFloat(n.toString())
     .toFixed(2)
     .toString();
 
