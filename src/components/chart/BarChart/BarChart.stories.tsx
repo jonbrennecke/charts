@@ -12,11 +12,7 @@ import { wrapWithChartHeader } from '../ChartHeader';
 import { BarChart } from './BarChart';
 import randomWords from 'random-words';
 import { GridLineStyle, GridLines } from '../GridLines/GridLines';
-
-const capitalizeFirstLetter = (str: string) =>
-  str.length > 0
-    ? `${str.replace(/^./, str.charAt(0).toLocaleUpperCase())}`
-    : str;
+import { capitalizeFirstLetter } from '../common';
 
 const dimensions = {
   height: 240,

@@ -9,9 +9,16 @@ export const defaultDomainFormatter = <T extends { label: string }>(data: T) =>
   data.label;
 
 export const defaultRangeValueFormatter = (n: number | string | null) =>
-  isNil(n) ? '' : parseFloat(n.toString())
-    .toFixed(2)
-    .toString();
+  isNil(n)
+    ? ''
+    : parseFloat(n.toString())
+        .toFixed(2)
+        .toString();
 
 export const defaultRangeFormatter = <T extends { value: number }>(data: T) =>
   defaultRangeValueFormatter(data.value);
+
+export const capitalizeFirstLetter = (str: string) =>
+  str.length > 0
+    ? `${str.replace(/^./, str.charAt(0).toLocaleUpperCase())}`
+    : str;
