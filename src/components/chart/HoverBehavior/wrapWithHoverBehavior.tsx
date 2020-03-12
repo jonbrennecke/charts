@@ -6,6 +6,7 @@ import { Text } from '../../text';
 import { unit } from '../../../constants';
 import { defaultRangeValueFormatter } from '../common';
 import noop from 'lodash/noop';
+import { Color } from '../Color';
 
 const positionCss = ({
   point,
@@ -14,24 +15,11 @@ const positionCss = ({
   point: { x: number; y: number } | null;
   value: any | null;
 }) => {
-  const transformCss = point
-    ? css`
-        transform: translate(${point.x}px, ${point.y}px);
-      `
-    : css`
-        transform: translate(0, 0);
-      `;
-  const opacityCss =
-    point && value
-      ? css`
-          opacity: 1;
-        `
-      : css`
-          opacity: 0;
-        `;
+  const transform = point || { x: 0, y: 0 };
+  const opacity = point && value ? 1 : 0;
   return css`
-    ${transformCss}
-    ${opacityCss}
+    transform: translate(${transform.x}px, ${transform.y}px);
+    opacity: ${opacity};
   `;
 };
 
@@ -104,14 +92,6 @@ const ToolTipCategoryText = styled(Text)<{
   text-overflow: ellipsis;
   color: ${props =>
     props.colorTheme === TooltipColorTheme.light ? '#fff' : '#000'};
-`;
-
-const Color = styled.div<{ color: string }>`
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  border: 2px solid ${props => props.color};
-  margin-right: ${unit * 0.5}px;
 `;
 
 export interface HoverTooltipProps<RangeElementType extends { value: number }> {

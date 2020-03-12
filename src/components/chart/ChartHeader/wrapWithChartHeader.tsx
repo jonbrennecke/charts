@@ -3,7 +3,10 @@ import { BarChart, IBarChartProps, BarChartEventPayload } from '../BarChart';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { ChartHeader } from './ChartHeader';
-import { defaultRangeValueFormatter } from '../common';
+import {
+  defaultRangeValueFormatter,
+  defaultChartColorAccessor,
+} from '../common';
 
 const Container = styled.div``;
 
@@ -27,10 +30,19 @@ export const wrapWithChartHeader = <
     > | null>(null);
     const rangeLabelFormatter =
       props.rangeLabelFormatter || defaultRangeValueFormatter;
+    const colorAccessor = props.colorAccessor
+      ? props.colorAccessor
+      : defaultChartColorAccessor;
     return (
       <Container>
         <ChartHeader
           title="Title"
+          categories={Map(
+            props.categories.map(category => [
+              category,
+              colorAccessor(category),
+            ])
+          )}
           value={
             eventPayload
               ? {
