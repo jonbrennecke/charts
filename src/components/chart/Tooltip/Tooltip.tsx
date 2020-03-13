@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled, { css } from 'styled-components';
-import { BarChart, IBarChartProps, BarChartEventPayload } from '../BarChart';
 import { opacity } from '../../../theme/colorUtils';
 import { Text } from '../../text';
-import { unit } from '../../../constants';
 import { defaultRangeValueFormatter } from '../common';
-import noop from 'lodash/noop';
+import { unit } from '../../../constants';
 import { Color } from '../Color';
 
 const positionCss = ({
@@ -28,7 +26,7 @@ export enum TooltipColorTheme {
   dark = 'dark',
 }
 
-const HoverTooltipContainer = styled.div<{
+const TooltipContainer = styled.div<{
   point: { x: number; y: number } | null;
   value: any | null;
   colorTheme: TooltipColorTheme | keyof typeof TooltipColorTheme;
@@ -94,7 +92,7 @@ const ToolTipCategoryText = styled(Text)<{
     props.colorTheme === TooltipColorTheme.light ? '#fff' : '#000'};
 `;
 
-export interface HoverTooltipProps<RangeElementType extends { value: number }> {
+export interface TooltipProps<RangeElementType extends { value: number }> {
   point: { x: number; y: number } | null;
   value: RangeElementType | null;
   category: string | null;
@@ -103,15 +101,15 @@ export interface HoverTooltipProps<RangeElementType extends { value: number }> {
   valueFormatter?(value: number): string;
 }
 
-export const HoverTooltip = <RangeElementType extends { value: number }>({
+export const Tooltip = <RangeElementType extends { value: number }>({
   point,
   value,
   category,
   color = 'gray',
   colorTheme = TooltipColorTheme.light,
   valueFormatter = defaultRangeValueFormatter,
-}: HoverTooltipProps<RangeElementType>) => (
-  <HoverTooltipContainer point={point} value={value} colorTheme={colorTheme}>
+}: TooltipProps<RangeElementType>) => (
+  <TooltipContainer point={point} value={value} colorTheme={colorTheme}>
     <svg width="93px" height="30px" viewBox="0 0 93 30">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g transform="translate(-248.000000, -147.000000)">
@@ -122,73 +120,11 @@ export const HoverTooltip = <RangeElementType extends { value: number }>({
     <TextContainer>
       <Color color={color} />
       <ToolTipCategoryText weight="bold" colorTheme={colorTheme}>
-        {category ? `${category}:` : '\u00A0'}
+        {category ? `${category}:\u00A0` : '\u00A0'}
       </ToolTipCategoryText>
       <TooltipValueText colorTheme={colorTheme}>
         {value && valueFormatter(value.value)}
       </TooltipValueText>
     </TextContainer>
-  </HoverTooltipContainer>
+  </TooltipContainer>
 );
-
-const Container = styled.div`
-  position: relative;
-`;
-
-export interface ChartEventPayload<RangeElementType> {
-  category: BarChartEventPayload<RangeElementType>['category'] | null;
-  color: BarChartEventPayload<RangeElementType>['color'] | null;
-  value: BarChartEventPayload<RangeElementType>['value'] | null;
-  point: BarChartEventPayload<RangeElementType>['point'] | null;
-}
-
-export interface ChartPropsWithHover<RangeElementType>
-  extends IBarChartProps<RangeElementType> {
-  showTooltipOnHover?: boolean;
-}
-
-export const wrapWithHoverBehavior = <
-  RangeElementType extends { value: number }
->(
-  ChartComponent: typeof BarChart
-) => {
-  return ({
-    showTooltipOnHover = false,
-    onValueMouseOver = noop,
-    onValueMouseOut = noop,
-    ...props
-  }: ChartPropsWithHover<RangeElementType>) => {
-    const [eventPayload, setEventPayload] = useState<ChartEventPayload<
-      RangeElementType
-    > | null>(null);
-    return (
-      <Container>
-        {showTooltipOnHover && (
-          <HoverTooltip
-            category={eventPayload?.category || null}
-            point={eventPayload?.point || null}
-            value={eventPayload?.value || null}
-            color={eventPayload?.color || undefined}
-            valueFormatter={props.rangeLabelFormatter}
-          />
-        )}
-        <ChartComponent
-          {...props}
-          onValueMouseOver={payload => {
-            setEventPayload(payload);
-            onValueMouseOver(payload);
-          }}
-          onValueMouseOut={() => {
-            setEventPayload({
-              color: null,
-              category: null,
-              value: null,
-              point: eventPayload?.point || null,
-            });
-            onValueMouseOut();
-          }}
-        />
-      </Container>
-    );
-  };
-};

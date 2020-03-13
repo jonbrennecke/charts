@@ -7,12 +7,12 @@ import { List, Map } from 'immutable';
 import fromPairs from 'lodash/fromPairs';
 import React from 'react';
 import uuid from 'uuid';
-import { wrapWithHoverBehavior } from '../HoverBehavior';
 import { wrapWithChartHeader } from '../ChartHeader';
 import { BarChart } from './BarChart';
 import randomWords from 'random-words';
-import { GridLineStyle, GridLines } from '../GridLines/GridLines';
+import { GridLineStyle } from '../GridLines/GridLines';
 import { capitalizeFirstLetter } from '../common';
+import { wrapWithTooltip } from '../Tooltip';
 
 const dimensions = {
   height: 240,
@@ -61,7 +61,7 @@ const data = range(numberOfStacks).reduce(
   }>
 );
 
-const BarChartComponent = wrapWithChartHeader(wrapWithHoverBehavior(BarChart));
+const BarChartComponent = wrapWithChartHeader(wrapWithTooltip(BarChart));
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
