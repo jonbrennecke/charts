@@ -1,12 +1,7 @@
 import React from 'react';
-import { ChartDimensions } from './ChartDimensions';
-import { IChartDimensions } from '../common';
+import { ChartDimensions, Dimensional } from './ChartDimensions';
 
-export interface DimensionalChartProps {
-  dimensions: IChartDimensions;
-}
-
-export const resizableChart = <P extends DimensionalChartProps>(
+export const resizableChart = <P extends Dimensional>(
   ChartComponent: React.ComponentType<P>
 ) => (props: Omit<P, 'dimensions'>) => (
   <ChartDimensions>

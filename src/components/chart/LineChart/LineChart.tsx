@@ -3,9 +3,7 @@ import { line } from 'd3-shape';
 import property from 'lodash/property';
 
 import { ColorTheme, colorThemes } from '../../../theme';
-import { Svg } from '../Svg';
 import {
-  IChartDimensions,
   IChartPadding,
   zeroPadding,
   defaultChartTickLength,
@@ -16,12 +14,13 @@ import {
   calculateDefaultYDomainForLineChart,
   calculateDefaultXDomainForLineChart,
 } from '../common';
-import { GridLines, GridLineStyle } from '../GridLines/GridLines';
+import { GridLineStyle } from '../GridLines/GridLines';
+import { Dimensional } from '../ChartDimensions';
+import { Chart } from '../Chart/Chart';
 
-export interface ILineChartProps<T = any> {
+export interface ILineChartProps<T = any> extends Dimensional {
   data: ILineChartData<T>;
   padding?: IChartPadding;
-  dimensions: IChartDimensions;
   yDomain?: [number, number];
   xDomain?: [number, number];
   xValueAccessor?(data: T): number;
@@ -72,17 +71,17 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   const [y1, y0] = yScale.range();
   return (
     <div data-test="line-chart">
-      <Svg dimensions={dimensions}>
-        <GridLines
-          xScale={xScale}
-          yScale={yScale}
-          numberOfYTicks={numberOfYTicks}
-          numberOfXTicks={numberOfXTicks}
-          colorTheme={colorTheme}
-          showVerticalGridLines={showVerticalGridLines}
-          showHorizontalGridLines={showHorizontalGridLines}
-          gridlineStyle={gridlineStyle}
-        />
+      <Chart
+        dimensions={dimensions}
+        xScale={xScale}
+        yScale={yScale}
+        numberOfYTicks={numberOfYTicks}
+        numberOfXTicks={numberOfXTicks}
+        stroke={colorTheme.components.chart.axis.gridline.stroke}
+        showVerticalGridLines={showVerticalGridLines}
+        showHorizontalGridLines={showHorizontalGridLines}
+        gridlineStyle={gridlineStyle}
+      >
         <g data-test="paths">
           <clipPath id="clipPath">
             <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
@@ -165,7 +164,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
             </g>
           ))}
         </g>
-      </Svg>
+      </Chart>
     </div>
   );
 };

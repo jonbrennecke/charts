@@ -5,8 +5,12 @@ import styled from 'styled-components';
 
 export type ReactChild = React.ReactElement | React.ReactNode;
 
-export interface IChartDimensionsProps {
-  children?: (childProps: { dimensions: IChartDimensions }) => ReactChild;
+export interface Dimensional {
+  dimensions: IChartDimensions;
+}
+
+export interface ChartDimensionsProps {
+  children?: (childProps: Dimensional) => ReactChild;
 }
 
 const StyledDiv = styled.div`
@@ -14,7 +18,7 @@ const StyledDiv = styled.div`
   width: 100%;
 `;
 
-export const ChartDimensions = ({ children }: IChartDimensionsProps) => {
+export const ChartDimensions = ({ children }: ChartDimensionsProps) => {
   const [state, setState] = useState({ dimensions: zeroDimensions });
   return (
     <Measure

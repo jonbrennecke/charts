@@ -5,7 +5,7 @@ import { IChartDimensions } from '../common';
 
 type ReactChild = React.ReactElement | React.ReactNode;
 
-export interface ISvgProps {
+export interface SvgProps {
   dimensions: IChartDimensions;
   children: ReactChild | ReactChild[];
 }
@@ -25,7 +25,7 @@ const StyledSvg = styled.svg`
 `;
 
 export const Svg = forwardRef(
-  ({ dimensions, children }: ISvgProps, ref: React.Ref<SVGSVGElement>) => (
+  ({ dimensions, children }: SvgProps, ref: React.Ref<SVGSVGElement>) => (
     <StyledSvg
       width={dimensions.width}
       height={dimensions.height}

@@ -20,11 +20,12 @@ import {
   defaultRangeValueFormatter,
   defaultDomainFormatter,
 } from '../common';
-import { GridLines, GridLineStyle } from '../GridLines/GridLines';
+import { GridLines, GridLineStyle } from '../GridLines';
 import { Svg } from '../Svg';
 import styled from 'styled-components';
 import { darker, brighter } from '../../../theme/colorUtils';
 import noop from 'lodash/noop';
+import { Dimensional } from '../ChartDimensions';
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]
@@ -78,11 +79,11 @@ export interface BarChartEventPayload<RangeElementType> {
   point: { x: number; y: number };
 }
 
-export interface IBarChartProps<RangeElementType, DomainElementType> {
+export interface IBarChartProps<RangeElementType, DomainElementType>
+  extends Dimensional {
   data: IBarChartData<DomainElementType>;
   categories: string[];
   padding?: IChartPadding;
-  dimensions: IChartDimensions;
   dataAccessor?(data: DomainElementType): Map<string, RangeElementType>;
   valueAccessor?(data: RangeElementType): number;
   colorAccessor?(key: string): string;
