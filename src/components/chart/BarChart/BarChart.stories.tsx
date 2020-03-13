@@ -13,11 +13,7 @@ import randomWords from 'random-words';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { capitalizeFirstLetter } from '../common';
 import { wrapWithTooltip } from '../Tooltip';
-
-const dimensions = {
-  height: 240,
-  width: 640,
-};
+import { resizableChart } from '../ChartDimensions';
 
 export const padding = {
   top: 15,
@@ -61,7 +57,9 @@ const data = range(numberOfStacks).reduce(
   }>
 );
 
-const BarChartComponent = wrapWithChartHeader(wrapWithTooltip(BarChart));
+const BarChartComponent = wrapWithChartHeader(
+  resizableChart(wrapWithTooltip(BarChart))
+);
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
@@ -69,7 +67,6 @@ storiesOf('Charts', module)
     <BarChartComponent
       data={data}
       categories={categories}
-      dimensions={dimensions}
       padding={padding}
       colorAccessor={key => colors[key]}
       showHorizontalGridLines={boolean('Show horizontal grid lines', true)}

@@ -78,10 +78,7 @@ export interface BarChartEventPayload<RangeElementType> {
   point: { x: number; y: number };
 }
 
-export interface IBarChartProps<
-  RangeElementType = any,
-  DomainElementType = any
-> {
+export interface IBarChartProps<RangeElementType, DomainElementType> {
   data: IBarChartData<DomainElementType>;
   categories: string[];
   padding?: IChartPadding;
@@ -109,12 +106,18 @@ export interface IBarChartProps<
   onValueMouseOut?(): void;
 }
 
+export interface BaseRangeElementType {
+  value: number;
+}
+
+export interface BaseDomainElementType<R> {
+  data: Map<string, R>;
+  label: string;
+}
+
 export const BarChart = <
-  RangeElementType extends { value: number },
-  DomainElementType extends {
-    data: Map<string, RangeElementType>;
-    label: string;
-  }
+  RangeElementType extends BaseRangeElementType,
+  DomainElementType extends BaseDomainElementType<RangeElementType>
 >({
   data: originalData,
   categories,

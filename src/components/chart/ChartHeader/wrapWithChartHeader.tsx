@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { BarChart, IBarChartProps, BarChartEventPayload } from '../BarChart';
+import {
+  IBarChartProps,
+  BarChartEventPayload,
+  BaseRangeElementType,
+  BaseDomainElementType,
+} from '../BarChart';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { ChartHeader } from './ChartHeader';
@@ -8,25 +13,29 @@ import {
   defaultChartColorAccessor,
 } from '../common';
 
-const Container = styled.div``;
+const Container = styled.div`
+  position: relative;
+  height: 100%;
+`;
 
-export type ChartPropsWithHeader<ChartProps> = ChartProps & {
+export interface WrapWithChartHeaderProps<R, D>
+  extends Pick<
+    IBarChartProps<R, D>,
+    'colorAccessor' | 'rangeLabelFormatter' | 'categories'
+  > {
   showHeader?: boolean;
-};
+}
 
 export const wrapWithChartHeader = <
-  RangeElementType extends { value: number },
-  DomainElementType extends {
-    data: Map<string, RangeElementType>;
-    label: string;
-  },
-  ChartProps extends IBarChartProps<RangeElementType, DomainElementType>
+  R extends BaseRangeElementType,
+  D extends BaseDomainElementType<R>,
+  P extends WrapWithChartHeaderProps<R, D>
 >(
-  ChartComponent: React.ComponentType<ChartProps>
+  ChartComponent: React.ComponentType<P>
 ) => {
-  return (props: ChartProps) => {
+  return (props: P) => {
     const [eventPayload, setEventPayload] = useState<BarChartEventPayload<
-      RangeElementType
+      R
     > | null>(null);
     const rangeLabelFormatter =
       props.rangeLabelFormatter || defaultRangeValueFormatter;

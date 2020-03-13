@@ -62,7 +62,6 @@ storiesOf('Charts', module)
           dimensions={dimensions}
           padding={padding}
           colorAccessor={key => colors[key]}
-          showGridLines
         />
       )}
     </ChartDimensions>
