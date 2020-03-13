@@ -16,7 +16,7 @@ import {
   calculateDefaultYDomainForLineChart,
   calculateDefaultXDomainForLineChart,
 } from '../common';
-import { GridLines } from '../GridLines/GridLines';
+import { GridLines, GridLineStyle } from '../GridLines/GridLines';
 
 export interface ILineChartProps<T = any> {
   data: ILineChartData<T>;
@@ -33,7 +33,9 @@ export interface ILineChartProps<T = any> {
   xAxisHeight?: number;
   yAxisWidth?: number;
   colorTheme?: ColorTheme;
-  showGridLines?: boolean;
+  gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
+  showVerticalGridLines?: boolean;
+  showHorizontalGridLines?: boolean;
 }
 
 export const LineChart = <T extends any = { x: number; y: number }>({
@@ -51,7 +53,9 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
   colorTheme = colorThemes.light,
-  showGridLines = true,
+  gridlineStyle,
+  showVerticalGridLines = true,
+  showHorizontalGridLines = true,
 }: ILineChartProps<T>) => {
   const { xScale, yScale } = makeLineChartScales(
     xDomain,
@@ -69,15 +73,16 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   return (
     <div data-test="line-chart">
       <Svg dimensions={dimensions}>
-        {showGridLines && (
-          <GridLines
-            xScale={xScale}
-            yScale={yScale}
-            numberOfYTicks={numberOfYTicks}
-            colorTheme={colorTheme}
-          />
-        )}
-
+        <GridLines
+          xScale={xScale}
+          yScale={yScale}
+          numberOfYTicks={numberOfYTicks}
+          numberOfXTicks={numberOfXTicks}
+          colorTheme={colorTheme}
+          showVerticalGridLines={showVerticalGridLines}
+          showHorizontalGridLines={showHorizontalGridLines}
+          gridlineStyle={gridlineStyle}
+        />
         <g data-test="paths">
           <clipPath id="clipPath">
             <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />

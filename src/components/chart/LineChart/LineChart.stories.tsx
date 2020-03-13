@@ -7,7 +7,8 @@ import { LineChart } from './LineChart';
 import { Map } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
-import { withKnobs, boolean } from '@storybook/addon-knobs';
+import { withKnobs, boolean, select } from '@storybook/addon-knobs';
+import { GridLineStyle } from '../GridLines/GridLines';
 
 const dimensions = {
   height: 240,
@@ -50,6 +51,16 @@ storiesOf('Charts', module)
       colorAccessor={key => colors[key]}
       yDomain={[-100, 200]}
       numberOfYTicks={5}
-      showGridLines={boolean('Show grid lines', true)}
+      showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
+      showVerticalGridLines={boolean('Show vertical grid lines', true)}
+      gridlineStyle={select(
+        'grid line style',
+        {
+          Solid: GridLineStyle.solid,
+          Dashed: GridLineStyle.dashed,
+          Dotted: GridLineStyle.dotted,
+        },
+        GridLineStyle.solid
+      )}
     />
   ));
