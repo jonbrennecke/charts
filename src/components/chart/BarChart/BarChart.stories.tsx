@@ -14,6 +14,7 @@ import { GridLineStyle } from '../GridLines/GridLines';
 import { capitalizeFirstLetter } from '../common';
 import { wrapWithTooltip } from '../Tooltip';
 import { resizableChart } from '../ChartDimensions';
+import { wrapWithLegend } from '../Legend';
 
 export const padding = {
   top: 15,
@@ -57,7 +58,7 @@ const data = range(numberOfStacks).reduce(
   }>
 );
 
-const BarChartComponent = wrapWithChartHeader(
+const BarChartComponent = wrapWithLegend(
   resizableChart(wrapWithTooltip(BarChart))
 );
 
