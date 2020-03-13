@@ -83,8 +83,6 @@ export interface IBarChartProps<RangeElementType, DomainElementType> {
   categories: string[];
   padding?: IChartPadding;
   dimensions: IChartDimensions;
-  yDomain?: [number, number];
-  xDomain?: [number, number];
   dataAccessor?(data: DomainElementType): Map<string, RangeElementType>;
   valueAccessor?(data: RangeElementType): number;
   colorAccessor?(key: string): string;
