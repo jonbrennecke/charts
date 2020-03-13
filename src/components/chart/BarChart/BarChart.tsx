@@ -20,12 +20,12 @@ import {
   defaultRangeValueFormatter,
   defaultDomainFormatter,
 } from '../common';
-import { GridLines, GridLineStyle } from '../GridLines';
-import { Svg } from '../Svg';
+import { GridLineStyle } from '../GridLines';
 import styled from 'styled-components';
 import { darker, brighter } from '../../../theme/colorUtils';
 import noop from 'lodash/noop';
 import { Dimensional } from '../ChartDimensions';
+import { Chart } from '../Chart/Chart';
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]
@@ -165,16 +165,16 @@ export const BarChart = <
   const [y1, y0] = yScale.range();
   const bandWidth = xScale.bandwidth();
   return (
-    <Svg dimensions={dimensions}>
-      <GridLines
-        xScale={xScale}
-        yScale={yScale}
-        numberOfYTicks={numberOfYTicks}
-        colorTheme={colorTheme}
-        showVerticalGridLines={showVerticalGridLines}
-        showHorizontalGridLines={showHorizontalGridLines}
-        gridlineStyle={gridlineStyle}
-      />
+    <Chart
+      dimensions={dimensions}
+      xScale={xScale}
+      yScale={yScale}
+      numberOfYTicks={numberOfYTicks}
+      stroke={colorTheme.components.chart.axis.gridline.stroke}
+      showVerticalGridLines={showVerticalGridLines}
+      showHorizontalGridLines={showHorizontalGridLines}
+      gridlineStyle={gridlineStyle}
+    >
       <g data-test="stacks">
         <clipPath id="clipPath">
           <rect
@@ -303,6 +303,6 @@ export const BarChart = <
           </g>
         ))}
       </g>
-    </Svg>
+    </Chart>
   );
 };
