@@ -19,6 +19,7 @@ import {
   zeroPadding,
   defaultRangeValueFormatter,
   defaultDomainFormatter,
+  MouseOverEventProps,
 } from '../common';
 import { GridLineStyle } from '../GridLines';
 import styled from 'styled-components';
@@ -80,7 +81,8 @@ export interface BarChartEventPayload<RangeElementType> {
 }
 
 export interface IBarChartProps<RangeElementType, DomainElementType>
-  extends Dimensional {
+  extends Dimensional,
+    MouseOverEventProps<BarChartEventPayload<RangeElementType>> {
   data: IBarChartData<DomainElementType>;
   categories: string[];
   padding?: IChartPadding;
@@ -101,8 +103,6 @@ export interface IBarChartProps<RangeElementType, DomainElementType>
   showHorizontalGridLines?: boolean;
   gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
   onValueClick?(payload: BarChartEventPayload<RangeElementType>): void;
-  onValueMouseOver?(payload: BarChartEventPayload<RangeElementType>): void;
-  onValueMouseOut?(): void;
 }
 
 export interface BaseRangeElementType {

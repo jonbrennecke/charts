@@ -8,15 +8,20 @@ export const ellipsis = (text: string, charLimitBeforeEllipsis: number) =>
 export const defaultDomainFormatter = <T extends { label: string }>(data: T) =>
   data.label;
 
-export const defaultRangeValueFormatter = (n: number | string | null) =>
+export const numericFormatter = (n: number | string | null) =>
   isNil(n)
     ? ''
     : parseFloat(n.toString())
         .toFixed(2)
         .toString();
 
-export const defaultRangeFormatter = <T extends { value: number }>(data: T) =>
-  defaultRangeValueFormatter(data.value);
+export const defaultRangeValueFormatter = numericFormatter;
+
+export const defaultRangeFormatter = <
+  T extends { value: number | string | null }
+>(
+  data: T
+) => defaultRangeValueFormatter(data.value);
 
 export const capitalizeFirstLetter = (str: string) =>
   str.length > 0

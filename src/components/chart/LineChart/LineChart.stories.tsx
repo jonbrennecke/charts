@@ -1,15 +1,17 @@
-import React from 'react';
+import { boolean, select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
-import uuid from 'uuid';
 import { range } from 'd3-array';
 import { randomUniform } from 'd3-random';
-import { LineChart } from './LineChart';
-import { Map } from 'immutable';
 import { schemeSet3 } from 'd3-scale-chromatic';
+import { Map } from 'immutable';
 import fromPairs from 'lodash/fromPairs';
-import { withKnobs, boolean, select } from '@storybook/addon-knobs';
+import randomWords from 'random-words';
+import React from 'react';
+import uuid from 'uuid';
+import { capitalizeFirstLetter, numericFormatter } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
+import { LineChart } from './LineChart';
 
 const dimensions = {
   height: 240,
@@ -28,11 +30,21 @@ const numberOfPoints = 50;
 
 const random = randomUniform(yDomain[0], yDomain[1]);
 
+type Value = {
+  id: string;
+  x: number;
+  y: number;
+};
+
 const makeRandomLineData = () =>
-  range(numberOfPoints).map((y, i) => ({ id: uuid.v4(), y: random(), x: i }));
+  range(numberOfPoints).map(
+    (y, i): Value => ({ id: uuid.v4(), y: random(), x: i })
+  );
 
 const colors = fromPairs(
-  schemeSet3.slice(0, 3).map((color, i) => [String.fromCharCode(i), color])
+  schemeSet3
+    .slice(0, 3)
+    .map((color, i) => [capitalizeFirstLetter(randomWords()), color])
 );
 
 const categories = Object.keys(colors);
@@ -65,5 +77,8 @@ storiesOf('Charts', module)
         },
         GridLineStyle.solid
       )}
+      tooltipValueFormatter={(v: Value) =>
+        `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
+      }
     />
   ));

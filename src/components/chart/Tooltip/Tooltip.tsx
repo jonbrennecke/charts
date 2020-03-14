@@ -92,23 +92,21 @@ const ToolTipCategoryText = styled(Text)<{
     props.colorTheme === TooltipColorTheme.light ? '#fff' : '#000'};
 `;
 
-export interface TooltipProps<RangeElementType extends { value: number }> {
+export interface TooltipProps {
   point: { x: number; y: number } | null;
-  value: RangeElementType | null;
+  value: string | null;
   category: string | null;
   color?: string;
   colorTheme?: TooltipColorTheme | keyof typeof TooltipColorTheme;
-  valueFormatter?(value: number): string;
 }
 
-export const Tooltip = <RangeElementType extends { value: number }>({
+export const Tooltip = ({
   point,
   value,
   category,
   color = 'gray',
   colorTheme = TooltipColorTheme.light,
-  valueFormatter = defaultRangeValueFormatter,
-}: TooltipProps<RangeElementType>) => (
+}: TooltipProps) => (
   <TooltipContainer point={point} value={value} colorTheme={colorTheme}>
     <svg width="93px" height="30px" viewBox="0 0 93 30">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -122,9 +120,7 @@ export const Tooltip = <RangeElementType extends { value: number }>({
       <ToolTipCategoryText weight="bold" colorTheme={colorTheme}>
         {category ? `${category}:\u00A0` : '\u00A0'}
       </ToolTipCategoryText>
-      <TooltipValueText colorTheme={colorTheme}>
-        {value && valueFormatter(value.value)}
-      </TooltipValueText>
+      <TooltipValueText colorTheme={colorTheme}>{value}</TooltipValueText>
     </TextContainer>
   </TooltipContainer>
 );

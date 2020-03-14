@@ -25,3 +25,8 @@ export interface IChartRect {
   origin: IChartPoint;
   size: IChartSize;
 }
+
+export interface MouseOverEventProps<Payload> {
+  onValueMouseOver?(payload: Payload): void;
+  onValueMouseOut?(): void;
+}

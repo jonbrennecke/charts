@@ -7,6 +7,7 @@ import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithLegend } from '../Legend';
 import { wrapWithTooltip } from '../Tooltip';
 import { BarChart } from './BarChart';
+import { numericFormatter } from '../common';
 
 const config = generateRandomBarChartConfigForStory();
 
@@ -36,6 +37,7 @@ storiesOf('Charts', module)
           },
           GridLineStyle.solid
         )}
+        tooltipValueFormatter={(v: any) => numericFormatter(v.value)}
       />
     );
   });

@@ -1,41 +1,39 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import isUndefined from 'lodash/isUndefined';
-import {
-  IBarChartProps,
-  BarChartEventPayload,
-  BaseRangeElementType,
-  BaseDomainElementType,
-} from '../BarChart';
+import { BarChartEventPayload } from '../BarChart';
 import { Tooltip } from './Tooltip';
+import { LineChartEventPayload } from '../LineChart';
+import { MouseOverEventProps } from '../common';
 
 const Container = styled.div`
   position: relative;
 `;
 
-export interface ChartEventPayload<R> {
-  category: BarChartEventPayload<R>['category'] | null;
-  color: BarChartEventPayload<R>['color'] | null;
-  value: BarChartEventPayload<R>['value'] | null;
-  point: BarChartEventPayload<R>['point'] | null;
+export interface ChartEventPayload<T> {
+  category: string | null;
+  color: string | null;
+  value: T | null;
+  point: { x: number; y: number } | null;
 }
 
-export interface WrapWithTooltipProps<R, D>
-  extends Pick<
-    IBarChartProps<R, D>,
-    'rangeLabelFormatter' | 'onValueMouseOver' | 'onValueMouseOut'
-  > {
+export type ChartPayload<T> =
+  | BarChartEventPayload<T>
+  | LineChartEventPayload<T>;
+
+interface AdditionalComponentProps<T> {
   showTooltipOnHover?: boolean;
+  tooltipValueFormatter?(value: T): string;
 }
 
-export const wrapWithTooltip = <
-  R extends BaseRangeElementType,
-  D extends BaseDomainElementType<R>,
-  P extends WrapWithTooltipProps<R, D>
->(
+export interface WrapWithTooltipProps<T>
+  extends MouseOverEventProps<ChartPayload<T>>,
+    AdditionalComponentProps<T> {}
+
+export const wrapWithTooltip = <T, P extends WrapWithTooltipProps<T>>(
   ChartComponent: React.ComponentType<P>
-) => (props: P & { showTooltipOnHover?: boolean }) => {
-  const [eventPayload, setEventPayload] = useState<ChartEventPayload<R> | null>(
+) => (props: P & AdditionalComponentProps<T>) => {
+  const [eventPayload, setEventPayload] = useState<ChartEventPayload<T> | null>(
     null
   );
   const showTooltipOnHover = isUndefined(props.showTooltipOnHover)
@@ -47,9 +45,12 @@ export const wrapWithTooltip = <
         <Tooltip
           category={eventPayload?.category || null}
           point={eventPayload?.point || null}
-          value={eventPayload?.value || null}
+          value={
+            eventPayload?.value && props.tooltipValueFormatter
+              ? props.tooltipValueFormatter(eventPayload.value)
+              : null
+          }
           color={eventPayload?.color || undefined}
-          valueFormatter={props.rangeLabelFormatter}
         />
       )}
       <ChartComponent

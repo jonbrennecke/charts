@@ -13,6 +13,7 @@ import {
   ILineChartData,
   calculateDefaultYDomainForLineChart,
   calculateDefaultXDomainForLineChart,
+  MouseOverEventProps,
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { Dimensional } from '../ChartDimensions';
@@ -32,7 +33,8 @@ export interface BaseLineChartElement {
 }
 
 export interface LineChartProps<LineChartElement extends BaseLineChartElement>
-  extends Dimensional {
+  extends Dimensional,
+    MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
   data: ILineChartData<LineChartElement>;
   padding?: IChartPadding;
   yDomain?: [number, number];
@@ -49,8 +51,6 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
   showVerticalGridLines?: boolean;
   showHorizontalGridLines?: boolean;
-  onValueMouseOver?(payload: LineChartEventPayload<LineChartElement>): void;
-  onValueMouseOut?(): void;
 }
 
 export const LineChart = <LineChartElement extends BaseLineChartElement>({
@@ -115,14 +115,13 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
             ) => (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
               const x = xScale.invert(e.clientX);
               const y = yScale.invert(e.clientY);
-              console.log();
               categoryData &&
                 callback({
                   color,
                   category,
                   value: {
-                    x,
-                    y,
+                    x: x,
+                    y: y,
                   } as LineChartElement,
                   point: {
                     x: e.clientX,

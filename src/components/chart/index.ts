@@ -4,5 +4,5 @@ export * from './AreaChart';
 export * from './PieChart';
 export * from './ChartDimensions';
 export * from './ChartHeader';
-export * from './HoverBehavior';
+export * from './Tooltip';
 export * from './Color';
