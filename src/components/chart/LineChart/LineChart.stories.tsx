@@ -9,6 +9,7 @@ import { schemeSet3 } from 'd3-scale-chromatic';
 import fromPairs from 'lodash/fromPairs';
 import { withKnobs, boolean, select } from '@storybook/addon-knobs';
 import { GridLineStyle } from '../GridLines/GridLines';
+import { wrapWithTooltip } from '../Tooltip';
 
 const dimensions = {
   height: 240,
@@ -31,7 +32,7 @@ const makeRandomLineData = () =>
   range(numberOfPoints).map((y, i) => ({ id: uuid.v4(), y: random(), x: i }));
 
 const colors = fromPairs(
-  schemeSet3.map((color, i) => [String.fromCharCode(i), color])
+  schemeSet3.slice(0, 3).map((color, i) => [String.fromCharCode(i), color])
 );
 
 const categories = Object.keys(colors);
@@ -41,10 +42,12 @@ const data = categories.reduce(
   Map<string, ReturnType<typeof makeRandomLineData>>()
 );
 
+const LineChartComponent = wrapWithTooltip(LineChart);
+
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
   .add('Line chart', () => (
-    <LineChart
+    <LineChartComponent
       data={data}
       dimensions={dimensions}
       padding={padding}

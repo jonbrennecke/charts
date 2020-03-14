@@ -226,7 +226,7 @@ export const BarChart = <
                   fill={color}
                   onClick={makeOnMouseOverOrClickFunction(onValueClick)}
                   onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
-                  onMouseOut={() => onValueMouseOut()}
+                  onMouseOut={onValueMouseOut}
                 />
               );
             })}

@@ -17,14 +17,28 @@ import {
 import { GridLineStyle } from '../GridLines/GridLines';
 import { Dimensional } from '../ChartDimensions';
 import { Chart } from '../Chart/Chart';
+import noop from 'lodash/noop';
 
-export interface ILineChartProps<T = any> extends Dimensional {
-  data: ILineChartData<T>;
+export interface LineChartEventPayload<Value> {
+  category: string;
+  color: string;
+  value: Value;
+  point: { x: number; y: number };
+}
+
+export interface BaseLineChartElement {
+  x: number;
+  y: number;
+}
+
+export interface LineChartProps<LineChartElement extends BaseLineChartElement>
+  extends Dimensional {
+  data: ILineChartData<LineChartElement>;
   padding?: IChartPadding;
   yDomain?: [number, number];
   xDomain?: [number, number];
-  xValueAccessor?(data: T): number;
-  yValueAccessor?(data: T): number;
+  xValueAccessor?(data: LineChartElement): number;
+  yValueAccessor?(data: LineChartElement): number;
   colorAccessor?(key: string): string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
@@ -35,9 +49,11 @@ export interface ILineChartProps<T = any> extends Dimensional {
   gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
   showVerticalGridLines?: boolean;
   showHorizontalGridLines?: boolean;
+  onValueMouseOver?(payload: LineChartEventPayload<LineChartElement>): void;
+  onValueMouseOut?(): void;
 }
 
-export const LineChart = <T extends any = { x: number; y: number }>({
+export const LineChart = <LineChartElement extends BaseLineChartElement>({
   data,
   dimensions,
   padding = zeroPadding,
@@ -55,7 +71,9 @@ export const LineChart = <T extends any = { x: number; y: number }>({
   gridlineStyle,
   showVerticalGridLines = true,
   showHorizontalGridLines = true,
-}: ILineChartProps<T>) => {
+  onValueMouseOver = noop,
+  onValueMouseOut = noop,
+}: LineChartProps<LineChartElement>) => {
   const { xScale, yScale } = makeLineChartScales(
     xDomain,
     yDomain,
@@ -64,7 +82,7 @@ export const LineChart = <T extends any = { x: number; y: number }>({
     dimensions,
     padding
   );
-  const lineGenerator = line<T>()
+  const lineGenerator = line<LineChartElement>()
     .x(d => xScale(xValueAccessor(d)))
     .y(d => yScale(yValueAccessor(d)));
   const [x0, x1] = xScale.range();
@@ -87,16 +105,44 @@ export const LineChart = <T extends any = { x: number; y: number }>({
             <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
           </clipPath>
 
-          {Object.keys(data.toJS()).map(key => (
-            <path
-              clipPath={`url(#clipPath)`}
-              data-test={`path-${key}`}
-              key={key}
-              d={lineGenerator(data.get(key) || []) || ''}
-              stroke={colorAccessor(key)}
-              fill="transparent"
-            />
-          ))}
+          {Object.keys(data.toJS()).map(category => {
+            const categoryData = data.get(category);
+            const color = colorAccessor(category);
+            categoryData && categoryData;
+
+            const makeOnMouseOverOrClickFunction = (
+              callback: typeof onValueMouseOver
+            ) => (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+              const x = xScale.invert(e.clientX);
+              const y = yScale.invert(e.clientY);
+              console.log();
+              categoryData &&
+                callback({
+                  color,
+                  category,
+                  value: {
+                    x,
+                    y,
+                  } as LineChartElement,
+                  point: {
+                    x: e.clientX,
+                    y: e.clientY,
+                  },
+                });
+            };
+            return (
+              <path
+                clipPath={`url(#clipPath)`}
+                data-test={`path-${category}`}
+                key={category}
+                d={lineGenerator(data.get(category) || []) || ''}
+                stroke={color}
+                fill="transparent"
+                onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
+                onMouseOut={onValueMouseOut}
+              />
+            );
+          })}
         </g>
 
         <g data-test="x-axis">
