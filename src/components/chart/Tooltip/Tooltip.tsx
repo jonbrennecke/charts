@@ -2,8 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { opacity } from '../../../theme/colorUtils';
 import { Text } from '../../text';
-import { defaultRangeValueFormatter } from '../common';
-import { unit } from '../../../constants';
+import { unit, trueBlack } from '../../../constants';
 import { Color } from '../Color';
 
 const positionCss = ({
@@ -16,7 +15,7 @@ const positionCss = ({
   const transform = point || { x: 0, y: 0 };
   const opacity = point && value ? 1 : 0;
   return css`
-    transform: translate(${transform.x}px, ${transform.y}px);
+    transform: translate(-50%, 0) translate(${transform.x}px, ${transform.y}px);
     opacity: ${opacity};
   `;
 };
@@ -31,39 +30,30 @@ const TooltipContainer = styled.div<{
   value: any | null;
   colorTheme: TooltipColorTheme | keyof typeof TooltipColorTheme;
 }>`
+  background-color: ${props =>
+    props.colorTheme === TooltipColorTheme.light ? '#000' : '#fff'};
   position: absolute;
-  height: 30px;
-  width: 100px;
-  left: -50px;
+  height: 25px;
+  max-width: 300px;
   top: -30px;
   z-index: 1000;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${unit}px;
+  border-radius: ${unit * 0.5}px;
   filter: drop-shadow(0px 0px 3px ${opacity('#000', 0.1)});
   transition: transform 0.05s ease-in-out, opacity 0.05s ease-in-out 0.05s;
   pointer-events: none;
   ${positionCss}
 
   svg {
-    width: 100%;
-    height: auto;
-
     path {
       fill: ${props =>
         props.colorTheme === TooltipColorTheme.light ? '#000' : '#fff'};
     }
   }
-`;
-
-const TextContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 25px;
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: ${unit}px;
 `;
 
 const TooltipValueText = styled(Text)<{
@@ -84,12 +74,30 @@ const ToolTipCategoryText = styled(Text)<{
 }>`
   font-size: 11px;
   display: inline-block;
-  max-width: 100%;
+  max-width: 85%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: ${props =>
     props.colorTheme === TooltipColorTheme.light ? '#fff' : '#000'};
+`;
+
+const ArrowSvg = styled(({ className }: any) => (
+  <svg width="11px" height="7px" viewBox="0 0 11 7" className={className}>
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+      <g transform="translate(-229.000000, -195.000000)" fill={trueBlack}>
+        <g transform="translate(229.000000, 195.000000)">
+          <path d="M10.923,0 L6.299232,6.149104 C5.967297,6.590508 5.340382,6.67925 4.898978,6.347314 C4.823929,6.290878 4.757204,6.224153 4.700768,6.149104 L0.076,0 L10.923,0 Z" />
+        </g>
+      </g>
+    </g>
+  </svg>
+))`
+  width: ${unit * 2}px;
+  height: auto;
+  position: absolute;
+  top: calc(100% - 1px);
+  left: calc(50% - ${unit}px);
 `;
 
 export interface TooltipProps {
@@ -108,19 +116,11 @@ export const Tooltip = ({
   colorTheme = TooltipColorTheme.light,
 }: TooltipProps) => (
   <TooltipContainer point={point} value={value} colorTheme={colorTheme}>
-    <svg width="93px" height="30px" viewBox="0 0 93 30">
-      <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-        <g transform="translate(-248.000000, -147.000000)">
-          <path d="M339,147 C340.104569,147 341,147.895431 341,149 L341,168 C341,169.104569 340.104569,170 339,170 L299.923,170 L295.299232,176.149104 C294.967297,176.590508 294.340382,176.67925 293.898978,176.347314 C293.823929,176.290878 293.757204,176.224153 293.700768,176.149104 L289.076,170 L250,170 C248.895431,170 248,169.104569 248,168 L248,149 C248,147.895431 248.895431,147 250,147 L339,147 Z"></path>
-        </g>
-      </g>
-    </svg>
-    <TextContainer>
-      <Color color={color} />
-      <ToolTipCategoryText weight="bold" colorTheme={colorTheme}>
-        {category ? `${category}:\u00A0` : '\u00A0'}
-      </ToolTipCategoryText>
-      <TooltipValueText colorTheme={colorTheme}>{value}</TooltipValueText>
-    </TextContainer>
+    <ArrowSvg />
+    <Color color={color} />
+    <ToolTipCategoryText weight="bold" colorTheme={colorTheme}>
+      {category ? `${category}:\u00A0` : '\u00A0'}
+    </ToolTipCategoryText>
+    <TooltipValueText colorTheme={colorTheme}>{value}</TooltipValueText>
   </TooltipContainer>
 );
