@@ -1,8 +1,11 @@
 import React from 'react';
 import { ScaleLinear, ScaleBand } from 'd3-scale';
-import { ColorTheme, colorThemes } from '../../../theme';
-import { unit, lightGray } from '../../../constants';
+import { unit } from '../../../constants';
 import { isFunction } from 'util';
+import {
+  defaultChartGridLineColor,
+  defaultChartNumberOfYTicks,
+} from '../common';
 
 export enum GridLineStyle {
   solid = 'solid',
@@ -11,11 +14,11 @@ export enum GridLineStyle {
 }
 
 export interface GridLinesProps {
-  numberOfYTicks: number;
+  numberOfYTicks?: number;
   numberOfXTicks?: number;
   yScale: ScaleLinear<number, number>;
   xScale: ScaleLinear<number, number> | ScaleBand<number>;
-  stroke?: string;
+  gridLineColor?: string;
   showVerticalGridLines?: boolean;
   showHorizontalGridLines?: boolean;
   gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
@@ -35,11 +38,11 @@ const dasharrayForGridLineStyle = (
 };
 
 export const GridLines = ({
-  numberOfYTicks,
+  numberOfYTicks = defaultChartNumberOfYTicks,
   numberOfXTicks = 0,
   yScale,
   xScale,
-  stroke = lightGray,
+  gridLineColor = defaultChartGridLineColor,
   showVerticalGridLines = true,
   showHorizontalGridLines = true,
   gridlineStyle = GridLineStyle.solid,
@@ -54,7 +57,7 @@ export const GridLines = ({
           x1={x1}
           numberOfYTicks={numberOfYTicks}
           yScale={yScale}
-          stroke={stroke}
+          stroke={gridLineColor}
           strokeDasharray={dasharrayForGridLineStyle(gridlineStyle)}
         />
       )}
@@ -64,7 +67,7 @@ export const GridLines = ({
           y1={y1}
           numberOfXTicks={numberOfXTicks}
           xScale={xScale}
-          stroke={stroke}
+          stroke={gridLineColor}
           strokeDasharray={dasharrayForGridLineStyle(gridlineStyle)}
         />
       )}

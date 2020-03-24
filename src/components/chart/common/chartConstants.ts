@@ -1,12 +1,18 @@
 import { DefaultArcObject } from 'd3-shape';
 import { IChartDimensions, IChartPadding } from './chartTypes';
+import { lightGray, darkGray } from '../../../constants';
 
 export const defaultChartTickLength = 5;
 export const defaultChartXAxisHeight = 30;
 export const defaultChartYAxisWidth = 30;
 export const defaultChartCharLimitBeforeEllipsis = 15;
+export const defaultChartNumberOfYTicks = 10;
 
 export const defaultChartColorAccessor = () => '#000000';
+
+// colors
+export const defaultChartGridLineColor = lightGray;
+export const defaultChartAxisLineColor = darkGray;
 
 // pie chart
 export const defaultPieChartPadAngle = 0.01;

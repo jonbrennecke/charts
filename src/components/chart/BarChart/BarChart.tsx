@@ -1,4 +1,4 @@
-import { scaleBand, scaleLinear } from 'd3-scale';
+import { scaleBand, scaleLinear, ScaleBand, ScaleLinear } from 'd3-scale';
 import { Series, stack, stackOffsetNone, stackOrderNone } from 'd3-shape';
 import { List, Map } from 'immutable';
 import ceil from 'lodash/ceil';
@@ -7,7 +7,6 @@ import max from 'lodash/max';
 import min from 'lodash/min';
 import property from 'lodash/property';
 import React from 'react';
-import { ColorTheme, colorThemes } from '../../../theme';
 import {
   defaultChartCharLimitBeforeEllipsis,
   defaultChartTickLength,
@@ -20,13 +19,16 @@ import {
   defaultRangeValueFormatter,
   defaultDomainFormatter,
   MouseOverEventProps,
+  defaultChartNumberOfYTicks,
+  defaultChartColorAccessor,
+  defaultChartAxisLineColor,
 } from '../common';
 import { GridLineStyle } from '../GridLines';
 import styled from 'styled-components';
 import { darker, brighter } from '../../../theme/colorUtils';
 import noop from 'lodash/noop';
 import { Dimensional } from '../ChartDimensions';
-import { Chart } from '../Chart/Chart';
+import { wrapWithChart } from '../Chart';
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]
@@ -92,7 +94,8 @@ export interface IBarChartProps<RangeElementType, DomainElementType>
   domainLabelFormatter?(data: DomainElementType): string;
   rangeLabelFormatter?(n: number): string;
   numberOfYTicks?: number;
-  colorTheme?: ColorTheme;
+  axisLineColor?: string;
+  gridLineColor?: string;
   paddingInner?: number;
   paddingOuter?: number;
   tickLength?: number;
@@ -124,23 +127,11 @@ export const BarChart = <
   padding = zeroPadding,
   valueAccessor = property('value'),
   dataAccessor = property('data'),
-  domainLabelFormatter = defaultDomainFormatter,
-  rangeLabelFormatter = defaultRangeValueFormatter,
-  colorAccessor = () => '#000000',
-  numberOfYTicks = 10,
   paddingInner = 0.25,
   paddingOuter = 0.25,
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
-  tickLength = defaultChartTickLength,
-  colorTheme = colorThemes.light,
-  charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
-  showVerticalGridLines = true,
-  showHorizontalGridLines = true,
-  gridlineStyle,
-  onValueClick = noop,
-  onValueMouseOut = noop,
-  onValueMouseOver = noop,
+  ...props
 }: IBarChartProps<RangeElementType, DomainElementType>) => {
   const data = List(originalData);
   const stackGenerator = stack<DomainElementType>()
@@ -149,7 +140,7 @@ export const BarChart = <
     .order(stackOrderNone)
     .offset(stackOffsetNone);
   const series = stackGenerator(data.toJS());
-  const xDomain: number[] = data.map((value, i) => i).toJS();
+  const xDomain: number[] = data.map((v, i) => i).toJS();
   const yDomain = calculateDefaultYDomainWithSeries(series);
   const { xScale, yScale } = makeBarChartScales(
     xDomain,
@@ -161,20 +152,65 @@ export const BarChart = <
     paddingInner,
     paddingOuter
   );
+  return (
+    <BarChartComponent
+      dimensions={dimensions}
+      xScale={xScale}
+      yScale={yScale}
+      data={data}
+      series={series}
+      xDomain={xDomain}
+      {...props}
+    />
+  );
+};
+
+export interface BarChartSvgProps<RangeElementType, DomainElementType>
+  extends MouseOverEventProps<BarChartEventPayload<RangeElementType>> {
+  series: Series<DomainElementType, string>[];
+  data: List<DomainElementType>;
+  xDomain: number[];
+  xScale: ScaleBand<number>;
+  yScale: ScaleLinear<number, number>;
+  yAxisWidth?: number;
+  tickLength?: number;
+  numberOfYTicks?: number;
+  charLimitBeforeEllipsis?: number;
+  axisLineColor?: string;
+  dataAccessor?(data: DomainElementType): Map<string, RangeElementType>;
+  colorAccessor?(key: string): string;
+  domainLabelFormatter?(data: DomainElementType): string;
+  rangeLabelFormatter?(n: number): string;
+  onValueClick?(payload: BarChartEventPayload<RangeElementType>): void;
+}
+
+export const BarChartSvg = <
+  RangeElementType extends BaseRangeElementType,
+  DomainElementType extends BaseDomainElementType<RangeElementType>
+>({
+  data,
+  series,
+  xDomain,
+  xScale,
+  yScale,
+  yAxisWidth = defaultChartYAxisWidth,
+  axisLineColor = defaultChartAxisLineColor,
+  numberOfYTicks = defaultChartNumberOfYTicks,
+  tickLength = defaultChartTickLength,
+  charLimitBeforeEllipsis = defaultChartCharLimitBeforeEllipsis,
+  dataAccessor = property('data'),
+  domainLabelFormatter = defaultDomainFormatter,
+  rangeLabelFormatter = defaultRangeValueFormatter,
+  onValueClick = noop,
+  onValueMouseOut = noop,
+  onValueMouseOver = noop,
+  colorAccessor = defaultChartColorAccessor,
+}: BarChartSvgProps<RangeElementType, DomainElementType>) => {
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
   const bandWidth = xScale.bandwidth();
   return (
-    <Chart
-      dimensions={dimensions}
-      xScale={xScale}
-      yScale={yScale}
-      numberOfYTicks={numberOfYTicks}
-      stroke={colorTheme.components.chart.axis.gridline.stroke}
-      showVerticalGridLines={showVerticalGridLines}
-      showHorizontalGridLines={showHorizontalGridLines}
-      gridlineStyle={gridlineStyle}
-    >
+    <g data-test="bar-chart">
       <g data-test="stacks">
         <clipPath id="clipPath">
           <rect
@@ -239,7 +275,7 @@ export const BarChart = <
           x2={x1}
           y1={y1}
           y2={y1}
-          stroke={colorTheme.components.chart.axis.line.stroke}
+          stroke={axisLineColor}
           fill="transparent"
           data-test="x-axis-line"
         />
@@ -254,14 +290,14 @@ export const BarChart = <
                 x2={bandCenter}
                 y1={y1}
                 y2={y1 + tickLength}
-                stroke={colorTheme.components.chart.axis.line.stroke}
+                stroke={axisLineColor}
                 fill="transparent"
               />
               <g transform={`translate(${bandCenter}, ${y1 + tickLength})`}>
                 <text
                   dy="1em"
                   textAnchor="start"
-                  fill={colorTheme.components.chart.axis.tick.color}
+                  fill={axisLineColor}
                   transform="rotate(45)"
                 >
                   {ellipsis(label, charLimitBeforeEllipsis)}
@@ -277,7 +313,7 @@ export const BarChart = <
           x2={x0}
           y1={y0}
           y2={y1}
-          stroke={colorTheme.components.chart.axis.line.stroke}
+          stroke={axisLineColor}
           fill="transparent"
         />
         {yScale.ticks(numberOfYTicks).map(n => (
@@ -287,7 +323,7 @@ export const BarChart = <
               x2={x0}
               y1={yScale(n)}
               y2={yScale(n)}
-              stroke={colorTheme.components.chart.axis.line.stroke}
+              stroke={axisLineColor}
               fill="transparent"
             />
             <text
@@ -296,13 +332,15 @@ export const BarChart = <
               dy="0.28em"
               width={yAxisWidth}
               textAnchor="end"
-              fill={colorTheme.components.chart.axis.tick.color}
+              fill={axisLineColor}
             >
               {rangeLabelFormatter(n)}&nbsp;
             </text>
           </g>
         ))}
       </g>
-    </Chart>
+    </g>
   );
 };
+
+const BarChartComponent = wrapWithChart(BarChartSvg);
