@@ -17,7 +17,7 @@ import {
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
-import { LineChart } from './LineChart';
+import { LineChart, LineChartFillStyle } from './LineChart';
 
 const dimensions = {
   height: 240,
@@ -100,6 +100,14 @@ storiesOf('Charts', module)
           catmullRom: Curve.CatmullRom,
         },
         Curve.Linear
+      )}
+      fillStyle={select(
+        'Fill style',
+        {
+          line: LineChartFillStyle.line,
+          area: LineChartFillStyle.area,
+        },
+        LineChartFillStyle.line
       )}
     />
   ));

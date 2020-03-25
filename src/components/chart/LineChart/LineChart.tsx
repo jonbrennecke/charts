@@ -1,5 +1,5 @@
 import { ScaleLinear } from 'd3-scale';
-import { line } from 'd3-shape';
+import { line, area } from 'd3-shape';
 import noop from 'lodash/noop';
 import property from 'lodash/property';
 import React from 'react';
@@ -21,6 +21,7 @@ import {
   zeroPadding,
   Curve,
   d3CurveFunction,
+  IChartDimensions,
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithChart } from '../Chart';
@@ -37,6 +38,11 @@ export interface BaseLineChartElement {
   y: number;
 }
 
+export enum LineChartFillStyle {
+  line = 'line',
+  area = 'area',
+}
+
 export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   extends Dimensional,
     MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
@@ -44,7 +50,8 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   padding?: IChartPadding;
   yDomain?: [number, number];
   xDomain?: [number, number];
-  curve?: Curve;
+  curve?: Curve; // TODO: keyof typeof Curve
+  fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   xValueAccessor?(data: LineChartElement): number;
   yValueAccessor?(data: LineChartElement): number;
   colorAccessor?(key: string): string;
@@ -97,6 +104,8 @@ export interface LineChartSvgProps<LineChartElement>
   yScale: ScaleLinear<number, number>;
   data: ILineChartData<LineChartElement>;
   curve?: Curve;
+  fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
+  dimensions: IChartDimensions;
   axisLineColor?: string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
@@ -112,6 +121,8 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
   yScale,
   data,
   curve,
+  fillStyle,
+  dimensions,
   numberOfXTicks,
   numberOfYTicks,
   tickLength,
@@ -133,6 +144,8 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
         y0={y0}
         y1={y1}
         curve={curve}
+        dimensions={dimensions}
+        fillStyle={fillStyle}
         xScale={xScale}
         yScale={yScale}
         xValueAccessor={xValueAccessor}
@@ -175,9 +188,11 @@ export interface LineChartPathsSvgProps<
   y0: number;
   y1: number;
   curve?: Curve;
+  fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   data: ILineChartData<LineChartElement>;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
+  dimensions: IChartDimensions;
   xValueAccessor?(data: LineChartElement): number;
   yValueAccessor?(data: LineChartElement): number;
   colorAccessor?(key: string): string;
@@ -193,17 +208,26 @@ export const LineChartPathsSvg = <
   data,
   xScale,
   yScale,
+  dimensions,
   curve = Curve.Linear,
+  fillStyle = LineChartFillStyle.line,
   xValueAccessor = property('x'),
   yValueAccessor = property('y'),
   colorAccessor = defaultChartColorAccessor,
   onValueMouseOver = noop,
   onValueMouseOut = noop,
 }: LineChartPathsSvgProps<LineChartElement>) => {
-  const lineGenerator = line<LineChartElement>()
-    .curve(d3CurveFunction(curve))
-    .x(d => xScale(xValueAccessor(d)))
-    .y(d => yScale(yValueAccessor(d)));
+  const lineGenerator =
+    fillStyle === LineChartFillStyle.line
+      ? line<LineChartElement>()
+          .curve(d3CurveFunction(curve))
+          .x(d => xScale(xValueAccessor(d)))
+          .y(d => yScale(yValueAccessor(d)))
+      : area<LineChartElement>()
+          .curve(d3CurveFunction(curve))
+          .x(d => xScale(xValueAccessor(d)))
+          .y0(dimensions.height)
+          .y1(d => yScale(yValueAccessor(d)));
   return (
     <g data-test="paths">
       <clipPath id="clipPath">
@@ -212,8 +236,6 @@ export const LineChartPathsSvg = <
       {Object.keys(data.toJS()).map(category => {
         const categoryData = data.get(category);
         const color = colorAccessor(category);
-        categoryData && categoryData;
-
         const makeOnMouseOverOrClickFunction = (
           callback: typeof onValueMouseOver
         ) => (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
@@ -240,7 +262,7 @@ export const LineChartPathsSvg = <
             key={category}
             d={lineGenerator(data.get(category) || []) || ''}
             stroke={color}
-            fill="transparent"
+            fill={fillStyle === LineChartFillStyle.line ? 'transparent' : color}
             onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
             onMouseOut={onValueMouseOut}
           />
