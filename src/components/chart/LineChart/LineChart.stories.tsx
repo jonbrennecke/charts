@@ -13,10 +13,11 @@ import {
   numericFormatter,
   defaultChartNumberOfXTicks,
   defaultChartNumberOfYTicks,
+  Curve,
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
-import { LineChart, CurveVariant } from './LineChart';
+import { LineChart } from './LineChart';
 
 const dimensions = {
   height: 240,
@@ -89,16 +90,16 @@ storiesOf('Charts', module)
       curve={select(
         'Curve',
         {
-          linear: CurveVariant.Linear,
-          step: CurveVariant.Step,
-          stepBefore: CurveVariant.StepBefore,
-          stepAfter: CurveVariant.StepAfter,
-          basis: CurveVariant.Basis,
-          cardinal: CurveVariant.Cardinal,
-          monotoneX: CurveVariant.MonotoneX,
-          catmullRom: CurveVariant.CatmullRom,
+          linear: Curve.Linear,
+          step: Curve.Step,
+          stepBefore: Curve.StepBefore,
+          stepAfter: Curve.StepAfter,
+          basis: Curve.Basis,
+          cardinal: Curve.Cardinal,
+          monotoneX: Curve.MonotoneX,
+          catmullRom: Curve.CatmullRom,
         },
-        CurveVariant.Linear
+        Curve.Linear
       )}
     />
   ));
