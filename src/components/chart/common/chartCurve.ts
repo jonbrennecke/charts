@@ -21,7 +21,7 @@ export enum Curve {
   CatmullRom = 'CatmullRom',
 }
 
-export const d3CurveFunction = (curve: Curve) => {
+export const d3CurveFunction = (curve: Curve | keyof typeof Curve) => {
   switch (curve) {
     case Curve.Linear:
       return curveLinear;
@@ -39,5 +39,7 @@ export const d3CurveFunction = (curve: Curve) => {
       return curveMonotoneX;
     case Curve.CatmullRom:
       return curveCatmullRom;
+    default:
+      return curveLinear;
   }
 };

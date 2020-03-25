@@ -50,7 +50,7 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   padding?: IChartPadding;
   yDomain?: [number, number];
   xDomain?: [number, number];
-  curve?: Curve; // TODO: keyof typeof Curve
+  curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   xValueAccessor?(data: LineChartElement): number;
   yValueAccessor?(data: LineChartElement): number;
@@ -103,7 +103,7 @@ export interface LineChartSvgProps<LineChartElement>
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   data: ILineChartData<LineChartElement>;
-  curve?: Curve;
+  curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   dimensions: IChartDimensions;
   axisLineColor?: string;
@@ -187,7 +187,7 @@ export interface LineChartPathsSvgProps<
   x1: number;
   y0: number;
   y1: number;
-  curve?: Curve;
+  curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   data: ILineChartData<LineChartElement>;
   xScale: ScaleLinear<number, number>;
