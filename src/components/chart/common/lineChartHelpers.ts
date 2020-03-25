@@ -15,10 +15,12 @@ export const makeLineChartScales = (
 ) => {
   const xScale = scaleLinear()
     .domain(xDomain)
-    .range([yAxisWidth + padding.left, dimensions.width - padding.right]);
+    .range([yAxisWidth + padding.left, dimensions.width - padding.right])
+    .nice();
   const yScale = scaleLinear()
     .domain(yDomain)
-    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top]);
+    .range([dimensions.height - xAxisHeight - padding.bottom, padding.top])
+    .nice();
   return { xScale, yScale };
 };
 
@@ -37,5 +39,5 @@ export const calculateDefaultXDomainForLineChart = <T extends any>(
   data: ILineChartData<T>
 ): [number, number] => {
   const x: T[] = data.first([]);
-  return [0, x.length];
+  return [0, x.length - 1];
 };

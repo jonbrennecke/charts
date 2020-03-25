@@ -301,27 +301,30 @@ export const LineChartXAxisSvg = ({
       fill="transparent"
       data-test="x-axis-line"
     />
-    {xScale.ticks(numberOfXTicks).map(n => (
-      <g key={n}>
-        <line
-          x1={xScale(n)}
-          x2={xScale(n)}
-          y1={y1}
-          y2={y1 + tickLength}
-          stroke={axisLineColor}
-          fill="transparent"
-        />
-        <text
-          x={xScale(n)}
-          y={y1 + tickLength}
-          dy="1em"
-          textAnchor="middle"
-          fill={axisLineColor}
-        >
-          {n}
-        </text>
-      </g>
-    ))}
+    {xScale
+      .ticks(numberOfXTicks)
+      .concat(xScale.domain())
+      .map(n => (
+        <g key={n}>
+          <line
+            x1={xScale(n)}
+            x2={xScale(n)}
+            y1={y1}
+            y2={y1 + tickLength}
+            stroke={axisLineColor}
+            fill="transparent"
+          />
+          <text
+            x={xScale(n)}
+            y={y1 + tickLength}
+            dy="1em"
+            textAnchor="middle"
+            fill={axisLineColor}
+          >
+            {n}
+          </text>
+        </g>
+      ))}
   </g>
 );
 

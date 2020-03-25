@@ -44,7 +44,7 @@ type Value = {
 
 const makeRandomLineData = () =>
   range(numberOfPoints).map(
-    (y, i): Value => ({ id: uuid.v4(), y: random(), x: i })
+    (y, x): Value => ({ id: uuid.v4(), y: random(), x })
   );
 
 const colors = fromPairs(
