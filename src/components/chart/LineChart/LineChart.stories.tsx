@@ -16,7 +16,7 @@ import {
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
-import { LineChart } from './LineChart';
+import { LineChart, CurveVariant } from './LineChart';
 
 const dimensions = {
   height: 240,
@@ -73,7 +73,7 @@ storiesOf('Charts', module)
       showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
       showVerticalGridLines={boolean('Show vertical grid lines', true)}
       gridlineStyle={select(
-        'grid line style',
+        'Grid line style',
         {
           Solid: GridLineStyle.solid,
           Dashed: GridLineStyle.dashed,
@@ -86,5 +86,19 @@ storiesOf('Charts', module)
       }
       numberOfXTicks={number('Number of X Ticks', defaultChartNumberOfXTicks)}
       numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}
+      curve={select(
+        'Curve',
+        {
+          linear: CurveVariant.Linear,
+          step: CurveVariant.Step,
+          stepBefore: CurveVariant.StepBefore,
+          stepAfter: CurveVariant.StepAfter,
+          basis: CurveVariant.Basis,
+          cardinal: CurveVariant.Cardinal,
+          monotoneX: CurveVariant.MonotoneX,
+          catmullRom: CurveVariant.CatmullRom,
+        },
+        CurveVariant.Linear
+      )}
     />
   ));

@@ -7,7 +7,7 @@ import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithLegend } from '../Legend';
 import { wrapWithTooltip } from '../Tooltip';
 import { BarChart } from './BarChart';
-import { numericFormatter } from '../common';
+import { numericFormatter, defaultChartNumberOfYTicks } from '../common';
 
 const config = generateRandomBarChartConfigForStory();
 
@@ -38,7 +38,7 @@ storiesOf('Charts', module)
           GridLineStyle.solid
         )}
         tooltipValueFormatter={(v: any) => numericFormatter(v.value)}
-        numberOfYTicks={number('Number of Y Ticks', defaultNum)}
+        numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}
       />
     );
   });

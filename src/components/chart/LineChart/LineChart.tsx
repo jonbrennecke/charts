@@ -1,5 +1,15 @@
 import { ScaleLinear } from 'd3-scale';
-import { line } from 'd3-shape';
+import {
+  line,
+  curveLinear,
+  curveStep,
+  curveStepAfter,
+  curveStepBefore,
+  curveBasis,
+  curveCardinal,
+  curveMonotoneX,
+  curveCatmullRom,
+} from 'd3-shape';
 import noop from 'lodash/noop';
 import property from 'lodash/property';
 import React from 'react';
@@ -42,6 +52,7 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   padding?: IChartPadding;
   yDomain?: [number, number];
   xDomain?: [number, number];
+  curve?: CurveVariant;
   xValueAccessor?(data: LineChartElement): number;
   yValueAccessor?(data: LineChartElement): number;
   colorAccessor?(key: string): string;
@@ -93,6 +104,7 @@ export interface LineChartSvgProps<LineChartElement>
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   data: ILineChartData<LineChartElement>;
+  curve?: CurveVariant;
   axisLineColor?: string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
@@ -107,6 +119,7 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
   xScale,
   yScale,
   data,
+  curve,
   numberOfXTicks,
   numberOfYTicks,
   tickLength,
@@ -127,6 +140,7 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
         x1={x1}
         y0={y0}
         y1={y1}
+        curve={curve}
         xScale={xScale}
         yScale={yScale}
         xValueAccessor={xValueAccessor}
@@ -161,6 +175,38 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
 
 const LineChartComponent = wrapWithChart(LineChartSvg);
 
+export enum CurveVariant {
+  Linear = 'Linear',
+  Step = 'Step',
+  StepBefore = 'StepBefore',
+  StepAfter = 'StepAfter',
+  Basis = 'Basis',
+  Cardinal = 'Cardinal',
+  MonotoneX = 'MonotoneX',
+  CatmullRom = 'CatmullRom',
+}
+
+export const d3CurveFunctionForCurveVariant = (curve: CurveVariant) => {
+  switch (curve) {
+    case CurveVariant.Linear:
+      return curveLinear;
+    case CurveVariant.Step:
+      return curveStep;
+    case CurveVariant.StepBefore:
+      return curveStepBefore;
+    case CurveVariant.StepAfter:
+      return curveStepAfter;
+    case CurveVariant.Basis:
+      return curveBasis;
+    case CurveVariant.Cardinal:
+      return curveCardinal;
+    case CurveVariant.MonotoneX:
+      return curveMonotoneX;
+    case CurveVariant.CatmullRom:
+      return curveCatmullRom;
+  }
+};
+
 export interface LineChartPathsSvgProps<
   LineChartElement extends BaseLineChartElement
 > extends MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
@@ -168,6 +214,7 @@ export interface LineChartPathsSvgProps<
   x1: number;
   y0: number;
   y1: number;
+  curve?: CurveVariant;
   data: ILineChartData<LineChartElement>;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
@@ -186,6 +233,7 @@ export const LineChartPathsSvg = <
   data,
   xScale,
   yScale,
+  curve = CurveVariant.Linear,
   xValueAccessor = property('x'),
   yValueAccessor = property('y'),
   colorAccessor = defaultChartColorAccessor,
@@ -193,6 +241,7 @@ export const LineChartPathsSvg = <
   onValueMouseOut = noop,
 }: LineChartPathsSvgProps<LineChartElement>) => {
   const lineGenerator = line<LineChartElement>()
+    .curve(d3CurveFunctionForCurveVariant(curve))
     .x(d => xScale(xValueAccessor(d)))
     .y(d => yScale(yValueAccessor(d)));
   return (
