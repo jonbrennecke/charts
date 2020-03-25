@@ -3,14 +3,12 @@ import { line } from 'd3-shape';
 import noop from 'lodash/noop';
 import property from 'lodash/property';
 import React from 'react';
-import { Chart } from '../Chart/Chart';
 import { Dimensional } from '../ChartDimensions';
 import {
   calculateDefaultXDomainForLineChart,
   calculateDefaultYDomainForLineChart,
   defaultChartAxisLineColor,
   defaultChartColorAccessor,
-  defaultChartGridLineColor,
   defaultChartNumberOfXTicks,
   defaultChartNumberOfYTicks,
   defaultChartTickLength,
@@ -23,6 +21,7 @@ import {
   zeroPadding,
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
+import { wrapWithChart } from '../Chart';
 
 export interface LineChartEventPayload<Value> {
   category: string;
@@ -64,21 +63,11 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
   padding = zeroPadding,
   xValueAccessor = property('x'),
   yValueAccessor = property('y'),
-  colorAccessor = () => '#000000',
-  gridLineColor = defaultChartGridLineColor,
-  axisLineColor = defaultChartAxisLineColor,
-  numberOfXTicks = defaultChartNumberOfXTicks,
-  numberOfYTicks = defaultChartNumberOfYTicks,
-  tickLength = defaultChartTickLength,
   yDomain = calculateDefaultYDomainForLineChart(data, yValueAccessor),
   xDomain = calculateDefaultXDomainForLineChart(data),
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
-  gridlineStyle,
-  showVerticalGridLines = true,
-  showHorizontalGridLines = true,
-  onValueMouseOver = noop,
-  onValueMouseOut = noop,
+  ...props
 }: LineChartProps<LineChartElement>) => {
   const { xScale, yScale } = makeLineChartScales(
     xDomain,
@@ -88,20 +77,51 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
     dimensions,
     padding
   );
-  const [x0, x1] = xScale.range();
-  const [y1, y0] = yScale.range();
   return (
-    <Chart
+    <LineChartComponent
       dimensions={dimensions}
       xScale={xScale}
       yScale={yScale}
-      numberOfYTicks={numberOfYTicks}
-      numberOfXTicks={numberOfXTicks}
-      gridLineColor={gridLineColor}
-      showVerticalGridLines={showVerticalGridLines}
-      showHorizontalGridLines={showHorizontalGridLines}
-      gridlineStyle={gridlineStyle}
-    >
+      data={data}
+      {...props}
+    />
+  );
+};
+
+export interface LineChartSvgProps<LineChartElement>
+  extends MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
+  xScale: ScaleLinear<number, number>;
+  yScale: ScaleLinear<number, number>;
+  data: ILineChartData<LineChartElement>;
+  axisLineColor?: string;
+  numberOfXTicks?: number;
+  numberOfYTicks?: number;
+  tickLength?: number;
+  yAxisWidth?: number;
+  xValueAccessor?(data: LineChartElement): number;
+  yValueAccessor?(data: LineChartElement): number;
+  colorAccessor?(key: string): string;
+}
+
+export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
+  xScale,
+  yScale,
+  data,
+  numberOfXTicks,
+  numberOfYTicks,
+  tickLength,
+  yAxisWidth,
+  axisLineColor,
+  xValueAccessor,
+  yValueAccessor,
+  colorAccessor,
+  onValueMouseOut,
+  onValueMouseOver,
+}: LineChartSvgProps<LineChartElement>) => {
+  const [x0, x1] = xScale.range();
+  const [y1, y0] = yScale.range();
+  return (
+    <g data-test="line-chart">
       <LineChartPathsSvg
         x0={x0}
         x1={x1}
@@ -135,9 +155,11 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
         tickLength={tickLength}
         yAxisWidth={yAxisWidth}
       />
-    </Chart>
+    </g>
   );
 };
+
+const LineChartComponent = wrapWithChart(LineChartSvg);
 
 export interface LineChartPathsSvgProps<
   LineChartElement extends BaseLineChartElement
