@@ -1,27 +1,29 @@
-import React from 'react';
+import { ScaleLinear } from 'd3-scale';
 import { line } from 'd3-shape';
+import noop from 'lodash/noop';
 import property from 'lodash/property';
-
+import React from 'react';
 import { ColorTheme, colorThemes } from '../../../theme';
+import { Chart } from '../Chart/Chart';
+import { Dimensional } from '../ChartDimensions';
 import {
-  IChartPadding,
-  zeroPadding,
+  calculateDefaultXDomainForLineChart,
+  calculateDefaultYDomainForLineChart,
+  defaultChartAxisLineColor,
+  defaultChartColorAccessor,
+  defaultChartGridLineColor,
+  defaultChartNumberOfXTicks,
+  defaultChartNumberOfYTicks,
   defaultChartTickLength,
   defaultChartXAxisHeight,
   defaultChartYAxisWidth,
-  makeLineChartScales,
+  IChartPadding,
   ILineChartData,
-  calculateDefaultYDomainForLineChart,
-  calculateDefaultXDomainForLineChart,
+  makeLineChartScales,
   MouseOverEventProps,
-  defaultChartGridLineColor,
-  defaultChartColorAccessor,
+  zeroPadding,
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
-import { Dimensional } from '../ChartDimensions';
-import { Chart } from '../Chart/Chart';
-import noop from 'lodash/noop';
-import { ScaleLinear } from 'd3-scale';
 
 export interface LineChartEventPayload<Value> {
   category: string;
@@ -46,6 +48,7 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   yValueAccessor?(data: LineChartElement): number;
   colorAccessor?(key: string): string;
   gridLineColor?: string;
+  axisLineColor?: string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
   tickLength?: number;
@@ -65,8 +68,9 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
   yValueAccessor = property('y'),
   colorAccessor = () => '#000000',
   gridLineColor = defaultChartGridLineColor,
-  numberOfXTicks = 10,
-  numberOfYTicks = 10,
+  axisLineColor = defaultChartAxisLineColor,
+  numberOfXTicks = defaultChartNumberOfXTicks,
+  numberOfYTicks = defaultChartNumberOfYTicks,
   tickLength = defaultChartTickLength,
   yDomain = calculateDefaultYDomainForLineChart(data, yValueAccessor),
   xDomain = calculateDefaultXDomainForLineChart(data),
@@ -115,72 +119,25 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
         onValueMouseOut={onValueMouseOut}
         onValueMouseOver={onValueMouseOver}
       />
-
-      <g data-test="x-axis">
-        <line
-          x1={x0}
-          x2={x1}
-          y1={y1}
-          y2={y1}
-          stroke={colorTheme.components.chart.axis.line.stroke}
-          fill="transparent"
-          data-test="x-axis-line"
-        />
-        {xScale.ticks(numberOfXTicks).map(n => (
-          <g key={n}>
-            <line
-              x1={xScale(n)}
-              x2={xScale(n)}
-              y1={y1}
-              y2={y1 + tickLength}
-              stroke={colorTheme.components.chart.axis.line.stroke}
-              fill="transparent"
-            />
-            <text
-              x={xScale(n)}
-              y={y1 + tickLength}
-              dy="1em"
-              textAnchor="middle"
-              fill={colorTheme.components.chart.axis.tick.color}
-            >
-              {n}
-            </text>
-          </g>
-        ))}
-      </g>
-
-      <g data-test="y-axis">
-        <line
-          x1={x0}
-          x2={x0}
-          y1={y0}
-          y2={y1}
-          stroke={colorTheme.components.chart.axis.line.stroke}
-          fill="transparent"
-        />
-        {yScale.ticks(numberOfYTicks).map(n => (
-          <g key={n}>
-            <line
-              x1={x0 - tickLength}
-              x2={x0}
-              y1={yScale(n)}
-              y2={yScale(n)}
-              stroke={colorTheme.components.chart.axis.line.stroke}
-              fill="transparent"
-            />
-            <text
-              x={x0 - tickLength}
-              y={yScale(n)}
-              dy="0.28em"
-              width={yAxisWidth}
-              textAnchor="end"
-              fill={colorTheme.components.chart.axis.tick.color}
-            >
-              {n}&nbsp;
-            </text>
-          </g>
-        ))}
-      </g>
+      <LineChartXAxisSvg
+        x0={x0}
+        x1={x1}
+        y1={y1}
+        xScale={xScale}
+        axisLineColor={axisLineColor}
+        numberOfXTicks={numberOfXTicks}
+        tickLength={tickLength}
+      />
+      <LineChartYAxisSvg
+        x0={x0}
+        y0={y0}
+        y1={y1}
+        yScale={yScale}
+        axisLineColor={axisLineColor}
+        numberOfYTicks={numberOfYTicks}
+        tickLength={tickLength}
+        yAxisWidth={yAxisWidth}
+      />
     </Chart>
   );
 };
@@ -265,3 +222,111 @@ export const LineChartPathsSvg = <
     </g>
   );
 };
+
+export interface LineChartXAxisSvgProps {
+  x0: number;
+  x1: number;
+  y1: number;
+  xScale: ScaleLinear<number, number>;
+  axisLineColor?: string;
+  numberOfXTicks?: number;
+  tickLength?: number;
+}
+
+export const LineChartXAxisSvg = ({
+  x0,
+  x1,
+  y1,
+  xScale,
+  axisLineColor = defaultChartAxisLineColor,
+  numberOfXTicks = defaultChartNumberOfXTicks,
+  tickLength = defaultChartTickLength,
+}: LineChartXAxisSvgProps) => (
+  <g data-test="x-axis">
+    <line
+      x1={x0}
+      x2={x1}
+      y1={y1}
+      y2={y1}
+      stroke={axisLineColor}
+      fill="transparent"
+      data-test="x-axis-line"
+    />
+    {xScale.ticks(numberOfXTicks).map(n => (
+      <g key={n}>
+        <line
+          x1={xScale(n)}
+          x2={xScale(n)}
+          y1={y1}
+          y2={y1 + tickLength}
+          stroke={axisLineColor}
+          fill="transparent"
+        />
+        <text
+          x={xScale(n)}
+          y={y1 + tickLength}
+          dy="1em"
+          textAnchor="middle"
+          fill={axisLineColor}
+        >
+          {n}
+        </text>
+      </g>
+    ))}
+  </g>
+);
+
+export interface LineChartYAxisSvgProps {
+  x0: number;
+  y0: number;
+  y1: number;
+  yScale: ScaleLinear<number, number>;
+  axisLineColor?: string;
+  numberOfYTicks?: number;
+  tickLength?: number;
+  yAxisWidth?: number;
+}
+
+export const LineChartYAxisSvg = ({
+  x0,
+  y0,
+  y1,
+  yScale,
+  axisLineColor = defaultChartAxisLineColor,
+  numberOfYTicks = defaultChartNumberOfYTicks,
+  tickLength = defaultChartTickLength,
+  yAxisWidth,
+}: LineChartYAxisSvgProps) => (
+  <g data-test="y-axis">
+    <line
+      x1={x0}
+      x2={x0}
+      y1={y0}
+      y2={y1}
+      stroke={axisLineColor}
+      fill="transparent"
+    />
+    {yScale.ticks(numberOfYTicks).map(n => (
+      <g key={n}>
+        <line
+          x1={x0 - tickLength}
+          x2={x0}
+          y1={yScale(n)}
+          y2={yScale(n)}
+          stroke={axisLineColor}
+          fill="transparent"
+        />
+        <text
+          x={x0 - tickLength}
+          y={yScale(n)}
+          dy="0.28em"
+          width={yAxisWidth}
+          textAnchor="end"
+          fill={axisLineColor}
+        >
+          {n}&nbsp;
+        </text>
+      </g>
+    ))}
+  </g>
+);

@@ -1,34 +1,34 @@
-import { scaleBand, scaleLinear, ScaleBand, ScaleLinear } from 'd3-scale';
+import { scaleBand, ScaleBand, scaleLinear, ScaleLinear } from 'd3-scale';
 import { Series, stack, stackOffsetNone, stackOrderNone } from 'd3-shape';
 import { List, Map } from 'immutable';
 import ceil from 'lodash/ceil';
 import floor from 'lodash/floor';
 import max from 'lodash/max';
 import min from 'lodash/min';
+import noop from 'lodash/noop';
 import property from 'lodash/property';
 import React from 'react';
+import styled from 'styled-components';
+import { brighter, darker } from '../../../theme/colorUtils';
+import { wrapWithChart } from '../Chart';
+import { Dimensional } from '../ChartDimensions';
 import {
+  defaultChartAxisLineColor,
   defaultChartCharLimitBeforeEllipsis,
+  defaultChartColorAccessor,
+  defaultChartNumberOfYTicks,
   defaultChartTickLength,
   defaultChartXAxisHeight,
   defaultChartYAxisWidth,
+  defaultDomainFormatter,
+  defaultRangeValueFormatter,
   ellipsis,
   IChartDimensions,
   IChartPadding,
-  zeroPadding,
-  defaultRangeValueFormatter,
-  defaultDomainFormatter,
   MouseOverEventProps,
-  defaultChartNumberOfYTicks,
-  defaultChartColorAccessor,
-  defaultChartAxisLineColor,
+  zeroPadding,
 } from '../common';
 import { GridLineStyle } from '../GridLines';
-import styled from 'styled-components';
-import { darker, brighter } from '../../../theme/colorUtils';
-import noop from 'lodash/noop';
-import { Dimensional } from '../ChartDimensions';
-import { wrapWithChart } from '../Chart';
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]

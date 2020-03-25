@@ -7,6 +7,7 @@ export const defaultChartXAxisHeight = 30;
 export const defaultChartYAxisWidth = 30;
 export const defaultChartCharLimitBeforeEllipsis = 15;
 export const defaultChartNumberOfYTicks = 10;
+export const defaultChartNumberOfXTicks = 10;
 
 export const defaultChartColorAccessor = () => '#000000';
 
