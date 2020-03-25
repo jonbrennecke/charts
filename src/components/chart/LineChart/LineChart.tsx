@@ -200,7 +200,6 @@ export const LineChartPathsSvg = <
       <clipPath id="clipPath">
         <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
       </clipPath>
-
       {Object.keys(data.toJS()).map(category => {
         const categoryData = data.get(category);
         const color = colorAccessor(category);

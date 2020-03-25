@@ -1,4 +1,4 @@
-import { boolean, select, withKnobs } from '@storybook/addon-knobs';
+import { boolean, select, withKnobs, number } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import React from 'react';
 import { resizableChart } from '../ChartDimensions';
@@ -38,6 +38,7 @@ storiesOf('Charts', module)
           GridLineStyle.solid
         )}
         tooltipValueFormatter={(v: any) => numericFormatter(v.value)}
+        numberOfYTicks={number('Number of Y Ticks', defaultNum)}
       />
     );
   });

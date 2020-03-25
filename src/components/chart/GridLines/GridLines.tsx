@@ -5,6 +5,7 @@ import { isFunction } from 'util';
 import {
   defaultChartGridLineColor,
   defaultChartNumberOfYTicks,
+  defaultChartNumberOfXTicks,
 } from '../common';
 
 export enum GridLineStyle {
@@ -39,7 +40,7 @@ const dasharrayForGridLineStyle = (
 
 export const GridLines = ({
   numberOfYTicks = defaultChartNumberOfYTicks,
-  numberOfXTicks = 0,
+  numberOfXTicks = defaultChartNumberOfXTicks,
   yScale,
   xScale,
   gridLineColor = defaultChartGridLineColor,
@@ -92,7 +93,7 @@ const HorizontalGridLines = ({
   stroke,
   strokeDasharray,
 }: HorizontalGridLinesProps) => (
-  <>
+  <g data-test="horizontal-gridlines">
     {yScale.ticks(numberOfYTicks).map(i => (
       <g key={`horizontal-gridline-${i}`}>
         <line
@@ -106,7 +107,7 @@ const HorizontalGridLines = ({
         />
       </g>
     ))}
-  </>
+  </g>
 );
 
 interface VerticalGridLinesProps {
@@ -166,5 +167,5 @@ const VerticalGridLines = ({
         );
       });
   }
-  return <>{lines}</>;
+  return <g data-test="vertical-gridlines">{lines}</g>;
 };

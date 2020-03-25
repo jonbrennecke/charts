@@ -1,4 +1,4 @@
-import { boolean, select, withKnobs } from '@storybook/addon-knobs';
+import { boolean, select, withKnobs, number } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import { range } from 'd3-array';
 import { randomUniform } from 'd3-random';
@@ -8,7 +8,12 @@ import fromPairs from 'lodash/fromPairs';
 import randomWords from 'random-words';
 import React from 'react';
 import uuid from 'uuid';
-import { capitalizeFirstLetter, numericFormatter } from '../common';
+import {
+  capitalizeFirstLetter,
+  numericFormatter,
+  defaultChartNumberOfXTicks,
+  defaultChartNumberOfYTicks,
+} from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
 import { LineChart } from './LineChart';
@@ -65,7 +70,6 @@ storiesOf('Charts', module)
       padding={padding}
       colorAccessor={key => colors[key]}
       yDomain={[-100, 200]}
-      numberOfYTicks={5}
       showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
       showVerticalGridLines={boolean('Show vertical grid lines', true)}
       gridlineStyle={select(
@@ -80,5 +84,7 @@ storiesOf('Charts', module)
       tooltipValueFormatter={(v: Value) =>
         `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
       }
+      numberOfXTicks={number('Number of X Ticks', defaultChartNumberOfXTicks)}
+      numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}
     />
   ));
