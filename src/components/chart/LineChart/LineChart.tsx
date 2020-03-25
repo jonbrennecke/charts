@@ -3,7 +3,6 @@ import { line } from 'd3-shape';
 import noop from 'lodash/noop';
 import property from 'lodash/property';
 import React from 'react';
-import { ColorTheme, colorThemes } from '../../../theme';
 import { Chart } from '../Chart/Chart';
 import { Dimensional } from '../ChartDimensions';
 import {
@@ -54,7 +53,6 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   tickLength?: number;
   xAxisHeight?: number;
   yAxisWidth?: number;
-  colorTheme?: ColorTheme;
   gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
   showVerticalGridLines?: boolean;
   showHorizontalGridLines?: boolean;
@@ -76,7 +74,6 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
   xDomain = calculateDefaultXDomainForLineChart(data),
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
-  colorTheme = colorThemes.light,
   gridlineStyle,
   showVerticalGridLines = true,
   showHorizontalGridLines = true,
