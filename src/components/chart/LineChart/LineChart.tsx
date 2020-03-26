@@ -2,6 +2,7 @@ import { ScaleLinear } from 'd3-scale';
 import { line, area } from 'd3-shape';
 import noop from 'lodash/noop';
 import property from 'lodash/property';
+import uniq from 'lodash/uniq';
 import React from 'react';
 import { Dimensional } from '../ChartDimensions';
 import {
@@ -25,6 +26,7 @@ import {
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithChart } from '../Chart';
+import styled from 'styled-components';
 
 export interface LineChartEventPayload<Value> {
   category: string;
@@ -184,6 +186,34 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
 
 const LineChartComponent = wrapWithChart(LineChartSvg);
 
+const LinePath = styled.path`
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+  stroke-width: 1px;
+`;
+
+const PointCircle = styled.circle`
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+  r: 1.5;
+
+  &:hover {
+    r: 5;
+  }
+`;
+
+const LinePathGroup = styled.g`
+  &:hover {
+    ${LinePath} {
+      stroke-width: 2px;
+    }
+
+    ${PointCircle} {
+      r: 2.5;
+    }
+  }
+`;
+
 export interface LineChartPathsSvgProps<
   LineChartElement extends BaseLineChartElement
 > extends MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
@@ -241,48 +271,49 @@ export const LineChartPathsSvg = <
         const categoryData = data.get(category);
         const color = colorAccessor(category);
         const makeOnMouseOverOrClickFunction = (
-          callback: typeof onValueMouseOver
-        ) => (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          const x = xScale.invert(e.clientX);
-          const y = yScale.invert(e.clientY);
+          callback: typeof onValueMouseOver,
+          value: LineChartElement
+        ) => (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
           categoryData &&
             callback({
               color,
               category,
               value: {
-                x: x,
-                y: y,
+                x: value.x,
+                y: value.y,
               } as LineChartElement,
               point: {
-                x: e.clientX,
-                y: e.clientY,
+                x: xScale(value.x),
+                y: yScale(value.y),
               },
             });
         };
         return fillStyle === LineChartFillStyle.line ? (
-          <g key={`line-${category}`}>
-            <path
+          <LinePathGroup key={`line-${category}`}>
+            <LinePath
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
               d={lineGenerator(categoryData || []) || ''}
               stroke={color}
               fill="transparent"
-              onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
-              onMouseOut={onValueMouseOut}
             />
             {showPoints &&
               categoryData?.map(d => (
-                <circle
-                  r={1}
+                <PointCircle
+                  key={`point-${d.x}-${d.y}`}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  stroke={color}
-                  fill="transparent"
+                  fill={color}
+                  onMouseOver={makeOnMouseOverOrClickFunction(
+                    onValueMouseOver,
+                    d
+                  )}
+                  onMouseOut={onValueMouseOut}
                 />
               ))}
-          </g>
+          </LinePathGroup>
         ) : (
-          <g key={`line-${category}-fill`}>
+          <g key={`line-${category}-area`}>
             <path
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
@@ -296,9 +327,23 @@ export const LineChartPathsSvg = <
               d={lineGenerator(categoryData || []) || ''}
               stroke={color}
               fill="transparent"
-              onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
-              onMouseOut={onValueMouseOut}
             />
+            {showPoints &&
+              categoryData?.map(d => (
+                <PointCircle
+                  key={`point-${d.x}-${d.y}`}
+                  r={1}
+                  cx={xScale(d.x)}
+                  cy={yScale(d.y)}
+                  stroke={color}
+                  fill="transparent"
+                  onMouseOver={makeOnMouseOverOrClickFunction(
+                    onValueMouseOver,
+                    d
+                  )}
+                  onMouseOut={onValueMouseOut}
+                />
+              ))}
           </g>
         );
       })}
@@ -335,30 +380,27 @@ export const LineChartXAxisSvg = ({
       fill="transparent"
       data-test="x-axis-line"
     />
-    {xScale
-      .ticks(numberOfXTicks)
-      .concat(xScale.domain())
-      .map(n => (
-        <g key={n}>
-          <line
-            x1={xScale(n)}
-            x2={xScale(n)}
-            y1={y1}
-            y2={y1 + tickLength}
-            stroke={axisLineColor}
-            fill="transparent"
-          />
-          <text
-            x={xScale(n)}
-            y={y1 + tickLength}
-            dy="1em"
-            textAnchor="middle"
-            fill={axisLineColor}
-          >
-            {n}
-          </text>
-        </g>
-      ))}
+    {uniq(xScale.ticks(numberOfXTicks).concat(xScale.domain())).map(n => (
+      <g key={n}>
+        <line
+          x1={xScale(n)}
+          x2={xScale(n)}
+          y1={y1}
+          y2={y1 + tickLength}
+          stroke={axisLineColor}
+          fill="transparent"
+        />
+        <text
+          x={xScale(n)}
+          y={y1 + tickLength}
+          dy="1em"
+          textAnchor="middle"
+          fill={axisLineColor}
+        >
+          {n}
+        </text>
+      </g>
+    ))}
   </g>
 );
 
