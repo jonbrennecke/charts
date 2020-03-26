@@ -65,6 +65,7 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   gridlineStyle?: GridLineStyle | keyof typeof GridLineStyle;
   showVerticalGridLines?: boolean;
   showHorizontalGridLines?: boolean;
+  showPoints?: boolean;
 }
 
 export const LineChart = <LineChartElement extends BaseLineChartElement>({
@@ -103,6 +104,7 @@ export interface LineChartSvgProps<LineChartElement>
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   data: ILineChartData<LineChartElement>;
+  showPoints?: boolean;
   curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   dimensions: IChartDimensions;
@@ -120,6 +122,7 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
   xScale,
   yScale,
   data,
+  showPoints,
   curve,
   fillStyle,
   dimensions,
@@ -143,6 +146,7 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
         x1={x1}
         y0={y0}
         y1={y1}
+        showPoints={showPoints}
         curve={curve}
         dimensions={dimensions}
         fillStyle={fillStyle}
@@ -187,6 +191,7 @@ export interface LineChartPathsSvgProps<
   x1: number;
   y0: number;
   y1: number;
+  showPoints?: boolean;
   curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   data: ILineChartData<LineChartElement>;
@@ -209,6 +214,7 @@ export const LineChartPathsSvg = <
   xScale,
   yScale,
   dimensions,
+  showPoints = false,
   curve = Curve.Linear,
   fillStyle = LineChartFillStyle.line,
   xValueAccessor = property('x'),
@@ -254,29 +260,40 @@ export const LineChartPathsSvg = <
             });
         };
         return fillStyle === LineChartFillStyle.line ? (
-          <path
-            clipPath={`url(#clipPath)`}
-            data-test={`path-${category}`}
-            key={category}
-            d={lineGenerator(data.get(category) || []) || ''}
-            stroke={color}
-            fill="transparent"
-            onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
-            onMouseOut={onValueMouseOut}
-          />
-        ) : (
-          <g key={`${category}-fill`}>
+          <g key={`line-${category}`}>
             <path
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
-              d={areaGenerator(data.get(category) || []) || ''}
+              d={lineGenerator(categoryData || []) || ''}
+              stroke={color}
+              fill="transparent"
+              onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
+              onMouseOut={onValueMouseOut}
+            />
+            {showPoints &&
+              categoryData?.map(d => (
+                <circle
+                  r={1}
+                  cx={xScale(d.x)}
+                  cy={yScale(d.y)}
+                  stroke={color}
+                  fill="transparent"
+                />
+              ))}
+          </g>
+        ) : (
+          <g key={`line-${category}-fill`}>
+            <path
+              clipPath={`url(#clipPath)`}
+              data-test={`path-${category}`}
+              d={areaGenerator(categoryData || []) || ''}
               fill={color}
               fillOpacity={0.1}
             />
             <path
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
-              d={lineGenerator(data.get(category) || []) || ''}
+              d={lineGenerator(categoryData || []) || ''}
               stroke={color}
               fill="transparent"
               onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}

@@ -109,5 +109,6 @@ storiesOf('Charts', module)
         },
         LineChartFillStyle.line
       )}
+      showPoints={boolean('Show Points', false)}
     />
   ));
