@@ -35,7 +35,7 @@ storiesOf('Charts', module)
             Dashed: GridLineStyle.dashed,
             Dotted: GridLineStyle.dotted,
           },
-          GridLineStyle.solid
+          GridLineStyle.dotted
         )}
         tooltipValueFormatter={(v: any) => numericFormatter(v.value)}
         numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}

@@ -80,7 +80,7 @@ storiesOf('Charts', module)
           Dashed: GridLineStyle.dashed,
           Dotted: GridLineStyle.dotted,
         },
-        GridLineStyle.solid
+        GridLineStyle.dotted
       )}
       tooltipValueFormatter={(v: Value) =>
         `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
