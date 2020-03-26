@@ -217,17 +217,15 @@ export const LineChartPathsSvg = <
   onValueMouseOver = noop,
   onValueMouseOut = noop,
 }: LineChartPathsSvgProps<LineChartElement>) => {
-  const lineGenerator =
-    fillStyle === LineChartFillStyle.line
-      ? line<LineChartElement>()
-          .curve(d3CurveFunction(curve))
-          .x(d => xScale(xValueAccessor(d)))
-          .y(d => yScale(yValueAccessor(d)))
-      : area<LineChartElement>()
-          .curve(d3CurveFunction(curve))
-          .x(d => xScale(xValueAccessor(d)))
-          .y0(dimensions.height)
-          .y1(d => yScale(yValueAccessor(d)));
+  const lineGenerator = line<LineChartElement>()
+    .curve(d3CurveFunction(curve))
+    .x(d => xScale(xValueAccessor(d)))
+    .y(d => yScale(yValueAccessor(d)));
+  const areaGenerator = area<LineChartElement>()
+    .curve(d3CurveFunction(curve))
+    .x(d => xScale(xValueAccessor(d)))
+    .y0(dimensions.height)
+    .y1(d => yScale(yValueAccessor(d)));
   return (
     <g data-test="paths">
       <clipPath id="clipPath">
@@ -255,17 +253,36 @@ export const LineChartPathsSvg = <
               },
             });
         };
-        return (
+        return fillStyle === LineChartFillStyle.line ? (
           <path
             clipPath={`url(#clipPath)`}
             data-test={`path-${category}`}
             key={category}
             d={lineGenerator(data.get(category) || []) || ''}
             stroke={color}
-            fill={fillStyle === LineChartFillStyle.line ? 'transparent' : color}
+            fill="transparent"
             onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
             onMouseOut={onValueMouseOut}
           />
+        ) : (
+          <g key={`${category}-fill`}>
+            <path
+              clipPath={`url(#clipPath)`}
+              data-test={`path-${category}`}
+              d={areaGenerator(data.get(category) || []) || ''}
+              fill={color}
+              fillOpacity={0.1}
+            />
+            <path
+              clipPath={`url(#clipPath)`}
+              data-test={`path-${category}`}
+              d={lineGenerator(data.get(category) || []) || ''}
+              stroke={color}
+              fill="transparent"
+              onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
+              onMouseOut={onValueMouseOut}
+            />
+          </g>
         );
       })}
     </g>
