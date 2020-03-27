@@ -195,10 +195,11 @@ const LinePath = styled.path`
   transition: all 100ms ease-in-out;
 `;
 
-const PointCircle = styled.circle`
+const PointCircle = styled.circle<{ showPoints: boolean }>`
   cursor: pointer;
   transition: all 100ms ease-in-out;
   stroke-width: 1.5;
+  opacity: ${props => (props.showPoints ? 1 : 0)};
 
   &:hover {
     stroke-width: 5;
@@ -325,22 +326,22 @@ export const LineChartPathsSvg = <
               stroke={color}
               fill="transparent"
             />
-            {showPoints &&
-              categoryData?.map(d => (
-                <PointCircle
-                  key={`point-${d.x}-${d.y}`}
-                  cx={xScale(d.x)}
-                  cy={yScale(d.y)}
-                  fill={color}
-                  stroke={color}
-                  r={1}
-                  onMouseOver={makeOnMouseOverOrClickFunction(
-                    onValueMouseOver,
-                    d
-                  )}
-                  onMouseOut={onValueMouseOut}
-                />
-              ))}
+            {categoryData?.map(d => (
+              <PointCircle
+                showPoints={showPoints}
+                key={`point-${d.x}-${d.y}`}
+                cx={xScale(d.x)}
+                cy={yScale(d.y)}
+                fill={color}
+                stroke={color}
+                r={1}
+                onMouseOver={makeOnMouseOverOrClickFunction(
+                  onValueMouseOver,
+                  d
+                )}
+                onMouseOut={onValueMouseOut}
+              />
+            ))}
           </LinePathGroup>
         ) : (
           <LinePathGroup
@@ -365,22 +366,22 @@ export const LineChartPathsSvg = <
               stroke={color}
               fill="transparent"
             />
-            {showPoints &&
-              categoryData?.map(d => (
-                <PointCircle
-                  key={`point-${d.x}-${d.y}`}
-                  r={1}
-                  cx={xScale(d.x)}
-                  cy={yScale(d.y)}
-                  stroke={color}
-                  fill="transparent"
-                  onMouseOver={makeOnMouseOverOrClickFunction(
-                    onValueMouseOver,
-                    d
-                  )}
-                  onMouseOut={onValueMouseOut}
-                />
-              ))}
+            {categoryData?.map(d => (
+              <PointCircle
+                showPoints={showPoints}
+                key={`point-${d.x}-${d.y}`}
+                r={1}
+                cx={xScale(d.x)}
+                cy={yScale(d.y)}
+                stroke={color}
+                fill="transparent"
+                onMouseOver={makeOnMouseOverOrClickFunction(
+                  onValueMouseOver,
+                  d
+                )}
+                onMouseOut={onValueMouseOut}
+              />
+            ))}
           </LinePathGroup>
         );
       })}
