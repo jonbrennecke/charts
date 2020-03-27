@@ -311,7 +311,7 @@ export const LineChartPathsSvg = <
               },
             });
         };
-        return fillStyle === LineChartFillStyle.line ? (
+        return (
           <LinePathGroup
             key={`line-${category}`}
             category={category}
@@ -319,6 +319,16 @@ export const LineChartPathsSvg = <
             onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
             onMouseOut={onValueMouseOut}
           >
+            {fillStyle === LineChartFillStyle.area && (
+              <path
+                clipPath={`url(#clipPath)`}
+                data-test={`path-${category}`}
+                d={areaGenerator(categoryData || []) || ''}
+                fill={color}
+                fillOpacity={0.1}
+                pointerEvents="none"
+              />
+            )}
             <LinePath
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
@@ -335,46 +345,6 @@ export const LineChartPathsSvg = <
                 fill={color}
                 stroke={color}
                 r={1}
-                onMouseOver={makeOnMouseOverOrClickFunction(
-                  onValueMouseOver,
-                  d
-                )}
-                onMouseOut={onValueMouseOut}
-              />
-            ))}
-          </LinePathGroup>
-        ) : (
-          <LinePathGroup
-            key={`line-${category}-area`}
-            category={category}
-            selectedCategory={selectedCategory}
-            onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
-            onMouseOut={onValueMouseOut}
-          >
-            <path
-              clipPath={`url(#clipPath)`}
-              data-test={`path-${category}`}
-              d={areaGenerator(categoryData || []) || ''}
-              fill={color}
-              fillOpacity={0.1}
-              pointerEvents="none"
-            />
-            <LinePath
-              clipPath={`url(#clipPath)`}
-              data-test={`path-${category}`}
-              d={lineGenerator(categoryData || []) || ''}
-              stroke={color}
-              fill="transparent"
-            />
-            {categoryData?.map(d => (
-              <PointCircle
-                showPoints={showPoints}
-                key={`point-${d.x}-${d.y}`}
-                r={1}
-                cx={xScale(d.x)}
-                cy={yScale(d.y)}
-                stroke={color}
-                fill="transparent"
                 onMouseOver={makeOnMouseOverOrClickFunction(
                   onValueMouseOver,
                   d
