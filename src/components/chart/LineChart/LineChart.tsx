@@ -343,15 +343,22 @@ export const LineChartPathsSvg = <
               ))}
           </LinePathGroup>
         ) : (
-          <g key={`line-${category}-area`}>
+          <LinePathGroup
+            key={`line-${category}-area`}
+            category={category}
+            selectedCategory={selectedCategory}
+            onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
+            onMouseOut={onValueMouseOut}
+          >
             <path
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
               d={areaGenerator(categoryData || []) || ''}
               fill={color}
               fillOpacity={0.1}
+              pointerEvents="none"
             />
-            <path
+            <LinePath
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
               d={lineGenerator(categoryData || []) || ''}
@@ -374,7 +381,7 @@ export const LineChartPathsSvg = <
                   onMouseOut={onValueMouseOut}
                 />
               ))}
-          </g>
+          </LinePathGroup>
         );
       })}
     </g>
