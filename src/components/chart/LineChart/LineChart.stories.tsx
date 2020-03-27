@@ -73,7 +73,6 @@ storiesOf('Charts', module)
         dimensions={dimensions}
         padding={padding}
         colorAccessor={key => colors[key]}
-        yDomain={[-100, 200]}
         selectedCategory={selectedCategory}
         showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
         showVerticalGridLines={boolean('Show vertical grid lines', true)}
