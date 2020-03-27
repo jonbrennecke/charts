@@ -31,7 +31,7 @@ import styled from 'styled-components';
 export interface LineChartEventPayload<Value> {
   category: string;
   color: string;
-  value: Value;
+  value: Value | null;
   point: { x: number; y: number };
 }
 
@@ -54,6 +54,7 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   xDomain?: [number, number];
   curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
+  selectedCategory?: string;
   xValueAccessor?(data: LineChartElement): number;
   yValueAccessor?(data: LineChartElement): number;
   colorAccessor?(key: string): string;
@@ -110,6 +111,7 @@ export interface LineChartSvgProps<LineChartElement>
   curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   dimensions: IChartDimensions;
+  selectedCategory?: string;
   axisLineColor?: string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
@@ -124,6 +126,7 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
   xScale,
   yScale,
   data,
+  selectedCategory,
   showPoints,
   curve,
   fillStyle,
@@ -148,6 +151,7 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
         x1={x1}
         y0={y0}
         y1={y1}
+        selectedCategory={selectedCategory}
         showPoints={showPoints}
         curve={curve}
         dimensions={dimensions}
@@ -189,27 +193,40 @@ const LineChartComponent = wrapWithChart(LineChartSvg);
 const LinePath = styled.path`
   cursor: pointer;
   transition: all 100ms ease-in-out;
-  stroke-width: 1px;
 `;
 
 const PointCircle = styled.circle`
   cursor: pointer;
   transition: all 100ms ease-in-out;
-  r: 1.5;
+  stroke-width: 1.5;
 
   &:hover {
-    r: 5;
+    stroke-width: 5;
   }
 `;
 
-const LinePathGroup = styled.g`
+const LinePathGroup = styled.g<{
+  category?: string;
+  selectedCategory?: string;
+}>`
+  opacity: ${props =>
+    props.selectedCategory
+      ? props.category === props.selectedCategory
+        ? 1
+        : 0.25
+      : 1};
+
   &:hover {
     ${LinePath} {
-      stroke-width: 2px;
+      stroke-width: 2;
     }
 
     ${PointCircle} {
-      r: 2.5;
+      stroke-width: 2.5;
+
+      &:hover {
+        stroke-width: 3.5;
+      }
     }
   }
 `;
@@ -221,6 +238,7 @@ export interface LineChartPathsSvgProps<
   x1: number;
   y0: number;
   y1: number;
+  selectedCategory?: string;
   showPoints?: boolean;
   curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
@@ -244,6 +262,7 @@ export const LineChartPathsSvg = <
   xScale,
   yScale,
   dimensions,
+  selectedCategory,
   showPoints = false,
   curve = Curve.Linear,
   fillStyle = LineChartFillStyle.line,
@@ -272,24 +291,33 @@ export const LineChartPathsSvg = <
         const color = colorAccessor(category);
         const makeOnMouseOverOrClickFunction = (
           callback: typeof onValueMouseOver,
-          value: LineChartElement
+          value?: LineChartElement
         ) => (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
+          e.stopPropagation();
           categoryData &&
             callback({
               color,
               category,
-              value: {
-                x: value.x,
-                y: value.y,
-              } as LineChartElement,
+              value: value
+                ? ({
+                    x: value.x,
+                    y: value.y,
+                  } as LineChartElement)
+                : null,
               point: {
-                x: xScale(value.x),
-                y: yScale(value.y),
+                x: value ? xScale(value.x) : e.clientX,
+                y: value ? yScale(value.y) : e.clientY,
               },
             });
         };
         return fillStyle === LineChartFillStyle.line ? (
-          <LinePathGroup key={`line-${category}`}>
+          <LinePathGroup
+            key={`line-${category}`}
+            category={category}
+            selectedCategory={selectedCategory}
+            onMouseOver={makeOnMouseOverOrClickFunction(onValueMouseOver)}
+            onMouseOut={onValueMouseOut}
+          >
             <LinePath
               clipPath={`url(#clipPath)`}
               data-test={`path-${category}`}
@@ -304,6 +332,8 @@ export const LineChartPathsSvg = <
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   fill={color}
+                  stroke={color}
+                  r={1}
                   onMouseOver={makeOnMouseOverOrClickFunction(
                     onValueMouseOver,
                     d

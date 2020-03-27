@@ -35,7 +35,7 @@ const TooltipContainer = styled.div<{
   position: absolute;
   height: 25px;
   max-width: 300px;
-  top: -35px;
+  top: -37px;
   z-index: 1000;
   display: flex;
   flex: 1;

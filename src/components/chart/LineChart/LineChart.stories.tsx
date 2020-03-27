@@ -18,6 +18,7 @@ import {
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
 import { LineChart, LineChartFillStyle } from './LineChart';
+import { useState } from '@storybook/addons';
 
 const dimensions = {
   height: 240,
@@ -64,51 +65,57 @@ const LineChartComponent = wrapWithTooltip(LineChart);
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
-  .add('Line chart', () => (
-    <LineChartComponent
-      data={data}
-      dimensions={dimensions}
-      padding={padding}
-      colorAccessor={key => colors[key]}
-      yDomain={[-100, 200]}
-      showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
-      showVerticalGridLines={boolean('Show vertical grid lines', true)}
-      gridlineStyle={select(
-        'Grid line style',
-        {
-          Solid: GridLineStyle.solid,
-          Dashed: GridLineStyle.dashed,
-          Dotted: GridLineStyle.dotted,
-        },
-        GridLineStyle.dotted
-      )}
-      tooltipValueFormatter={(v: Value) =>
-        `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
-      }
-      numberOfXTicks={number('Number of X Ticks', defaultChartNumberOfXTicks)}
-      numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}
-      curve={select(
-        'Curve',
-        {
-          linear: Curve.Linear,
-          step: Curve.Step,
-          stepBefore: Curve.StepBefore,
-          stepAfter: Curve.StepAfter,
-          basis: Curve.Basis,
-          cardinal: Curve.Cardinal,
-          monotoneX: Curve.MonotoneX,
-          catmullRom: Curve.CatmullRom,
-        },
-        Curve.Linear
-      )}
-      fillStyle={select(
-        'Fill style',
-        {
-          line: LineChartFillStyle.line,
-          area: LineChartFillStyle.area,
-        },
-        LineChartFillStyle.line
-      )}
-      showPoints={boolean('Show Points', false)}
-    />
-  ));
+  .add('Line chart', () => {
+    const [selectedCategory, setSelectedCategory] = useState('');
+    return (
+      <LineChartComponent
+        data={data}
+        dimensions={dimensions}
+        padding={padding}
+        colorAccessor={key => colors[key]}
+        yDomain={[-100, 200]}
+        selectedCategory={selectedCategory}
+        showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
+        showVerticalGridLines={boolean('Show vertical grid lines', true)}
+        gridlineStyle={select(
+          'Grid line style',
+          {
+            Solid: GridLineStyle.solid,
+            Dashed: GridLineStyle.dashed,
+            Dotted: GridLineStyle.dotted,
+          },
+          GridLineStyle.dotted
+        )}
+        tooltipValueFormatter={(v: Value) =>
+          `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
+        }
+        numberOfXTicks={number('Number of X Ticks', defaultChartNumberOfXTicks)}
+        numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}
+        curve={select(
+          'Curve',
+          {
+            linear: Curve.Linear,
+            step: Curve.Step,
+            stepBefore: Curve.StepBefore,
+            stepAfter: Curve.StepAfter,
+            basis: Curve.Basis,
+            cardinal: Curve.Cardinal,
+            monotoneX: Curve.MonotoneX,
+            catmullRom: Curve.CatmullRom,
+          },
+          Curve.Linear
+        )}
+        fillStyle={select(
+          'Fill style',
+          {
+            line: LineChartFillStyle.line,
+            area: LineChartFillStyle.area,
+          },
+          LineChartFillStyle.line
+        )}
+        showPoints={boolean('Show Points', false)}
+        onValueMouseOver={value => setSelectedCategory(value.category)}
+        onValueMouseOut={() => setSelectedCategory('')}
+      />
+    );
+  });
