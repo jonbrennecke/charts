@@ -27,6 +27,7 @@ import {
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithChart } from '../Chart';
 import styled from 'styled-components';
+import { RectClipPath } from '../RectClipPath';
 
 export interface LineChartEventPayload<Value> {
   category: string;
@@ -284,9 +285,13 @@ export const LineChartPathsSvg = <
     .y1(d => yScale(yValueAccessor(d)));
   return (
     <g data-test="paths">
-      <clipPath id="clipPath">
-        <rect x={x0} width={x1 - x0} y={y0} height={y1 - y0} />
-      </clipPath>
+      <RectClipPath
+        id="clipPath"
+        x={x0}
+        y={y0}
+        width={x1 - x0}
+        height={y1 - y0}
+      />
       {Object.keys(data.toJS()).map(category => {
         const categoryData = data.get(category);
         const color = colorAccessor(category);

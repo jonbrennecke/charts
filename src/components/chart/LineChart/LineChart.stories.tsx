@@ -19,6 +19,7 @@ import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
 import { LineChart, LineChartFillStyle } from './LineChart';
 import { useState } from '@storybook/addons';
+import { resizableChart } from '../ChartDimensions';
 
 const dimensions = {
   height: 240,
@@ -61,7 +62,7 @@ const data = categories.reduce(
   Map<string, ReturnType<typeof makeRandomLineData>>()
 );
 
-const LineChartComponent = wrapWithTooltip(LineChart);
+const LineChartComponent = resizableChart(wrapWithTooltip(LineChart));
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
@@ -70,7 +71,6 @@ storiesOf('Charts', module)
     return (
       <LineChartComponent
         data={data}
-        dimensions={dimensions}
         padding={padding}
         colorAccessor={key => colors[key]}
         selectedCategory={selectedCategory}
