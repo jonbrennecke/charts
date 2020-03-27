@@ -29,6 +29,7 @@ import {
   zeroPadding,
 } from '../common';
 import { GridLineStyle } from '../GridLines';
+import { RectClipPath } from '../RectClipPath';
 
 const calculateDefaultYDomainWithSeries = <T extends any>(
   series: Series<T, string>[]
@@ -212,14 +213,13 @@ export const BarChartSvg = <
   return (
     <g data-test="bar-chart">
       <g data-test="stacks">
-        <clipPath id="clipPath">
-          <rect
-            x={x0}
-            width={Math.max(x1 - x0, 0)}
-            y={y0}
-            height={Math.max(y1 - y0, 0)}
-          />
-        </clipPath>
+        <RectClipPath
+          id="clipPath"
+          x={x0}
+          width={x1 - x0}
+          y={y0}
+          height={y1 - y0}
+        />
         {xDomain.map(i => (
           <Stack data-test={`stack-${i}`} key={`stack-${i}`}>
             {series.map((s, j) => {

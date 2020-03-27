@@ -17,7 +17,7 @@ import {
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithTooltip } from '../Tooltip';
-import { LineChart, LineChartFillStyle } from './LineChart';
+import { LineChart, LineChartFillStyle, LineChartProps } from './LineChart';
 import { useState } from '@storybook/addons';
 import { resizableChart } from '../ChartDimensions';
 
@@ -42,11 +42,12 @@ type Value = {
   id: string;
   x: number;
   y: number;
+  count: number;
 };
 
 const makeRandomLineData = () =>
   range(numberOfPoints).map(
-    (y, x): Value => ({ id: uuid.v4(), y: random(), x })
+    (y, x): Value => ({ id: uuid.v4(), y: random(), x, count: random() })
   );
 
 const colors = fromPairs(
@@ -62,7 +63,9 @@ const data = categories.reduce(
   Map<string, ReturnType<typeof makeRandomLineData>>()
 );
 
-const LineChartComponent = resizableChart(wrapWithTooltip(LineChart));
+const LineChartComponent = resizableChart(
+  wrapWithTooltip(LineChart as React.ComponentType<LineChartProps<Value>>)
+);
 
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
@@ -71,6 +74,19 @@ storiesOf('Charts', module)
     return (
       <LineChartComponent
         data={data}
+        domainConfig={{
+          accessor: (value: Value) => value.x,
+        }}
+        rangeConfig={{
+          y: {
+            chartType: 'line',
+            accessor: (value: Value) => value.y,
+          },
+          count: {
+            chartType: 'bar',
+            accessor: (value: Value) => value.count,
+          },
+        }}
         padding={padding}
         colorAccessor={key => colors[key]}
         selectedCategory={selectedCategory}
@@ -102,7 +118,7 @@ storiesOf('Charts', module)
             monotoneX: Curve.MonotoneX,
             catmullRom: Curve.CatmullRom,
           },
-          Curve.Linear
+          Curve.Cardinal
         )}
         fillStyle={select(
           'Fill style',
@@ -112,7 +128,7 @@ storiesOf('Charts', module)
           },
           LineChartFillStyle.line
         )}
-        showPoints={boolean('Show Points', false)}
+        showPoints={boolean('Show Points', true)}
         onValueMouseOver={value => setSelectedCategory(value.category)}
         onValueMouseOut={() => setSelectedCategory('')}
       />

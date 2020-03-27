@@ -1,4 +1,4 @@
-import { ScaleLinear } from 'd3-scale';
+import { ScaleLinear, ScaleBand, scaleBand } from 'd3-scale';
 import { line, area } from 'd3-shape';
 import noop from 'lodash/noop';
 import property from 'lodash/property';
@@ -6,8 +6,8 @@ import uniq from 'lodash/uniq';
 import React from 'react';
 import { Dimensional } from '../ChartDimensions';
 import {
-  calculateDefaultXDomainForLineChart,
-  calculateDefaultYDomainForLineChart,
+  calculateDefaultDomainForLineChart,
+  calculateDefaultRangeForLineChart,
   defaultChartAxisLineColor,
   defaultChartColorAccessor,
   defaultChartNumberOfXTicks,
@@ -28,6 +28,10 @@ import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithChart } from '../Chart';
 import styled from 'styled-components';
 import { RectClipPath } from '../RectClipPath';
+import min from 'lodash/min';
+import max from 'lodash/max';
+import times from 'lodash/times';
+import shortId from 'shortid';
 
 export interface LineChartEventPayload<Value> {
   category: string;
@@ -46,18 +50,30 @@ export enum LineChartFillStyle {
   area = 'area',
 }
 
+export enum SeriesChartType {
+  line = 'line',
+  bar = 'bar',
+}
+
 export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   extends Dimensional,
     MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
   data: ILineChartData<LineChartElement>;
   padding?: IChartPadding;
-  yDomain?: [number, number];
-  xDomain?: [number, number];
+  range?: [number, number];
+  domain?: [number, number];
   curve?: Curve | keyof typeof Curve;
   fillStyle?: LineChartFillStyle | keyof typeof LineChartFillStyle;
   selectedCategory?: string;
-  xValueAccessor?(data: LineChartElement): number;
-  yValueAccessor?(data: LineChartElement): number;
+  domainConfig?: {
+    accessor?(data: LineChartElement): number;
+  };
+  rangeConfig?: {
+    [key in keyof Partial<LineChartElement>]: {
+      chartType?: SeriesChartType | keyof typeof SeriesChartType;
+      accessor?(data: LineChartElement): number;
+    };
+  };
   colorAccessor?(key: string): string;
   gridLineColor?: string;
   axisLineColor?: string;
@@ -72,21 +88,47 @@ export interface LineChartProps<LineChartElement extends BaseLineChartElement>
   showPoints?: boolean;
 }
 
+const defaultDomainKeys = {
+  accessor: property('x'),
+};
+
+const defaulRangeKeys = {
+  y: {
+    chartType: SeriesChartType.line,
+    accessor: property('y'),
+  },
+};
+
 export const LineChart = <LineChartElement extends BaseLineChartElement>({
   data,
   dimensions,
   padding = zeroPadding,
-  xValueAccessor = property('x'),
-  yValueAccessor = property('y'),
-  yDomain = calculateDefaultYDomainForLineChart(data, yValueAccessor),
-  xDomain = calculateDefaultXDomainForLineChart(data),
+  domainConfig = defaultDomainKeys as NonNullable<
+    LineChartProps<LineChartElement>['domainConfig']
+  >,
+  rangeConfig = defaulRangeKeys as NonNullable<
+    LineChartProps<LineChartElement>['rangeConfig']
+  >,
+  range,
+  domain = calculateDefaultDomainForLineChart(data),
   xAxisHeight = defaultChartXAxisHeight,
   yAxisWidth = defaultChartYAxisWidth,
   ...props
 }: LineChartProps<LineChartElement>) => {
+  const applyRangeAccessor = (value: LineChartElement) =>
+    Object.keys(rangeConfig).map(key =>
+      rangeConfig[key].accessor
+        ? rangeConfig[key].accessor(value)
+        : (value[key] as number)
+    );
   const { xScale, yScale } = makeLineChartScales(
-    xDomain,
-    yDomain,
+    domain,
+    range ||
+      calculateDefaultRangeForLineChart(
+        data,
+        (value: LineChartElement) => min(applyRangeAccessor(value)),
+        (value: LineChartElement) => max(applyRangeAccessor(value))
+      ),
     yAxisWidth,
     xAxisHeight,
     dimensions,
@@ -98,6 +140,8 @@ export const LineChart = <LineChartElement extends BaseLineChartElement>({
       xScale={xScale}
       yScale={yScale}
       data={data}
+      rangeConfig={rangeConfig}
+      domainConfig={domainConfig}
       {...props}
     />
   );
@@ -116,10 +160,19 @@ export interface LineChartSvgProps<LineChartElement>
   axisLineColor?: string;
   numberOfXTicks?: number;
   numberOfYTicks?: number;
+  barPaddingInner?: number;
+  barPaddingOuter?: number;
   tickLength?: number;
   yAxisWidth?: number;
-  xValueAccessor?(data: LineChartElement): number;
-  yValueAccessor?(data: LineChartElement): number;
+  rangeConfig: {
+    [key in keyof Partial<LineChartElement>]: {
+      chartType?: SeriesChartType | keyof typeof SeriesChartType;
+      accessor?(data: LineChartElement): number;
+    };
+  };
+  domainConfig: {
+    accessor?(data: LineChartElement): number;
+  };
   colorAccessor?(key: string): string;
 }
 
@@ -127,6 +180,8 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
   xScale,
   yScale,
   data,
+  rangeConfig,
+  domainConfig,
   selectedCategory,
   showPoints,
   curve,
@@ -137,35 +192,80 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
   tickLength,
   yAxisWidth,
   axisLineColor,
-  xValueAccessor,
-  yValueAccessor,
   colorAccessor,
   onValueMouseOut,
   onValueMouseOver,
+  barPaddingInner = 0.25,
+  barPaddingOuter = 0.25,
 }: LineChartSvgProps<LineChartElement>) => {
   const [x0, x1] = xScale.range();
   const [y1, y0] = yScale.range();
   return (
-    <g data-test="line-chart">
-      <LineChartPathsSvg
-        x0={x0}
-        x1={x1}
-        y0={y0}
-        y1={y1}
-        selectedCategory={selectedCategory}
-        showPoints={showPoints}
-        curve={curve}
-        dimensions={dimensions}
-        fillStyle={fillStyle}
-        xScale={xScale}
-        yScale={yScale}
-        xValueAccessor={xValueAccessor}
-        yValueAccessor={yValueAccessor}
-        colorAccessor={colorAccessor}
-        data={data}
-        onValueMouseOut={onValueMouseOut}
-        onValueMouseOver={onValueMouseOver}
-      />
+    <g data-test="chart">
+      {Object.keys(rangeConfig).map(key => {
+        const xValueAccessor = (value: LineChartElement) =>
+          domainConfig.accessor ? domainConfig.accessor(value) : value.x;
+        const yValueAccessor = (value: LineChartElement) =>
+          rangeConfig[key].accessor
+            ? rangeConfig[key].accessor(value)
+            : (value[key] as number);
+        const config = rangeConfig[key as keyof typeof rangeConfig];
+        const chartType = config.chartType || SeriesChartType.line;
+        switch (chartType) {
+          case SeriesChartType.line:
+            return (
+              <LineChartPathsSvg
+                key={`line-chart-${key}`}
+                x0={x0}
+                x1={x1}
+                y0={y0}
+                y1={y1}
+                selectedCategory={selectedCategory}
+                showPoints={showPoints}
+                curve={curve}
+                dimensions={dimensions}
+                fillStyle={fillStyle}
+                xScale={xScale}
+                yScale={yScale}
+                xValueAccessor={xValueAccessor}
+                yValueAccessor={yValueAccessor}
+                colorAccessor={colorAccessor}
+                data={data}
+                onValueMouseOut={onValueMouseOut}
+                onValueMouseOver={onValueMouseOver}
+              />
+            );
+          case SeriesChartType.bar:
+            const barDomain = times(
+              max(
+                data
+                  .valueSeq()
+                  .map(key => key.length)
+                  .toArray()
+              ) || 0
+            );
+            const barXScale = scaleBand<number>()
+              .domain(barDomain)
+              .range(xScale.range() as [number, number])
+              .paddingInner(barPaddingInner)
+              .paddingOuter(barPaddingOuter);
+            return (
+              <SeriesBarChartSvg
+                key={`bar-chart-${key}`}
+                x0={x0}
+                x1={x1}
+                y0={y0}
+                y1={y1}
+                xScale={barXScale}
+                yScale={yScale}
+                xValueAccessor={xValueAccessor}
+                yValueAccessor={yValueAccessor}
+                colorAccessor={colorAccessor}
+                data={data}
+              />
+            );
+        }
+      })}
       <LineChartXAxisSvg
         x0={x0}
         x1={x1}
@@ -190,6 +290,73 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
 };
 
 const LineChartComponent = wrapWithChart(LineChartSvg);
+
+const SeriesBar = styled.rect``;
+
+export interface SeriesBarChartSvgProps<
+  LineChartElement extends BaseLineChartElement
+> {
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+  data: ILineChartData<LineChartElement>;
+  xScale: ScaleBand<number>;
+  yScale: ScaleLinear<number, number>;
+  xValueAccessor?(data: LineChartElement): number;
+  yValueAccessor?(data: LineChartElement): number;
+  colorAccessor?(key: string): string;
+}
+
+export const SeriesBarChartSvg = <
+  LineChartElement extends BaseLineChartElement
+>({
+  x0,
+  x1,
+  y0,
+  y1,
+  data,
+  xScale,
+  yScale,
+  xValueAccessor = property('x'),
+  yValueAccessor = property('y'),
+  colorAccessor = defaultChartColorAccessor,
+}: SeriesBarChartSvgProps<LineChartElement>) => {
+  const uniqueId = shortId.generate();
+  const clipPathId = `clipPath-${uniqueId}`;
+  const bandWidth = xScale.bandwidth();
+  return (
+    <g data-test="paths">
+      <RectClipPath
+        id={clipPathId}
+        x={x0}
+        y={y0}
+        width={x1 - x0}
+        height={y1 - y0}
+      />
+      {Object.keys(data.toJS()).map(category => {
+        const color = colorAccessor(category);
+        const categoryData = data.get(category);
+        return categoryData?.map(d => {
+          const yStart = yScale(0);
+          const yEnd = yScale(yValueAccessor(d));
+          const height = yStart - yEnd;
+          return (
+            <SeriesBar
+              key={`bar-${category}-${d.x}`}
+              clipPath={`url(#${clipPathId})`}
+              fill={color}
+              x={Math.max(xScale(xValueAccessor(d)) || 0, 0)}
+              width={Math.max(bandWidth, 0)}
+              y={Math.max(yStart - height, 0)}
+              height={Math.max(height, 0)}
+            />
+          );
+        });
+      })}
+    </g>
+  );
+};
 
 const LinePath = styled.path`
   cursor: pointer;
@@ -283,10 +450,12 @@ export const LineChartPathsSvg = <
     .x(d => xScale(xValueAccessor(d)))
     .y0(dimensions.height)
     .y1(d => yScale(yValueAccessor(d)));
+  const uniqueId = shortId.generate();
+  const clipPathId = `clipPath-${uniqueId}`;
   return (
     <g data-test="paths">
       <RectClipPath
-        id="clipPath"
+        id={clipPathId}
         x={x0}
         y={y0}
         width={x1 - x0}
@@ -326,7 +495,7 @@ export const LineChartPathsSvg = <
           >
             {fillStyle === LineChartFillStyle.area && (
               <path
-                clipPath={`url(#clipPath)`}
+                clipPath={`url(#${clipPathId})`}
                 data-test={`path-${category}`}
                 d={areaGenerator(categoryData || []) || ''}
                 fill={color}
@@ -335,11 +504,12 @@ export const LineChartPathsSvg = <
               />
             )}
             <LinePath
-              clipPath={`url(#clipPath)`}
+              clipPath={`url(#${clipPathId})`}
               data-test={`path-${category}`}
               d={lineGenerator(categoryData || []) || ''}
               stroke={color}
               fill="transparent"
+              pointerEvents="stroke"
             />
             {categoryData?.map(d => (
               <PointCircle

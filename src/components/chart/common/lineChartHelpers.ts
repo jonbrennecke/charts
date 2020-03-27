@@ -6,36 +6,37 @@ import floor from 'lodash/floor';
 import ceil from 'lodash/ceil';
 
 export const makeLineChartScales = (
-  xDomain: [number, number],
-  yDomain: [number, number],
+  domain: [number, number],
+  range: [number, number],
   yAxisWidth: number,
   xAxisHeight: number,
   dimensions: IChartDimensions,
   padding: IChartPadding
 ) => {
   const xScale = scaleLinear()
-    .domain(xDomain)
+    .domain(domain)
     .range([yAxisWidth + padding.left, dimensions.width - padding.right])
     .nice();
   const yScale = scaleLinear()
-    .domain(yDomain)
+    .domain(range)
     .range([dimensions.height - xAxisHeight - padding.bottom, padding.top])
     .nice();
   return { xScale, yScale };
 };
 
-export const calculateDefaultYDomainForLineChart = <T extends any>(
+export const calculateDefaultRangeForLineChart = <T extends any>(
   data: ILineChartData<T>,
-  yValueAccessor: (data: T) => number
+  minValueAccessor: (data: T) => number,
+  maxValueAccessor: (data: T) => number
 ): [number, number] => {
-  const minData = data.minBy(y => y.map(yValueAccessor)) || [];
-  const a = floor(min(minData.map(yValueAccessor)) || 0);
-  const maxData = data.maxBy(y => y.map(yValueAccessor)) || [];
-  const b = ceil(max(maxData.map(yValueAccessor)) || 0);
+  const minData = data.minBy(y => y.map(minValueAccessor)) || [];
+  const a = floor(min(minData.map(minValueAccessor)) || 0);
+  const maxData = data.maxBy(y => y.map(maxValueAccessor)) || [];
+  const b = ceil(max(maxData.map(maxValueAccessor)) || 0);
   return [a, b];
 };
 
-export const calculateDefaultXDomainForLineChart = <T extends any>(
+export const calculateDefaultDomainForLineChart = <T extends any>(
   data: ILineChartData<T>
 ): [number, number] => {
   const x: T[] = data.first([]);

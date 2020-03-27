@@ -46,6 +46,7 @@
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
+    "shortid": "^2.2.15",
     "styled-components": "^5.0.1"
   },
   "peerDependencies": {
@@ -70,6 +71,7 @@
     "@types/redux-logger": "3.0.7",
     "@types/redux-storage": "4.1.0",
     "@types/reselect": "2.2.0",
+    "@types/shortid": "^0.0.29",
     "@types/uuid": "^3.4.6",
     "babel-loader": "^8.0.6",
     "enzyme": "3.11.0",
