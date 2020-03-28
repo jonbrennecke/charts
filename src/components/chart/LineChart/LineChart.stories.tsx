@@ -32,7 +32,9 @@ export const padding = {
 const yDomain = [0, 100];
 const numberOfPoints = 50;
 
-const random = randomUniform(yDomain[0], yDomain[1]);
+const randomYData = randomUniform(yDomain[0], yDomain[1]);
+
+const randomCountData = randomUniform(yDomain[0], yDomain[1] * 0.5);
 
 type Value = {
   id: string;
@@ -43,7 +45,12 @@ type Value = {
 
 const makeRandomLineData = () =>
   range(numberOfPoints).map(
-    (y, x): Value => ({ id: uuid.v4(), y: random(), x, count: random() })
+    (y, x): Value => ({
+      id: uuid.v4(),
+      y: randomYData(),
+      x,
+      count: randomCountData(),
+    })
   );
 
 const colors = fromPairs(

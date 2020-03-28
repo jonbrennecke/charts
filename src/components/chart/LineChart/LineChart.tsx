@@ -26,7 +26,7 @@ import {
 } from '../common';
 import { GridLineStyle } from '../GridLines/GridLines';
 import { wrapWithChart } from '../Chart';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { RectClipPath } from '../RectClipPath';
 import min from 'lodash/min';
 import max from 'lodash/max';
@@ -262,6 +262,9 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
                 yValueAccessor={yValueAccessor}
                 colorAccessor={colorAccessor}
                 data={data}
+                selectedCategory={selectedCategory}
+                onValueMouseOut={onValueMouseOut}
+                onValueMouseOver={onValueMouseOver}
               />
             );
         }
@@ -291,11 +294,28 @@ export const LineChartSvg = <LineChartElement extends BaseLineChartElement>({
 
 const LineChartComponent = wrapWithChart(LineChartSvg);
 
-const SeriesBar = styled.rect``;
+const selectedCategoryCss = (props: {
+  category?: string;
+  selectedCategory?: string;
+}) => css`
+  opacity: ${props.selectedCategory
+    ? props.category === props.selectedCategory
+      ? 1
+      : 0.25
+    : 1};
+`;
+
+const SeriesBar = styled.rect<{
+  category?: string;
+  selectedCategory?: string;
+}>`
+  ${selectedCategoryCss}
+`;
 
 export interface SeriesBarChartSvgProps<
   LineChartElement extends BaseLineChartElement
-> {
+> extends MouseOverEventProps<LineChartEventPayload<LineChartElement>> {
+  selectedCategory?: string;
   x0: number;
   x1: number;
   y0: number;
@@ -308,9 +328,34 @@ export interface SeriesBarChartSvgProps<
   colorAccessor?(key: string): string;
 }
 
+const makeOnMouseOverFunction = <T extends BaseLineChartElement>(
+  callback: (payload: LineChartEventPayload<T>) => void,
+  color: string,
+  category: string,
+  xValueAccessor: (data: T) => number,
+  yValueAccessor: (data: T) => number,
+  xScale: ScaleBand<number> | ScaleLinear<number, number>,
+  yScale: ScaleLinear<number, number>,
+  categoryData?: T[],
+  value?: T
+) => (e: React.MouseEvent<SVGRectElement, MouseEvent>) => {
+  e.stopPropagation();
+  categoryData &&
+    callback({
+      color,
+      category,
+      value: value || null,
+      point: {
+        x: value ? xScale(xValueAccessor(value))! : e.clientX,
+        y: value ? yScale(yValueAccessor(value)) : e.clientY,
+      },
+    });
+};
+
 export const SeriesBarChartSvg = <
   LineChartElement extends BaseLineChartElement
 >({
+  selectedCategory,
   x0,
   x1,
   y0,
@@ -321,6 +366,8 @@ export const SeriesBarChartSvg = <
   xValueAccessor = property('x'),
   yValueAccessor = property('y'),
   colorAccessor = defaultChartColorAccessor,
+  onValueMouseOver = noop,
+  onValueMouseOut = noop,
 }: SeriesBarChartSvgProps<LineChartElement>) => {
   const uniqueId = shortId.generate();
   const clipPathId = `clipPath-${uniqueId}`;
@@ -350,6 +397,24 @@ export const SeriesBarChartSvg = <
               width={Math.max(bandWidth, 0)}
               y={Math.max(yStart - height, 0)}
               height={Math.max(height, 0)}
+              category={category}
+              selectedCategory={selectedCategory}
+              onMouseOver={e => {
+                e.stopPropagation();
+                categoryData &&
+                  onValueMouseOver({
+                    color,
+                    category,
+                    value: d || null,
+                    point: {
+                      x: d
+                        ? xScale(xValueAccessor(d))! + bandWidth * 0.5
+                        : e.clientX,
+                      y: d ? yScale(yValueAccessor(d)) : e.clientY,
+                    },
+                  });
+              }}
+              onMouseOut={onValueMouseOut}
             />
           );
         });
@@ -378,12 +443,7 @@ const LinePathGroup = styled.g<{
   category?: string;
   selectedCategory?: string;
 }>`
-  opacity: ${props =>
-    props.selectedCategory
-      ? props.category === props.selectedCategory
-        ? 1
-        : 0.25
-      : 1};
+  ${selectedCategoryCss}
 
   &:hover {
     ${LinePath} {
@@ -475,13 +535,13 @@ export const LineChartPathsSvg = <
               category,
               value: value
                 ? ({
-                    x: value.x,
-                    y: value.y,
+                    x: xValueAccessor(value),
+                    y: yValueAccessor(value),
                   } as LineChartElement)
                 : null,
               point: {
-                x: value ? xScale(value.x) : e.clientX,
-                y: value ? yScale(value.y) : e.clientY,
+                x: value ? xScale(xValueAccessor(value)) : e.clientX,
+                y: value ? yScale(yValueAccessor(value)) : e.clientY,
               },
             });
         };
