@@ -20,11 +20,7 @@ import { wrapWithTooltip } from '../Tooltip';
 import { LineChart, LineChartFillStyle, LineChartProps } from './LineChart';
 import { useState } from '@storybook/addons';
 import { resizableChart } from '../ChartDimensions';
-
-const dimensions = {
-  height: 240,
-  width: 640,
-};
+import styled from 'styled-components';
 
 export const padding = {
   top: 15,
@@ -67,70 +63,86 @@ const LineChartComponent = resizableChart(
   wrapWithTooltip(LineChart as React.ComponentType<LineChartProps<Value>>)
 );
 
+const Container = styled.div`
+  display: flex;
+  flex: 1;
+  max-width: 768px;
+  max-height: 480px;
+  height: 100%;
+`;
+
 storiesOf('Charts', module)
   .addDecorator(withKnobs)
   .add('Line chart', () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     return (
-      <LineChartComponent
-        data={data}
-        domainConfig={{
-          accessor: (value: Value) => value.x,
-        }}
-        rangeConfig={{
-          y: {
-            chartType: 'line',
-            accessor: (value: Value) => value.y,
-          },
-          count: {
-            chartType: 'bar',
-            accessor: (value: Value) => value.count,
-          },
-        }}
-        padding={padding}
-        colorAccessor={key => colors[key]}
-        selectedCategory={selectedCategory}
-        showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
-        showVerticalGridLines={boolean('Show vertical grid lines', true)}
-        gridlineStyle={select(
-          'Grid line style',
-          {
-            Solid: GridLineStyle.solid,
-            Dashed: GridLineStyle.dashed,
-            Dotted: GridLineStyle.dotted,
-          },
-          GridLineStyle.dotted
-        )}
-        tooltipValueFormatter={(v: Value) =>
-          `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
-        }
-        numberOfXTicks={number('Number of X Ticks', defaultChartNumberOfXTicks)}
-        numberOfYTicks={number('Number of Y Ticks', defaultChartNumberOfYTicks)}
-        curve={select(
-          'Curve',
-          {
-            linear: Curve.Linear,
-            step: Curve.Step,
-            stepBefore: Curve.StepBefore,
-            stepAfter: Curve.StepAfter,
-            basis: Curve.Basis,
-            cardinal: Curve.Cardinal,
-            monotoneX: Curve.MonotoneX,
-            catmullRom: Curve.CatmullRom,
-          },
-          Curve.Cardinal
-        )}
-        fillStyle={select(
-          'Fill style',
-          {
-            line: LineChartFillStyle.line,
-            area: LineChartFillStyle.area,
-          },
-          LineChartFillStyle.line
-        )}
-        showPoints={boolean('Show Points', true)}
-        onValueMouseOver={value => setSelectedCategory(value.category)}
-        onValueMouseOut={() => setSelectedCategory('')}
-      />
+      <Container>
+        <LineChartComponent
+          data={data}
+          domainConfig={{
+            accessor: (value: Value) => value.x,
+          }}
+          rangeConfig={{
+            y: {
+              chartType: 'line',
+              accessor: (value: Value) => value.y,
+            },
+            count: {
+              chartType: 'bar',
+              accessor: (value: Value) => value.count,
+            },
+          }}
+          padding={padding}
+          colorAccessor={key => colors[key]}
+          selectedCategory={selectedCategory}
+          showHorizontalGridLines={boolean('Show horizontal grid lines', true)}
+          showVerticalGridLines={boolean('Show vertical grid lines', true)}
+          gridlineStyle={select(
+            'Grid line style',
+            {
+              Solid: GridLineStyle.solid,
+              Dashed: GridLineStyle.dashed,
+              Dotted: GridLineStyle.dotted,
+            },
+            GridLineStyle.dotted
+          )}
+          tooltipValueFormatter={(v: Value) =>
+            `${numericFormatter(v.x)} ${numericFormatter(v.y)}`
+          }
+          numberOfXTicks={number(
+            'Number of X Ticks',
+            defaultChartNumberOfXTicks
+          )}
+          numberOfYTicks={number(
+            'Number of Y Ticks',
+            defaultChartNumberOfYTicks
+          )}
+          curve={select(
+            'Curve',
+            {
+              linear: Curve.Linear,
+              step: Curve.Step,
+              stepBefore: Curve.StepBefore,
+              stepAfter: Curve.StepAfter,
+              basis: Curve.Basis,
+              cardinal: Curve.Cardinal,
+              monotoneX: Curve.MonotoneX,
+              catmullRom: Curve.CatmullRom,
+            },
+            Curve.Cardinal
+          )}
+          fillStyle={select(
+            'Fill style',
+            {
+              line: LineChartFillStyle.line,
+              area: LineChartFillStyle.area,
+            },
+            LineChartFillStyle.line
+          )}
+          showPoints={boolean('Show Points', true)}
+          onValueMouseOver={value => setSelectedCategory(value.category)}
+          onValueMouseOut={() => setSelectedCategory('')}
+        />
+      </Container>
     );
   });
