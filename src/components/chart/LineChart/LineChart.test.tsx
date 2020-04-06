@@ -49,7 +49,7 @@ describe('LineChart', () => {
         dimensions={dimensions}
         padding={padding}
         colorAccessor={key => colors[key]}
-        yDomain={[-100, 200]}
+        range={[-100, 200]}
         numberOfYTicks={5}
       />
     );
@@ -81,9 +81,10 @@ describe('LineChart', () => {
           dimensions={dimensions}
           padding={padding}
           colorAccessor={key => colors[key]}
-          yDomain={[-100, 200]}
+          range={[-100, 200]}
           numberOfYTicks={5}
-          showGridLines={true}
+          showHorizontalGridLines
+          showVerticalGridLines
         />
       );
       expect(lineChart.find(dataTestAttr('gridlines')).exists()).toBeTruthy();
@@ -96,9 +97,10 @@ describe('LineChart', () => {
           dimensions={dimensions}
           padding={padding}
           colorAccessor={key => colors[key]}
-          yDomain={[-100, 200]}
+          range={[-100, 200]}
           numberOfYTicks={5}
-          showGridLines={false}
+          showHorizontalGridLines={false}
+          showVerticalGridLines={false}
         />
       );
       expect(lineChart.find(dataTestAttr('gridlines')).exists()).toBeFalsy();

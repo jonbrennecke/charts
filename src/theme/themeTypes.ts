@@ -1,5 +1,3 @@
-import { EButtonVariant } from '../components';
-
 export type HexColor = string;
 
 export interface ColorTheme {
@@ -52,51 +50,6 @@ export interface ColorTheme {
       input: {
         placeholderColor: HexColor;
         color: HexColor;
-      };
-    };
-    select: {
-      border: {
-        color: HexColor;
-        hoverColor: HexColor;
-      };
-      options: {
-        backgroundColor: HexColor;
-      };
-      option: {
-        hoverBackgroundColor: HexColor;
-      };
-    };
-    list: {
-      item: {
-        hoverColor: HexColor;
-        selectedBackgroundColor: HexColor;
-        selectedColor: HexColor;
-      };
-    };
-    form: {
-      field: {
-        shadowColor: HexColor;
-        borderColor: HexColor;
-      };
-    };
-    button: {
-      base: {
-        primaryText: HexColor;
-        shadow: HexColor;
-        backgroundColor: { [key in EButtonVariant]: HexColor };
-        color: { [key in EButtonVariant]: HexColor };
-      };
-      hover: {
-        shadow: HexColor;
-        backgroundColor: { [key in EButtonVariant]: HexColor };
-        border: { [key in EButtonVariant]: HexColor };
-        color: { [key in EButtonVariant]: HexColor };
-      };
-      active: {
-        backgroundColor: { [key in EButtonVariant]: HexColor };
-        border: { [key in EButtonVariant]: HexColor };
-        color: { [key in EButtonVariant]: HexColor };
-        borderShadow: { [key in EButtonVariant]: HexColor };
       };
     };
   };

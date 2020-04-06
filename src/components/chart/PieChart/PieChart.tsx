@@ -103,7 +103,7 @@ export const PieChart = <T extends any = { value: number; label: string }>({
   const insetRect = makePaddedInsetRect(dimensions, padding);
   return (
     <div data-test="pie-chart">
-      <Svg dimensions={dimensions} colorTheme={colorTheme}>
+      <Svg dimensions={dimensions}>
         <g
           data-test="pie-paths"
           transform={`translate(${dimensions.width / 2}, ${dimensions.height /

@@ -93,7 +93,8 @@ describe('BarChart', () => {
           dimensions={dimensions}
           padding={padding}
           colorAccessor={key => colors[key]}
-          showGridLines={true}
+          showHorizontalGridLines
+          showVerticalGridLines
         />
       );
       expect(barChar.find(dataTestAttr('gridlines')).exists()).toBeTruthy();
@@ -107,7 +108,8 @@ describe('BarChart', () => {
           dimensions={dimensions}
           padding={padding}
           colorAccessor={key => colors[key]}
-          showGridLines={false}
+          showHorizontalGridLines={false}
+          showVerticalGridLines={false}
         />
       );
       expect(barChar.find(dataTestAttr('gridlines')).exists()).toBeFalsy();
